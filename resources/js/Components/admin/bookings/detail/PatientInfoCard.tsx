@@ -1,5 +1,3 @@
-import React from "react";
-
 interface PatientInfoCardProps {
     name: string;
     type: string;
@@ -20,34 +18,38 @@ export function PatientInfoCard({
     image,
 }: PatientInfoCardProps) {
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 sticky top-24">
-            <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
-                <h3 className="text-lg font-bold text-slate-900">Data Pasien</h3>
+        <div className="sticky top-24 rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
+                <h3 className="text-lg font-bold text-slate-900">
+                    Data Pasien
+                </h3>
             </div>
-            <div className="p-6 flex flex-col items-center text-center border-b border-slate-100">
+            <div className="flex flex-col items-center border-b border-slate-100 p-6 text-center">
                 <div
-                    className="size-24 rounded-full bg-slate-200 mb-4 bg-cover bg-center ring-4 ring-white shadow-md"
+                    className="mb-4 size-24 rounded-full bg-slate-200 bg-cover bg-center shadow-md ring-4 ring-white"
                     style={{ backgroundImage: `url("${image}")` }}
                 ></div>
                 <h3 className="text-xl font-bold text-slate-900">{name}</h3>
                 <p className="text-sm text-slate-500">{type}</p>
             </div>
-            <div className="p-6 space-y-5">
+            <div className="space-y-5 p-6">
                 <div className="flex flex-col gap-1">
-                    <span className="text-xs font-semibold text-slate-500 uppercase">
+                    <span className="text-xs font-semibold uppercase text-slate-500">
                         NIK
                     </span>
-                    <span className="text-sm font-medium text-slate-900">{nik}</span>
+                    <span className="text-sm font-medium text-slate-900">
+                        {nik}
+                    </span>
                 </div>
                 <div className="flex flex-col gap-1">
-                    <span className="text-xs font-semibold text-slate-500 uppercase">
+                    <span className="text-xs font-semibold uppercase text-slate-500">
                         Nomor WhatsApp
                     </span>
                     <div className="flex items-center justify-between">
                         <span className="text-sm font-medium text-slate-900">
                             {whatsapp}
                         </span>
-                        <button className="text-slate-400 hover:text-primary transition-colors">
+                        <button className="text-slate-400 transition-colors hover:text-primary">
                             <span className="material-symbols-outlined text-[18px]">
                                 content_copy
                             </span>
@@ -55,23 +57,25 @@ export function PatientInfoCard({
                     </div>
                 </div>
                 <div className="flex flex-col gap-1">
-                    <span className="text-xs font-semibold text-slate-500 uppercase">
+                    <span className="text-xs font-semibold uppercase text-slate-500">
                         Email
                     </span>
-                    <span className="text-sm font-medium text-slate-900">{email}</span>
+                    <span className="text-sm font-medium text-slate-900">
+                        {email}
+                    </span>
                 </div>
                 <div className="flex flex-col gap-1">
-                    <span className="text-xs font-semibold text-slate-500 uppercase">
+                    <span className="text-xs font-semibold uppercase text-slate-500">
                         Catatan Pasien
                     </span>
-                    <span className="text-sm font-medium text-slate-900 italic">
+                    <span className="text-sm font-medium italic text-slate-900">
                         "{note}"
                     </span>
                 </div>
-                <div className="pt-4 mt-2">
-                    <button className="w-full flex items-center justify-center rounded-lg bg-[#25D366] hover:bg-[#20bd5a] text-white px-4 py-3 text-sm font-bold transition-colors gap-2 shadow-sm">
+                <div className="mt-2 pt-4">
+                    <button className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#20bd5a]">
                         <svg
-                            className="w-5 h-5 fill-current"
+                            className="h-5 w-5 fill-current"
                             viewBox="0 0 448 512"
                             xmlns="http://www.w3.org/2000/svg"
                         >

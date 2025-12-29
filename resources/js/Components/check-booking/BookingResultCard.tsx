@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useRef, useState } from "react";
-import { toPng } from "html-to-image";
+import { toPng } from 'html-to-image';
+import { useRef, useState } from 'react';
 
 interface BookingResultCardProps {
     onDownload?: () => void;
@@ -18,7 +18,8 @@ export function BookingResultCard({ onDownload }: BookingResultCardProps) {
 
         try {
             // Hide action buttons temporarily for clean screenshot
-            const actionsFooter = cardRef.current.querySelector('.actions-footer');
+            const actionsFooter =
+                cardRef.current.querySelector('.actions-footer');
             if (actionsFooter) {
                 (actionsFooter as HTMLElement).style.display = 'none';
             }
@@ -30,7 +31,10 @@ export function BookingResultCard({ onDownload }: BookingResultCardProps) {
                 skipFonts: true,
                 filter: (node) => {
                     // Skip external stylesheets that may cause CORS issues
-                    if (node instanceof HTMLLinkElement && node.rel === 'stylesheet') {
+                    if (
+                        node instanceof HTMLLinkElement &&
+                        node.rel === 'stylesheet'
+                    ) {
                         return false;
                     }
                     return true;
@@ -58,114 +62,201 @@ export function BookingResultCard({ onDownload }: BookingResultCardProps) {
     };
 
     return (
-        <div ref={cardRef} className="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-gray-200 overflow-hidden transition-colors duration-200 animate-fade-in">
+        <div
+            ref={cardRef}
+            className="animate-fade-in overflow-hidden rounded-xl border border-gray-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition-colors duration-200"
+        >
             {/* Header Status */}
-            <div style={{ backgroundColor: '#f0fdf4', borderBottom: '1px solid #dcfce7' }} className="px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div
+                style={{
+                    backgroundColor: '#f0fdf4',
+                    borderBottom: '1px solid #dcfce7',
+                }}
+                className="flex flex-col items-start justify-between gap-4 px-6 py-4 sm:flex-row sm:items-center"
+            >
                 <div className="flex items-center gap-3">
-                    <div style={{ backgroundColor: '#dcfce7' }} className="size-10 rounded-full flex items-center justify-center text-green-600">
-                        <span className="material-symbols-outlined">check_circle</span>
+                    <div
+                        style={{ backgroundColor: '#dcfce7' }}
+                        className="flex size-10 items-center justify-center rounded-full text-green-600"
+                    >
+                        <span className="material-symbols-outlined">
+                            check_circle
+                        </span>
                     </div>
                     <div>
-                        <p className="text-sm text-gray-500 font-medium">Status Booking</p>
-                        <p className="text-lg font-bold text-green-700 leading-tight">Terkonfirmasi</p>
+                        <p className="text-sm font-medium text-gray-500">
+                            Status Booking
+                        </p>
+                        <p className="text-lg font-bold leading-tight text-green-700">
+                            Terkonfirmasi
+                        </p>
                     </div>
                 </div>
                 <div className="text-right sm:text-left">
                     <p className="text-sm text-gray-500">Kode Booking</p>
-                    <p className="text-lg font-mono font-bold text-gray-900">#BKG-8821</p>
+                    <p className="font-mono text-lg font-bold text-gray-900">
+                        #BKG-8821
+                    </p>
                 </div>
             </div>
 
             {/* Booking Details Grid */}
-            <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 gap-8 p-6 md:grid-cols-2 md:p-8">
                 {/* Left Column: Patient Info */}
                 <div className="space-y-6">
-                    <h3 className="text-sm uppercase tracking-wider font-bold text-gray-500 border-b border-gray-200 pb-2 mb-4">Informasi Pasien</h3>
+                    <h3 className="mb-4 border-b border-gray-200 pb-2 text-sm font-bold uppercase tracking-wider text-gray-500">
+                        Informasi Pasien
+                    </h3>
                     <div className="flex items-start gap-3">
-                        <span className="material-symbols-outlined text-[#0da2e7] mt-0.5">person</span>
+                        <span className="material-symbols-outlined mt-0.5 text-[#0da2e7]">
+                            person
+                        </span>
                         <div>
-                            <p className="text-xs text-gray-500 font-medium">Nama Pasien</p>
-                            <p className="text-base font-semibold text-gray-900">Sarah Wijaya</p>
+                            <p className="text-xs font-medium text-gray-500">
+                                Nama Pasien
+                            </p>
+                            <p className="text-base font-semibold text-gray-900">
+                                Sarah Wijaya
+                            </p>
                         </div>
                     </div>
 
                     <div className="flex items-start gap-3">
-                        <span className="material-symbols-outlined text-[#0da2e7] mt-0.5">badge</span>
+                        <span className="material-symbols-outlined mt-0.5 text-[#0da2e7]">
+                            badge
+                        </span>
                         <div>
-                            <p className="text-xs text-gray-500 font-medium">NIK</p>
-                            <p className="text-base font-semibold text-gray-900">3171234567890001</p>
+                            <p className="text-xs font-medium text-gray-500">
+                                NIK
+                            </p>
+                            <p className="text-base font-semibold text-gray-900">
+                                3171234567890001
+                            </p>
                         </div>
                     </div>
 
                     <div className="flex items-start gap-3">
-                        <span className="material-symbols-outlined text-[#0da2e7] mt-0.5">smartphone</span>
+                        <span className="material-symbols-outlined mt-0.5 text-[#0da2e7]">
+                            smartphone
+                        </span>
                         <div>
-                            <p className="text-xs text-gray-500 font-medium">Nomor WhatsApp</p>
-                            <p className="text-base font-semibold text-gray-900">0812-****-7890</p>
+                            <p className="text-xs font-medium text-gray-500">
+                                Nomor WhatsApp
+                            </p>
+                            <p className="text-base font-semibold text-gray-900">
+                                0812-****-7890
+                            </p>
                         </div>
                     </div>
 
                     <div className="flex items-start gap-3">
-                        <span className="material-symbols-outlined text-[#0da2e7] mt-0.5">email</span>
+                        <span className="material-symbols-outlined mt-0.5 text-[#0da2e7]">
+                            email
+                        </span>
                         <div>
-                            <p className="text-xs text-gray-500 font-medium">Email</p>
-                            <p className="text-base font-semibold text-gray-900">sarahw@gmail.com</p>
+                            <p className="text-xs font-medium text-gray-500">
+                                Email
+                            </p>
+                            <p className="text-base font-semibold text-gray-900">
+                                sarahw@gmail.com
+                            </p>
                         </div>
                     </div>
                 </div>
 
                 {/* Right Column: Appointment Info */}
                 <div className="space-y-6">
-                    <h3 className="text-sm uppercase tracking-wider font-bold text-gray-500 border-b border-gray-200 pb-2 mb-4">Detail Janji Temu</h3>
+                    <h3 className="mb-4 border-b border-gray-200 pb-2 text-sm font-bold uppercase tracking-wider text-gray-500">
+                        Detail Janji Temu
+                    </h3>
                     <div className="flex items-start gap-3">
-                        <span className="material-symbols-outlined text-[#0da2e7] mt-0.5">stethoscope</span>
+                        <span className="material-symbols-outlined mt-0.5 text-[#0da2e7]">
+                            stethoscope
+                        </span>
                         <div>
-                            <p className="text-xs text-gray-500 font-medium">Dokter</p>
-                            <p className="text-base font-semibold text-gray-900">Dr. Budi Santoso, Sp.KG</p>
+                            <p className="text-xs font-medium text-gray-500">
+                                Dokter
+                            </p>
+                            <p className="text-base font-semibold text-gray-900">
+                                Dr. Budi Santoso, Sp.KG
+                            </p>
                         </div>
                     </div>
                     <div className="flex items-start gap-3">
-                        <span className="material-symbols-outlined text-[#0da2e7] mt-0.5">calendar_clock</span>
+                        <span className="material-symbols-outlined mt-0.5 text-[#0da2e7]">
+                            calendar_clock
+                        </span>
                         <div>
-                            <p className="text-xs text-gray-500 font-medium">Jadwal</p>
-                            <p className="text-base font-semibold text-gray-900">Kamis, 24 Okt 2023</p>
-                            <p className="text-sm text-gray-500">Pukul 10:00 WIB</p>
+                            <p className="text-xs font-medium text-gray-500">
+                                Jadwal
+                            </p>
+                            <p className="text-base font-semibold text-gray-900">
+                                Kamis, 24 Okt 2023
+                            </p>
+                            <p className="text-sm text-gray-500">
+                                Pukul 10:00 WIB
+                            </p>
                         </div>
                     </div>
                     <div className="flex items-start gap-3">
-                        <span className="material-symbols-outlined text-[#0da2e7] mt-0.5">location_on</span>
+                        <span className="material-symbols-outlined mt-0.5 text-[#0da2e7]">
+                            location_on
+                        </span>
                         <div>
-                            <p className="text-xs text-gray-500 font-medium">Lokasi</p>
-                            <p className="text-base font-semibold text-gray-900">DentalCare Clinic</p>
-                            <p className="text-sm text-gray-500">Jl. Kesehatan No. 123, Jakarta Selatan</p>
+                            <p className="text-xs font-medium text-gray-500">
+                                Lokasi
+                            </p>
+                            <p className="text-base font-semibold text-gray-900">
+                                DentalCare Clinic
+                            </p>
+                            <p className="text-sm text-gray-500">
+                                Jl. Kesehatan No. 123, Jakarta Selatan
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Payment Note */}
-            <div style={{ backgroundColor: '#eff6ff', border: '1px solid #dbeafe' }} className="mx-6 md:mx-8 mb-6 p-4 rounded-lg flex gap-3">
-                <span className="material-symbols-outlined text-blue-600 shrink-0">info</span>
+            <div
+                style={{
+                    backgroundColor: '#eff6ff',
+                    border: '1px solid #dbeafe',
+                }}
+                className="mx-6 mb-6 flex gap-3 rounded-lg p-4 md:mx-8"
+            >
+                <span className="material-symbols-outlined shrink-0 text-blue-600">
+                    info
+                </span>
                 <div>
-                    <p className="text-sm font-bold text-blue-800">Informasi Pembayaran</p>
-                    <p className="text-sm text-blue-700 mt-1">Pembayaran dilakukan secara manual saat Anda tiba di klinik. Mohon datang 15 menit sebelum jadwal.</p>
+                    <p className="text-sm font-bold text-blue-800">
+                        Informasi Pembayaran
+                    </p>
+                    <p className="mt-1 text-sm text-blue-700">
+                        Pembayaran dilakukan secara manual saat Anda tiba di
+                        klinik. Mohon datang 15 menit sebelum jadwal.
+                    </p>
                 </div>
             </div>
 
             {/* Actions Footer */}
-            <div className="actions-footer bg-white border-t border-gray-200 px-6 py-4 flex flex-col sm:flex-row justify-end items-center gap-3">
-                <button className="w-full sm:w-auto px-4 py-2.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 text-sm font-semibold transition-colors flex items-center justify-center gap-2 cursor-pointer">
-                    <span className="material-symbols-outlined text-[18px]">cancel</span>
+            <div className="actions-footer flex flex-col items-center justify-end gap-3 border-t border-gray-200 bg-white px-6 py-4 sm:flex-row">
+                <button className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 sm:w-auto">
+                    <span className="material-symbols-outlined text-[18px]">
+                        cancel
+                    </span>
                     Batalkan Booking
                 </button>
-                <button className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-gray-100 border border-gray-200 hover:bg-gray-200 text-gray-900 text-sm font-semibold transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer">
-                    <span className="material-symbols-outlined text-[18px]">chat</span>
+                <button className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm transition-colors hover:bg-gray-200 sm:w-auto">
+                    <span className="material-symbols-outlined text-[18px]">
+                        chat
+                    </span>
                     Hubungi Admin
                 </button>
                 <button
                     onClick={handleDownload}
                     disabled={isDownloading}
-                    className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-[#0da2e7] hover:bg-[#0b8fd0] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-bold shadow-sm transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                    className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#0da2e7] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#0b8fd0] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
                     <span className="material-symbols-outlined text-[18px]">
                         {isDownloading ? 'hourglass_empty' : 'download'}

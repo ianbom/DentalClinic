@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, ReactNode, useContext, useState } from 'react';
 
 export interface BookingData {
     fullName: string;
@@ -19,19 +19,20 @@ interface BookingContextType {
 }
 
 const defaultBookingData: BookingData = {
-    fullName: "",
-    nik: "",
-    whatsapp: "",
-    email: "",
-    complaint: "",
-    selectedDate: "",
-    selectedTime: "",
+    fullName: '',
+    nik: '',
+    whatsapp: '',
+    email: '',
+    complaint: '',
+    selectedDate: '',
+    selectedTime: '',
 };
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
 
 export function BookingProvider({ children }: { children: ReactNode }) {
-    const [bookingData, setBookingDataState] = useState<BookingData>(defaultBookingData);
+    const [bookingData, setBookingDataState] =
+        useState<BookingData>(defaultBookingData);
 
     const setBookingData = (data: Partial<BookingData>) => {
         setBookingDataState((prev) => ({ ...prev, ...data }));
@@ -42,7 +43,9 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <BookingContext.Provider value={{ bookingData, setBookingData, resetBookingData }}>
+        <BookingContext.Provider
+            value={{ bookingData, setBookingData, resetBookingData }}
+        >
             {children}
         </BookingContext.Provider>
     );
@@ -51,7 +54,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
 export function useBooking() {
     const context = useContext(BookingContext);
     if (context === undefined) {
-        throw new Error("useBooking must be used within a BookingProvider");
+        throw new Error('useBooking must be used within a BookingProvider');
     }
     return context;
 }

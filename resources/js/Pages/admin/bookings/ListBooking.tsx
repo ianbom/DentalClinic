@@ -1,14 +1,11 @@
-import { BookingHeader } from "../../components/admin/bookings/BookingHeader";
-import { BookingTabs } from "../../components/admin/bookings/BookingTabs";
-import { BookingFilters } from "../../components/admin/bookings/BookingFilters";
-import { BookingTable } from "../../components/admin/bookings/BookingTable";
-import { BookingPagination } from "../../components/admin/bookings/BookingPagination";
+import { BookingFilters } from '@/Components/admin/bookings/BookingFilters';
+import { BookingHeader } from '@/Components/admin/bookings/BookingHeader';
+import { BookingPagination } from '@/Components/admin/bookings/BookingPagination';
+import { BookingTable } from '@/Components/admin/bookings/BookingTable';
+import { BookingTabs } from '@/Components/admin/bookings/BookingTabs';
+import AdminLayout from '@/Layouts/AdminLayout';
 
-export const metadata = {
-    title: "Manajemen Booking - Klinik Gigi Sehat",
-};
-
-export default function BookingPage() {
+function BookingPage() {
     return (
         <>
             <BookingHeader />
@@ -21,3 +18,9 @@ export default function BookingPage() {
         </>
     );
 }
+
+BookingPage.layout = (page: React.ReactNode) => (
+    <AdminLayout>{page}</AdminLayout>
+);
+
+export default BookingPage;

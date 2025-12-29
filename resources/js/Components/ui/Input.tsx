@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, forwardRef, ReactNode } from 'react';
+import { forwardRef, InputHTMLAttributes, ReactNode } from 'react';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
@@ -22,7 +22,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             id,
             ...props
         },
-        ref
+        ref,
     ) => {
         const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');
 
@@ -31,45 +31,36 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 {label && (
                     <label
                         htmlFor={inputId}
-                        className="block text-sm font-medium text-text-primary mb-2"
+                        className="text-text-primary mb-2 block text-sm font-medium"
                     >
                         {label}
-                        {props.required && <span className="text-error ml-1">*</span>}
+                        {props.required && (
+                            <span className="text-error ml-1">*</span>
+                        )}
                     </label>
                 )}
                 <div className="relative">
                     {leftIcon && (
-                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted">
+                        <div className="text-text-muted absolute left-3 top-1/2 -translate-y-1/2">
                             {leftIcon}
                         </div>
                     )}
                     <input
                         ref={ref}
                         id={inputId}
-                        className={`
-              w-full px-4 py-3
-              bg-surface border rounded-lg
-              text-text-primary placeholder:text-text-muted
-              transition-all duration-200
-              focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-              disabled:bg-gray-100 disabled:cursor-not-allowed
-              ${leftIcon ? 'pl-10' : ''}
-              ${rightIcon ? 'pr-10' : ''}
-              ${error ? 'border-error focus:ring-error' : 'border-border hover:border-primary-light'}
-              ${className}
-            `}
+                        className={`bg-surface text-text-primary placeholder:text-text-muted w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:bg-gray-100 ${leftIcon ? 'pl-10' : ''} ${rightIcon ? 'pr-10' : ''} ${error ? 'border-error focus:ring-error' : 'border-border hover:border-primary-light'} ${className} `}
                         {...props}
                     />
                     {rightIcon && (
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted">
+                        <div className="text-text-muted absolute right-3 top-1/2 -translate-y-1/2">
                             {rightIcon}
                         </div>
                     )}
                 </div>
                 {error && (
-                    <p className="mt-1.5 text-sm text-error flex items-center gap-1">
+                    <p className="text-error mt-1.5 flex items-center gap-1 text-sm">
                         <svg
-                            className="w-4 h-4"
+                            className="h-4 w-4"
                             fill="currentColor"
                             viewBox="0 0 20 20"
                         >
@@ -83,11 +74,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                     </p>
                 )}
                 {helperText && !error && (
-                    <p className="mt-1.5 text-sm text-text-muted">{helperText}</p>
+                    <p className="text-text-muted mt-1.5 text-sm">
+                        {helperText}
+                    </p>
                 )}
             </div>
         );
-    }
+    },
 );
 
 Input.displayName = 'Input';

@@ -1,13 +1,10 @@
-import { DoctorListHeader } from "@/app/components/admin/doctors/DoctorListHeader";
-import { DoctorFilters } from "@/app/components/admin/doctors/DoctorFilters";
-import { DoctorTable } from "@/app/components/admin/doctors/DoctorTable";
-import { DoctorPagination } from "@/app/components/admin/doctors/DoctorPagination";
+import { DoctorFilters } from '@/Components/admin/doctors/DoctorFilters';
+import { DoctorListHeader } from '@/Components/admin/doctors/DoctorListHeader';
+import { DoctorPagination } from '@/Components/admin/doctors/DoctorPagination';
+import { DoctorTable } from '@/Components/admin/doctors/DoctorTable';
+import AdminLayout from '@/Layouts/AdminLayout';
 
-export const metadata = {
-    title: "Manajemen Dokter - Klinik Gigi Sehat",
-};
-
-export default function DoctorsPage() {
+function DoctorsPage() {
     return (
         <div className="flex flex-col gap-6">
             <DoctorListHeader />
@@ -17,7 +14,7 @@ export default function DoctorsPage() {
                 <DoctorPagination />
             </div>
             {/* Footer Hint */}
-            <div className="text-center pb-8">
+            <div className="pb-8 text-center">
                 <p className="text-xs text-slate-500">
                     © 2024 Klinik Gigi Sehat Admin Panel. All rights reserved.
                 </p>
@@ -25,3 +22,9 @@ export default function DoctorsPage() {
         </div>
     );
 }
+
+DoctorsPage.layout = (page: React.ReactNode) => (
+    <AdminLayout>{page}</AdminLayout>
+);
+
+export default DoctorsPage;

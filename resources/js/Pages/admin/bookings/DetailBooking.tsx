@@ -1,34 +1,29 @@
-import { notFound } from "next/navigation";
-import { BookingDetailHeader } from "@/app/components/admin/bookings/detail/BookingDetailHeader";
-import { BookingStatusCard } from "@/app/components/admin/bookings/detail/BookingStatusCard";
-import { BookingScheduleCard } from "@/app/components/admin/bookings/detail/BookingScheduleCard";
-import { BookingTimeline } from "@/app/components/admin/bookings/detail/BookingTimeline";
-import { PatientInfoCard } from "@/app/components/admin/bookings/detail/PatientInfoCard";
-import { getBookingById } from "@/app/data/bookings";
-
-export const metadata = {
-    title: "Detail Booking - Klinik Gigi Sehat",
-};
+import { BookingDetailHeader } from '@/Components/admin/bookings/detail/BookingDetailHeader';
+import { BookingScheduleCard } from '@/Components/admin/bookings/detail/BookingScheduleCard';
+import { BookingStatusCard } from '@/Components/admin/bookings/detail/BookingStatusCard';
+import { BookingTimeline } from '@/Components/admin/bookings/detail/BookingTimeline';
+import { PatientInfoCard } from '@/Components/admin/bookings/detail/PatientInfoCard';
+import { getBookingById } from '@/data/bookings';
+import AdminLayout from '@/Layouts/AdminLayout';
 
 interface BookingDetailPageProps {
-    params: Promise<{ id: string }>;
+    id: string;
 }
 
-export default async function BookingDetailPage({ params }: BookingDetailPageProps) {
-    const { id } = await params;
+function BookingDetailPage({ id }: BookingDetailPageProps) {
     const bookingData = getBookingById(id);
 
     if (!bookingData) {
-        notFound();
+        return <div>Booking tidak ditemukan</div>;
     }
 
     return (
         <>
             <BookingDetailHeader />
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                 {/* Left Column: Main Info, Actions, Schedule */}
-                <div className="lg:col-span-2 flex flex-col gap-6">
+                <div className="flex flex-col gap-6 lg:col-span-2">
                     <BookingStatusCard
                         code={`#${bookingData.code}`}
                         createdDate={bookingData.createdDate}
@@ -45,7 +40,7 @@ export default async function BookingDetailPage({ params }: BookingDetailPagePro
                 </div>
 
                 {/* Right Column: Customer Info */}
-                <div className="lg:col-span-1 flex flex-col gap-6">
+                <div className="flex flex-col gap-6 lg:col-span-1">
                     <PatientInfoCard
                         name={bookingData.patient.name}
                         type={bookingData.patient.type}
@@ -60,3 +55,9 @@ export default async function BookingDetailPage({ params }: BookingDetailPagePro
         </>
     );
 }
+
+BookingDetailPage.layout = (page: React.ReactNode) => (
+    <AdminLayout>{page}</AdminLayout>
+);
+
+export default BookingDetailPage;

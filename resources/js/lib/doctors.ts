@@ -1,4 +1,4 @@
-import doctorsData from "@/data/doctors.json";
+import doctorsData from '../data/doctors.json';
 
 export interface Doctor {
     id: number;
@@ -26,8 +26,10 @@ export function getDoctors(): Doctor[] {
 }
 
 export function getDoctorById(id: string | number): Doctor | undefined {
-    const numericId = typeof id === "string" ? parseInt(id, 10) : id;
-    return doctorsData.find((doctor) => doctor.id === numericId) as Doctor | undefined;
+    const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
+    return doctorsData.find((doctor) => doctor.id === numericId) as
+        | Doctor
+        | undefined;
 }
 
 export function getDoctorIds(): string[] {

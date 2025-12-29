@@ -1,8 +1,15 @@
-import { DoctorListClient } from "@/app/components/doctors/DoctorListClient";
-import { getDoctors } from "@/lib/doctors";
+import { DoctorListClient } from '@/Components/doctors/DoctorListClient';
+import PatientLayout from '@/Layouts/PatientLayout';
+import { getDoctors } from '@/lib/doctors';
 
-export default function DoctorPage() {
+function DoctorPage() {
     const doctors = getDoctors();
 
     return <DoctorListClient doctors={doctors} />;
 }
+
+DoctorPage.layout = (page: React.ReactNode) => (
+    <PatientLayout>{page}</PatientLayout>
+);
+
+export default DoctorPage;

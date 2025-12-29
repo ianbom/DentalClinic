@@ -1,14 +1,15 @@
-import { AboutHero } from "@/app/components/about/AboutHero";
-import { AboutStory } from "@/app/components/about/AboutStory";
-import { VisionMission } from "@/app/components/about/VisionMission";
-import { TeamSection } from "@/app/components/about/TeamSection";
-import { LocationContact } from "@/app/components/about/LocationContact";
-import { AboutCTA } from "@/app/components/about/AboutCTA";
-import { FloatingWhatsApp } from "@/app/components/layout/FloatingWhatsApp";
+import { AboutCTA } from '@/Components/about/AboutCTA';
+import { AboutHero } from '@/Components/about/AboutHero';
+import { AboutStory } from '@/Components/about/AboutStory';
+import { LocationContact } from '@/Components/about/LocationContact';
+import { TeamSection } from '@/Components/about/TeamSection';
+import { VisionMission } from '@/Components/about/VisionMission';
+import { FloatingWhatsApp } from '@/Components/layout/FloatingWhatsApp';
+import PatientLayout from '@/Layouts/PatientLayout';
 
-export default function AboutPage() {
+function AboutPage() {
     return (
-        <div className="flex flex-col min-h-screen font-display">
+        <div className="flex min-h-screen flex-col font-display">
             <AboutHero />
             <AboutStory />
             <VisionMission />
@@ -19,3 +20,9 @@ export default function AboutPage() {
         </div>
     );
 }
+
+AboutPage.layout = (page: React.ReactNode) => (
+    <PatientLayout>{page}</PatientLayout>
+);
+
+export default AboutPage;

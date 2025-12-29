@@ -1,3 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    /* Dental Clinic Colors */
+    --primary: #0da2e7;
+    --primary-dark: #0a8bc7;
+
+    --background-light: #f8fbfc;
+    --background-dark: #101c22;
+
+    --text-light: #0d171c;
+    --text-dark: #f8fbfc;
+
+    --text-main-light: #0d171c;
+    --text-sub-light: #6b7280;
+
+    --subtle-light: #e7f0f4;
+    --subtle-dark: #1e2a30;
+
+    --border-subtle-light: #e7f0f4;
+}
+
+/* Base Styles */
+body {
+    background-color: var(--background-light);
+    color: var(--text-light);
+}
+
+/* Custom Utilities */
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

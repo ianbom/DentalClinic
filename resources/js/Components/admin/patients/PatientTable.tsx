@@ -1,28 +1,27 @@
-import React from "react";
-import { patientsData, Patient } from "@/app/data/patients";
+import { Patient, patientsData } from '@/app/data/patients';
 
 export function PatientTable() {
     return (
-        <div className="overflow-x-auto w-full bg-white">
-            <table className="w-full text-left border-collapse">
+        <div className="w-full overflow-x-auto bg-white">
+            <table className="w-full border-collapse text-left">
                 <thead>
-                    <tr className="bg-slate-50 border-b border-slate-100">
-                        <th className="p-4 text-xs font-semibold tracking-wide text-slate-500 uppercase w-16 text-center">
+                    <tr className="border-b border-slate-100 bg-slate-50">
+                        <th className="w-16 p-4 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">
                             #
                         </th>
-                        <th className="p-4 text-xs font-semibold tracking-wide text-slate-500 uppercase min-w-[200px]">
+                        <th className="min-w-[200px] p-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
                             Nama
                         </th>
-                        <th className="p-4 text-xs font-semibold tracking-wide text-slate-500 uppercase min-w-[180px]">
+                        <th className="min-w-[180px] p-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
                             NIK
                         </th>
-                        <th className="p-4 text-xs font-semibold tracking-wide text-slate-500 uppercase min-w-[160px]">
+                        <th className="min-w-[160px] p-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
                             WhatsApp
                         </th>
-                        <th className="p-4 text-xs font-semibold tracking-wide text-slate-500 uppercase text-center min-w-[140px]">
+                        <th className="min-w-[140px] p-4 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">
                             Total Kunjungan
                         </th>
-                        <th className="p-4 text-xs font-semibold tracking-wide text-slate-500 uppercase text-right w-24">
+                        <th className="w-24 p-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
                             Actions
                         </th>
                     </tr>
@@ -31,15 +30,15 @@ export function PatientTable() {
                     {patientsData.map((patient: Patient, index: number) => (
                         <tr
                             key={patient.id}
-                            className="group hover:bg-slate-50 transition-colors"
+                            className="group transition-colors hover:bg-slate-50"
                         >
-                            <td className="p-4 text-sm text-slate-400 text-center">
+                            <td className="p-4 text-center text-sm text-slate-400">
                                 {index + 1}
                             </td>
                             <td className="p-4">
                                 <div className="flex items-center gap-3">
                                     <div
-                                        className={`w-8 h-8 rounded-full ${patient.colorBg} ${patient.colorText} flex items-center justify-center text-xs font-bold`}
+                                        className={`h-8 w-8 rounded-full ${patient.colorBg} ${patient.colorText} flex items-center justify-center text-xs font-bold`}
                                     >
                                         {patient.initials}
                                     </div>
@@ -53,33 +52,33 @@ export function PatientTable() {
                                     </div>
                                 </div>
                             </td>
-                            <td className="p-4 text-sm font-mono text-slate-600">
+                            <td className="p-4 font-mono text-sm text-slate-600">
                                 {patient.nik}
                             </td>
                             <td className="p-4">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-green-500 bg-green-50 p-1 rounded-md">
-                                        <span className="w-3 h-3 block opacity-70">
+                                    <span className="rounded-md bg-green-50 p-1 text-green-500">
+                                        <span className="block h-3 w-3 opacity-70">
                                             {/* Simple SVG icon/placeholder for WA as img not available */}
                                             <span className="material-symbols-outlined text-[12px]">
                                                 chat
                                             </span>
                                         </span>
                                     </span>
-                                    <span className="text-sm font-mono text-slate-600">
+                                    <span className="font-mono text-sm text-slate-600">
                                         {patient.phone}
                                     </span>
                                 </div>
                             </td>
                             <td className="p-4 text-center">
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                                     {patient.totalVisits} Kunjungan
                                 </span>
                             </td>
                             <td className="p-4 text-right">
-                                <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100">
                                     <button
-                                        className="p-1.5 rounded-md hover:bg-slate-100 text-slate-500 hover:text-primary transition-colors"
+                                        className="rounded-md p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-primary"
                                         title="Edit Customer"
                                     >
                                         <span className="material-symbols-outlined text-[18px]">
@@ -87,7 +86,7 @@ export function PatientTable() {
                                         </span>
                                     </button>
                                     <button
-                                        className="p-1.5 rounded-md hover:bg-slate-100 text-slate-500 hover:text-primary transition-colors"
+                                        className="rounded-md p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-primary"
                                         title="View Details"
                                     >
                                         <span className="material-symbols-outlined text-[18px]">

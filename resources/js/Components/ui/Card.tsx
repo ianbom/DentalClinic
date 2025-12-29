@@ -27,15 +27,7 @@ export default function Card({
     return (
         <Component
             onClick={onClick}
-            className={`
-        bg-surface border border-border rounded-xl
-        shadow-sm
-        transition-all duration-200
-        ${interactive ? 'hover:shadow-lg hover:-translate-y-0.5 cursor-pointer' : ''}
-        ${paddingStyles[padding]}
-        ${onClick ? 'w-full text-left' : ''}
-        ${className}
-      `}
+            className={`bg-surface border-border rounded-xl border shadow-sm transition-all duration-200 ${interactive ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow-lg' : ''} ${paddingStyles[padding]} ${onClick ? 'w-full text-left' : ''} ${className} `}
         >
             {children}
         </Component>
@@ -49,11 +41,7 @@ interface CardHeaderProps {
 }
 
 export function CardHeader({ children, className = '' }: CardHeaderProps) {
-    return (
-        <div className={`mb-4 ${className}`}>
-            {children}
-        </div>
-    );
+    return <div className={`mb-4 ${className}`}>{children}</div>;
 }
 
 // Card Title component
@@ -64,7 +52,7 @@ interface CardTitleProps {
 
 export function CardTitle({ children, className = '' }: CardTitleProps) {
     return (
-        <h3 className={`text-lg font-semibold text-text-primary ${className}`}>
+        <h3 className={`text-text-primary text-lg font-semibold ${className}`}>
             {children}
         </h3>
     );
@@ -88,7 +76,7 @@ interface CardFooterProps {
 
 export function CardFooter({ children, className = '' }: CardFooterProps) {
     return (
-        <div className={`mt-4 pt-4 border-t border-border ${className}`}>
+        <div className={`border-border mt-4 border-t pt-4 ${className}`}>
             {children}
         </div>
     );

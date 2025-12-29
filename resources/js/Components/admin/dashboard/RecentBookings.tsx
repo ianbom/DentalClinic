@@ -7,7 +7,7 @@ interface BookingItem {
     doctorName: string;
     date: string;
     time: string;
-    status: "Confirmed" | "Pending" | "New";
+    status: 'Confirmed' | 'Pending' | 'New';
 }
 
 interface RecentBookingsProps {
@@ -15,32 +15,32 @@ interface RecentBookingsProps {
 }
 
 export function RecentBookings({ bookings }: RecentBookingsProps) {
-    const getStatusBadge = (status: BookingItem["status"]) => {
+    const getStatusBadge = (status: BookingItem['status']) => {
         switch (status) {
-            case "Confirmed":
-                return "bg-green-100 text-green-700 border-green-200";
-            case "Pending":
-                return "bg-orange-100 text-orange-700 border-orange-200";
-            case "New":
-                return "bg-blue-100 text-blue-700 border-blue-200";
+            case 'Confirmed':
+                return 'bg-green-100 text-green-700 border-green-200';
+            case 'Pending':
+                return 'bg-orange-100 text-orange-700 border-orange-200';
+            case 'New':
+                return 'bg-blue-100 text-blue-700 border-blue-200';
             default:
-                return "bg-slate-100 text-slate-700 border-slate-200";
+                return 'bg-slate-100 text-slate-700 border-slate-200';
         }
     };
 
     return (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col h-full overflow-hidden">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+        <div className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div className="flex items-center justify-between border-b border-slate-100 p-6">
                 <h3 className="text-lg font-bold text-slate-900">
                     Booking Terbaru
                 </h3>
-                <button className="px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-sky-600 transition-colors shadow-sm shadow-primary/30 cursor-pointer">
+                <button className="cursor-pointer rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm shadow-primary/30 transition-colors hover:bg-sky-600">
                     + Add Booking
                 </button>
             </div>
-            <div className="overflow-x-auto flex-1">
-                <table className="w-full text-left border-collapse">
-                    <thead className="bg-slate-50 text-slate-500 text-xs uppercase font-semibold">
+            <div className="flex-1 overflow-x-auto">
+                <table className="w-full border-collapse text-left">
+                    <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
                         <tr>
                             <th className="px-6 py-4">Patient Name</th>
                             <th className="px-6 py-4">Service</th>
@@ -54,7 +54,7 @@ export function RecentBookings({ bookings }: RecentBookingsProps) {
                         {bookings.map((booking) => (
                             <tr
                                 key={booking.id}
-                                className="hover:bg-slate-50 transition-colors"
+                                className="transition-colors hover:bg-slate-50"
                             >
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-3">
@@ -65,7 +65,7 @@ export function RecentBookings({ bookings }: RecentBookingsProps) {
                                                 src={booking.patientAvatar}
                                             />
                                         ) : (
-                                            <div className="size-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold">
+                                            <div className="flex size-9 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-500">
                                                 {booking.patientInitials}
                                             </div>
                                         )}
@@ -90,15 +90,15 @@ export function RecentBookings({ bookings }: RecentBookingsProps) {
                                 </td>
                                 <td className="px-6 py-4">
                                     <span
-                                        className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusBadge(
-                                            booking.status
+                                        className={`rounded-full border px-3 py-1 text-xs font-semibold ${getStatusBadge(
+                                            booking.status,
                                         )}`}
                                     >
                                         {booking.status}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 text-right">
-                                    <button className="text-slate-400 hover:text-primary transition-colors cursor-pointer">
+                                    <button className="cursor-pointer text-slate-400 transition-colors hover:text-primary">
                                         <span className="material-symbols-outlined text-xl">
                                             more_vert
                                         </span>

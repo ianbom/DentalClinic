@@ -1,18 +1,19 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { ServicesHero } from "@/app/components/services/ServicesHero";
-import { ServicesCategoryFilter } from "@/app/components/services/ServicesCategoryFilter";
-import { ServicesGrid } from "@/app/components/services/ServicesGrid";
-import { WhyChooseUs } from "@/app/components/services/WhyChooseUs";
-import { ServicesCTA } from "@/app/components/services/ServicesCTA";
-import { FloatingWhatsApp } from "@/app/components/layout/FloatingWhatsApp";
+import { FloatingWhatsApp } from '@/Components/layout/FloatingWhatsApp';
+import { ServicesCategoryFilter } from '@/Components/services/ServicesCategoryFilter';
+import { ServicesCTA } from '@/Components/services/ServicesCTA';
+import { ServicesGrid } from '@/Components/services/ServicesGrid';
+import { ServicesHero } from '@/Components/services/ServicesHero';
+import { WhyChooseUs } from '@/Components/services/WhyChooseUs';
+import PatientLayout from '@/Layouts/PatientLayout';
+import { useState } from 'react';
 
-export default function ServicesPage() {
-    const [selectedCategory, setSelectedCategory] = useState("all");
+function ServicesPage() {
+    const [selectedCategory, setSelectedCategory] = useState('all');
 
     return (
-        <div className="flex flex-col min-h-screen font-display bg-background-light">
+        <div className="flex min-h-screen flex-col bg-background-light font-display">
             <ServicesHero />
             <ServicesCategoryFilter
                 selectedCategory={selectedCategory}
@@ -25,3 +26,9 @@ export default function ServicesPage() {
         </div>
     );
 }
+
+ServicesPage.layout = (page: React.ReactNode) => (
+    <PatientLayout>{page}</PatientLayout>
+);
+
+export default ServicesPage;

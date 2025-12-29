@@ -7,7 +7,6 @@ export default function AdminLayout({
     children: React.ReactNode;
 }) {
     return (
-        // Added font-display and background variables to match HTML body classes
         <div className="flex h-screen overflow-hidden bg-background-light font-display text-slate-900">
             <AdminSidebar />
             <div className="flex min-w-0 flex-1 flex-col bg-background-light">

@@ -1,15 +1,12 @@
-import { CheckInHeader } from "@/app/components/admin/patients/checkin/CheckInHeader";
-import { CheckInSearchForm } from "@/app/components/admin/patients/checkin/CheckInSearchForm";
-import { CheckInResultCard } from "@/app/components/admin/patients/checkin/CheckInResultCard";
+import { CheckInHeader } from '@/Components/admin/patients/checkin/CheckInHeader';
+import { CheckInResultCard } from '@/Components/admin/patients/checkin/CheckInResultCard';
+import { CheckInSearchForm } from '@/Components/admin/patients/checkin/CheckInSearchForm';
+import AdminLayout from '@/Layouts/AdminLayout';
 
-export const metadata = {
-    title: "Check-in Pasien - Klinik Gigi Sehat",
-};
-
-export default function CheckInPage() {
+function CheckInPage() {
     return (
-        <div className="flex flex-col h-full bg-[#f8fbfc]">
-            <div className="flex-1 max-w-5xl mx-auto w-full">
+        <div className="flex h-full flex-col bg-[#f8fbfc]">
+            <div className="mx-auto w-full max-w-5xl flex-1">
                 <CheckInHeader />
                 <CheckInSearchForm />
                 <CheckInResultCard />
@@ -17,3 +14,9 @@ export default function CheckInPage() {
         </div>
     );
 }
+
+CheckInPage.layout = (page: React.ReactNode) => (
+    <AdminLayout>{page}</AdminLayout>
+);
+
+export default CheckInPage;

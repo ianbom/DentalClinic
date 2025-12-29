@@ -1,15 +1,20 @@
-import { BookingHeader } from "@/app/components/booking/BookingHeader";
-import { CustomerDataForm } from "@/app/components/booking/CustomerDataForm";
-import { CustomerBookingSidebar } from "@/app/components/booking/CustomerBookingSidebar";
-import { getDoctorById } from "@/lib/doctors";
+import { BookingHeader } from '@/Components/booking/BookingHeader';
+import { CustomerBookingSidebar } from '@/Components/booking/CustomerBookingSidebar';
+import { CustomerDataForm } from '@/Components/booking/CustomerDataForm';
+import { BookingProvider } from '@/context/BookingContext';
+import PatientLayout from '@/Layouts/PatientLayout';
+import { getDoctorById } from '@/lib/doctors';
 
-export default async function CustomerDataPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+interface CustomerDataPageProps {
+    id: string;
+}
+
+function CustomerDataPage({ id }: CustomerDataPageProps) {
     const doctor = getDoctorById(id);
 
     return (
-        <div className="flex-1 flex flex-col items-center py-8 px-4 md:px-10 lg:px-20 min-h-screen bg-background-light font-display">
-            <div className="max-w-6xl w-full flex flex-col gap-8">
+        <div className="flex min-h-screen flex-1 flex-col items-center bg-background-light px-4 py-8 font-display md:px-10 lg:px-20">
+            <div className="flex w-full max-w-6xl flex-col gap-8">
                 {/* Progress Bar */}
                 <BookingHeader currentStep={2} />
 
@@ -29,3 +34,11 @@ export default async function CustomerDataPage({ params }: { params: Promise<{ i
         </div>
     );
 }
+
+CustomerDataPage.layout = (page: React.ReactNode) => (
+    <PatientLayout>
+        <BookingProvider>{page}</BookingProvider>
+    </PatientLayout>
+);
+
+export default CustomerDataPage;

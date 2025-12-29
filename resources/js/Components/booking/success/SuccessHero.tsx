@@ -1,14 +1,17 @@
 export function SuccessHero() {
     return (
-        <div className="flex flex-col items-center text-center pb-8 animate-fade-in-up">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-                <span className="material-symbols-outlined text-green-500 text-[48px]">check_circle</span>
+        <div className="animate-fade-in-up flex flex-col items-center pb-8 text-center">
+            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
+                <span className="material-symbols-outlined text-[48px] text-green-500">
+                    check_circle
+                </span>
             </div>
-            <h1 className="text-text-light tracking-tight text-[32px] font-bold leading-tight px-4 pb-2">
+            <h1 className="px-4 pb-2 text-[32px] font-bold leading-tight tracking-tight text-text-light">
                 Booking Berhasil!
             </h1>
-            <p className="text-gray-600 text-base font-normal leading-normal max-w-lg">
-                Terima Kasih! Jadwal Anda telah terkonfirmasi. Silakan simpan kode booking ini untuk registrasi ulang saat kedatangan.
+            <p className="max-w-lg text-base font-normal leading-normal text-gray-600">
+                Terima Kasih! Jadwal Anda telah terkonfirmasi. Silakan simpan
+                kode booking ini untuk registrasi ulang saat kedatangan.
             </p>
         </div>
     );

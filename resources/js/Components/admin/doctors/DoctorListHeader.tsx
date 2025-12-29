@@ -1,5 +1,4 @@
-import Link from "next/link";
-import React from "react";
+import { Link } from '@inertiajs/react';
 
 export function DoctorListHeader() {
     return (
@@ -8,26 +7,28 @@ export function DoctorListHeader() {
             <div className="flex items-center gap-2 text-sm">
                 <Link
                     href="/admin"
-                    className="text-slate-500 hover:text-primary transition-colors"
+                    className="text-slate-500 transition-colors hover:text-primary"
                 >
                     Dashboard
                 </Link>
                 <span className="text-slate-500">/</span>
-                <span className="text-slate-900 font-medium">Dokter</span>
+                <span className="font-medium text-slate-900">Dokter</span>
             </div>
 
             {/* Page Header */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
-                    <h1 className="text-slate-900 text-3xl font-black leading-tight tracking-[-0.033em]">
+                    <h1 className="text-3xl font-black leading-tight tracking-[-0.033em] text-slate-900">
                         Manajemen Dokter
                     </h1>
-                    <p className="text-slate-500 mt-1">
+                    <p className="mt-1 text-slate-500">
                         Kelola data dokter, jadwal praktek, dan status aktif.
                     </p>
                 </div>
-                <button className="flex items-center gap-2 bg-primary hover:bg-sky-600 text-white px-5 py-2.5 rounded-lg shadow-sm font-bold text-sm transition-all active:scale-95">
-                    <span className="material-symbols-outlined text-[20px]">add</span>
+                <button className="flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-600 active:scale-95">
+                    <span className="material-symbols-outlined text-[20px]">
+                        add
+                    </span>
                     <span>Tambah Dokter</span>
                 </button>
             </div>

@@ -1,0 +1,122 @@
+[
+    {
+        "id": 1,
+        "name": "drg. Sarah Wijaya",
+        "specialty": "Spesialis Kawat Gigi",
+        "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDSqhKWAxFe25vN2yY0h5YHcFdzQX5M_Ayn7sKBRgueeTILkqH48pfDpxyMLsLDSKS1f77sl6XEPcek1b8vmKczbKmm5mILtFAClbPdDlL5rfgeA-W0wKuX70llL38cibW-2MJ1rBdQtsc3L-QNvXdlpGhbfLAmsPD3lW-x094CcMOAvIxgCidNcOvki7sMK14UOkRL2hKB-jq6ZfpjogXlnuMsq0Cpke0PgFXCR4gJWQXXs7pH6EB2zJhtrDXjrmfPBI1uIPBfgKv7",
+        "rating": 4.9,
+        "reviews": 128,
+        "location": "Jakarta Selatan",
+        "days": "Senin, Rabu, Jumat",
+        "practiceHours": "09:00 - 17:00 WIB",
+        "price": "Rp 350.000",
+        "profile": "Dokter gigi spesialis ortodonti dengan pengalaman lebih dari 10 tahun dalam pemasangan dan perawatan kawat gigi. Lulusan Universitas Indonesia dengan gelar Sp.Ort. Telah menangani lebih dari 500 pasien dengan hasil memuaskan.",
+        "education": "Universitas Indonesia - Sp.Ort",
+        "experience": "10+ tahun",
+        "badge": {
+            "text": "Ortodonti",
+            "colorClass": "bg-blue-50 text-blue-700",
+            "dotClass": "bg-green-500"
+        }
+    },
+    {
+        "id": 2,
+        "name": "drg. Budi Santoso",
+        "specialty": "Spesialis Bedah Mulut",
+        "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDnFIPLxd4MPoX0Yv40h2fSotX4noV2mzPZf3op3byj-j4kEFUS9XGNZKgUaNQ8GrluyBsh2a8Lq-oJTUtJ0WrAwHfwTdVT5H_07E_6F03R8eSPCSpDYrOABMWuqMA0o8ZaVsW3HlqN3Mp6BH3-QdjKJ6je-4yxSD4rbF38J8wuxDR-VdDnFAk5kcE1G28q5MvCPvhWvpIxXBzdAG0haRxhyP6IGXNGbrpmwfhUiWomG-o1_9cMi-9nUt-wjIjZkJAIK-WWMVlxN1jC",
+        "rating": 5.0,
+        "reviews": 84,
+        "location": "Jakarta Pusat",
+        "days": "Selasa, Kamis",
+        "practiceHours": "10:00 - 18:00 WIB",
+        "price": "Rp 500.000",
+        "profile": "Dokter gigi spesialis bedah mulut dengan keahlian dalam pencabutan gigi bungsu, implant gigi, dan operasi rahang. Lulusan Universitas Gadjah Mada dengan pengalaman 12 tahun di bidang bedah mulut.",
+        "education": "Universitas Gadjah Mada - Sp.BM",
+        "experience": "12 tahun",
+        "badge": {
+            "text": "Bedah Mulut",
+            "colorClass": "bg-emerald-50 text-emerald-700",
+            "dotClass": "bg-green-500"
+        }
+    },
+    {
+        "id": 3,
+        "name": "drg. Amanda Putri",
+        "specialty": "Spesialis Gigi Anak",
+        "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuBhcqKGp8Sbuh-4Dyp9Wn7FriIiXir-y4MefrRpAZgO-gA6zYJwzU6-HvVxW2aJvJYaUPXwSFs6mlg5OxBLL2ICiBTAeiHI7zEt_n5euRqPR4LMKphssBnBDyFLxsrc5TY9isqvepUedRoUg0eKOScUqte_AC8Qli4N2ySyfL2RbuFbe5rggOK7Z4lTfggq4Nu7sB7iSEIW6A57ZmjR4d1fD5_z0rcn_D4W8Qhcvflr56gkljqYResvvzH_iW-Zfs9RDIrQSKdqE9oP",
+        "rating": 4.8,
+        "reviews": 210,
+        "location": "Tangerang Selatan",
+        "days": "Senin - Jumat",
+        "practiceHours": "08:00 - 16:00 WIB",
+        "price": "Rp 200.000",
+        "profile": "Dokter gigi spesialis anak yang ramah dan berpengalaman dalam menangani pasien anak-anak. Menggunakan pendekatan yang menyenangkan untuk membuat anak tidak takut ke dokter gigi.",
+        "education": "Universitas Airlangga - Sp.KGA",
+        "experience": "8 tahun",
+        "badge": {
+            "text": "Pedodonti",
+            "colorClass": "bg-pink-50 text-pink-700",
+            "dotClass": "bg-gray-300"
+        }
+    },
+    {
+        "id": 4,
+        "name": "drg. Kevin Tan",
+        "specialty": "Dokter Gigi Umum",
+        "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDMXaU5_JeMJwDVi0K0TFCYGxu-a3FOTn3CRL7x4g8-mQCu2uIM_B7-9lUols68mM_6W5iM8gZYFlh6S4DC3fff6693Mxf5eEvlDxbw_9pElL3FgIKnfOa2N7rwKvqWR8zbYKIo1rABa7zAhYuU_-gvagJgDoudFijpUbFYuzSTtEWiu6iGwSfdR1O1_-Ph8cR7RsP8LqO-qSduWCz3GtvmDyTnhqjti1YPY4CtBhsPMTG4iACTtdn8GXJFXzp9DE567JkIsIfPuphC",
+        "rating": 4.7,
+        "reviews": 56,
+        "location": "Jakarta Selatan",
+        "days": "Sabtu - Minggu",
+        "practiceHours": "09:00 - 15:00 WIB",
+        "price": "Rp 150.000",
+        "profile": "Dokter gigi umum yang kompeten dalam penanganan berbagai masalah gigi sehari-hari. Melayani pemeriksaan rutin, pembersihan karang gigi, tambal gigi, dan konsultasi kesehatan gigi.",
+        "education": "Universitas Trisakti - drg.",
+        "experience": "5 tahun",
+        "badge": {
+            "text": "Umum",
+            "colorClass": "bg-gray-100 text-gray-700",
+            "dotClass": "bg-green-500"
+        }
+    },
+    {
+        "id": 5,
+        "name": "drg. Linda Kurnia",
+        "specialty": "Spesialis Konservasi Gigi",
+        "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuAs_6drgCM2lE4JghvaELk-RYD6sz9qGOGPg7xrYSgo1-rk3F_nhivFScv1bxSptord82y3zLsYQFX1RDPqXluyTRouHdJ3FxPRjRjyxvGMSYpZhqlwIEgdO4Dr-n9TzuAPwSbByfg2DBj5ccJwvpZkTDxpj3-sP6ZGKsgPIXpqgbexegd97wbED0_XYD88lHc-qqoJI2fTsbXhai3rhGj-c3PuekX-FBp0jOATynGkcHJlj0rLmNz3yYuFp73b_VN9l_pD8uF_wsoG",
+        "rating": 4.9,
+        "reviews": 92,
+        "location": "Jakarta Pusat",
+        "days": "Senin - Kamis",
+        "practiceHours": "10:00 - 19:00 WIB",
+        "price": "Rp 400.000",
+        "profile": "Dokter gigi spesialis konservasi dengan keahlian dalam perawatan saluran akar, restorasi gigi, dan estetika gigi. Menggunakan teknologi terkini untuk hasil terbaik.",
+        "education": "Universitas Padjadjaran - Sp.KG",
+        "experience": "9 tahun",
+        "badge": {
+            "text": "Konservasi",
+            "colorClass": "bg-purple-50 text-purple-700",
+            "dotClass": "bg-green-500"
+        }
+    },
+    {
+        "id": 6,
+        "name": "drg. Reza Pratama",
+        "specialty": "Spesialis Kawat Gigi",
+        "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuA0pruq4VvNYBhwufx6tkLTIXD2NuFmIJfwlP1SIVUF6OHNLttFzaDzO35wzff7MN64Ff2OTrgMG57Y9du9uItBarhe-MjU9W5LbPe3ewnfKHRpMFDvVnP6wiK-tQRxnJHMPJqdn1S_1U5MUC17FhxOH9ettpcK5Uy6J2Psrt5tKwOtG1VCd14VFyFVA6idedYHReWDKepMGDOJNjix-3MybsLRlEnBo6uszrayuQ_69fFLCoc4RGty47aXp_XmHVAz6lcfMNm0AeMI",
+        "rating": 4.8,
+        "reviews": 45,
+        "location": "Tangerang Selatan",
+        "days": "Jumat - Minggu",
+        "practiceHours": "11:00 - 20:00 WIB",
+        "price": "Rp 350.000",
+        "profile": "Dokter gigi spesialis ortodonti muda yang energik dan mengikuti perkembangan teknik terbaru dalam pemasangan kawat gigi dan aligner invisible.",
+        "education": "Universitas Indonesia - Sp.Ort",
+        "experience": "6 tahun",
+        "badge": {
+            "text": "Ortodonti",
+            "colorClass": "bg-blue-50 text-blue-700",
+            "dotClass": "bg-green-500"
+        }
+    }
+]

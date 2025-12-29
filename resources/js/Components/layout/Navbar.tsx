@@ -1,34 +1,36 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { Link, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 
 const navLinks = [
-    { href: "/", label: "Beranda" },
-    { href: "/doctors", label: "Dokter" },
-    { href: "/services", label: "Layanan" },
-    { href: "/about", label: "Tentang" },
-    { href: "/check-booking", label: "Cek Booking" },
+    { href: '/', label: 'Beranda' },
+    { href: '/doctors', label: 'Dokter' },
+    { href: '/services', label: 'Layanan' },
+    { href: '/about', label: 'Tentang' },
+    { href: '/check-booking', label: 'Cek Booking' },
 ];
 
 export function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const pathname = usePathname();
+    const { url } = usePage();
+    const pathname = url;
 
     const isActive = (href: string) => {
-        if (href === "/") return pathname === "/";
+        if (href === '/') return pathname === '/';
         return pathname.startsWith(href);
     };
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-subtle-light bg-background-light/95 backdrop-blur-sm font-display">
-            <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16">
+        <header className="sticky top-0 z-50 w-full border-b border-subtle-light bg-background-light/95 font-display backdrop-blur-sm">
+            <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+                <div className="flex h-16 items-center justify-between">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-3">
-                        <div className="flex items-center justify-center size-8 rounded-lg bg-primary/10 text-primary">
-                            <span className="material-symbols-outlined text-2xl">dentistry</span>
+                        <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                            <span className="material-symbols-outlined text-2xl">
+                                dentistry
+                            </span>
                         </div>
                         <h2 className="text-lg font-bold tracking-tight text-text-light">
                             DentalCare
@@ -36,15 +38,16 @@ export function Navbar() {
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <nav className="hidden md:flex items-center gap-6 lg:gap-8">
+                    <nav className="hidden items-center gap-6 md:flex lg:gap-8">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className={`text-sm font-medium transition-colors ${isActive(link.href)
-                                        ? "text-primary font-semibold"
-                                        : "text-gray-600 hover:text-primary"
-                                    }`}
+                                className={`text-sm font-medium transition-colors ${
+                                    isActive(link.href)
+                                        ? 'font-semibold text-primary'
+                                        : 'text-gray-600 hover:text-primary'
+                                }`}
                             >
                                 {link.label}
                             </Link>
@@ -52,10 +55,10 @@ export function Navbar() {
                     </nav>
 
                     {/* Desktop CTA Button */}
-                    <div className="hidden md:flex items-center gap-4">
+                    <div className="hidden items-center gap-4 md:flex">
                         <Link
                             href="/doctors"
-                            className="flex items-center justify-center h-10 px-6 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-bold transition-colors shadow-sm cursor-pointer"
+                            className="flex h-10 cursor-pointer items-center justify-center rounded-lg bg-primary px-6 text-sm font-bold text-white shadow-sm transition-colors hover:bg-primary-dark"
                         >
                             Booking Sekarang
                         </Link>
@@ -64,19 +67,24 @@ export function Navbar() {
                     {/* Mobile Menu Button */}
                     <button
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="md:hidden p-2 text-text-light cursor-pointer rounded-lg hover:bg-gray-100 transition-colors"
+                        className="cursor-pointer rounded-lg p-2 text-text-light transition-colors hover:bg-gray-100 md:hidden"
                         aria-label="Toggle menu"
                     >
                         <span className="material-symbols-outlined text-2xl">
-                            {isMobileMenuOpen ? "close" : "menu"}
+                            {isMobileMenuOpen ? 'close' : 'menu'}
                         </span>
                     </button>
                 </div>
             </div>
 
             {/* Mobile Menu */}
-            <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                }`}>
+            <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out md:hidden ${
+                    isMobileMenuOpen
+                        ? 'max-h-96 opacity-100'
+                        : 'max-h-0 opacity-0'
+                }`}
+            >
                 <div className="border-t border-subtle-light bg-white px-4 py-4 shadow-lg">
                     <nav className="flex flex-col gap-1">
                         {navLinks.map((link) => (
@@ -84,19 +92,20 @@ export function Navbar() {
                                 key={link.href}
                                 href={link.href}
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className={`py-3 px-4 rounded-lg text-sm font-medium transition-colors ${isActive(link.href)
-                                        ? "text-primary bg-primary/10 font-semibold"
-                                        : "text-gray-600 hover:text-primary hover:bg-gray-50"
-                                    }`}
+                                className={`rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                                    isActive(link.href)
+                                        ? 'bg-primary/10 font-semibold text-primary'
+                                        : 'text-gray-600 hover:bg-gray-50 hover:text-primary'
+                                }`}
                             >
                                 {link.label}
                             </Link>
                         ))}
-                        <div className="pt-3 mt-2 border-t border-gray-100">
+                        <div className="mt-2 border-t border-gray-100 pt-3">
                             <Link
                                 href="/doctors"
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="flex items-center justify-center h-12 px-6 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-bold transition-colors shadow-sm w-full cursor-pointer"
+                                className="flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-primary px-6 text-sm font-bold text-white shadow-sm transition-colors hover:bg-primary-dark"
                             >
                                 Booking Sekarang
                             </Link>

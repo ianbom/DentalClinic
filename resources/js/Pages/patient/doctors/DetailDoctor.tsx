@@ -1,27 +1,30 @@
-import { DoctorProfileHeader } from "@/app/components/doctor-detail/DoctorProfileHeader";
-import { BookingCalendar } from "@/app/components/doctor-detail/BookingCalendar";
-import { StickyBookingBar } from "@/app/components/doctor-detail/StickyBookingBar";
-import { getDoctorById, getDoctorIds } from "@/lib/doctors";
-import { notFound } from "next/navigation";
+import { BookingCalendar } from '@/Components/doctor-detail/BookingCalendar';
+import { DoctorProfileHeader } from '@/Components/doctor-detail/DoctorProfileHeader';
+import PatientLayout from '@/Layouts/PatientLayout';
+import { getDoctorById } from '@/lib/doctors';
 
-export function generateStaticParams() {
-    return getDoctorIds().map((id) => ({ id }));
+interface DoctorDetailPageProps {
+    id: string;
 }
 
-export default async function DoctorDetailPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+function DoctorDetailPage({ id }: DoctorDetailPageProps) {
     const doctor = getDoctorById(id);
 
     if (!doctor) {
-        notFound();
+        return <div>Dokter tidak ditemukan</div>;
     }
 
     return (
-        <div className="flex-grow w-full max-w-[960px] mx-auto px-4 py-8 pb-24 font-display">
+        <div className="mx-auto w-full max-w-[960px] flex-grow px-4 py-8 pb-24 font-display">
             <DoctorProfileHeader doctor={doctor} />
             <BookingCalendar doctor={doctor} doctorId={id} />
             <div className="h-20"></div>
-            {/* <StickyBookingBar doctorId={id} price={doctor.price} /> */}
         </div>
     );
 }
+
+DoctorDetailPage.layout = (page: React.ReactNode) => (
+    <PatientLayout>{page}</PatientLayout>
+);
+
+export default DoctorDetailPage;

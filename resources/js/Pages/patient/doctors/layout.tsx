@@ -1,4 +1,4 @@
-import { BookingProvider } from "@/context/BookingContext";
+import { BookingProvider } from '@/context/BookingContext';
 
 export default function BookingLayout({
     children,

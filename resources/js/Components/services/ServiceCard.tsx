@@ -12,17 +12,25 @@ interface ServiceCardProps {
 
 export function ServiceCard({ service }: ServiceCardProps) {
     return (
-        <div className="group flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-6 hover:shadow-lg hover:shadow-gray-200/50 hover:border-primary/30 transition-all duration-300 cursor-pointer">
-            <div className="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                <span className="material-symbols-outlined text-[28px]">{service.icon}</span>
+        <div className="group flex cursor-pointer flex-col gap-4 rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-gray-200/50">
+            <div className="flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-white">
+                <span className="material-symbols-outlined text-[28px]">
+                    {service.icon}
+                </span>
             </div>
             <div className="flex flex-col gap-2">
-                <h3 className="text-text-light text-lg font-bold leading-tight">{service.title}</h3>
-                <p className="text-gray-500 text-sm font-normal leading-relaxed">{service.description}</p>
+                <h3 className="text-lg font-bold leading-tight text-text-light">
+                    {service.title}
+                </h3>
+                <p className="text-sm font-normal leading-relaxed text-gray-500">
+                    {service.description}
+                </p>
             </div>
-            <div className="mt-auto pt-2 flex items-center text-primary text-sm font-bold">
+            <div className="mt-auto flex items-center pt-2 text-sm font-bold text-primary">
                 <span>Selengkapnya</span>
-                <span className="material-symbols-outlined text-sm ml-1 transition-transform group-hover:translate-x-1">arrow_forward</span>
+                <span className="material-symbols-outlined ml-1 text-sm transition-transform group-hover:translate-x-1">
+                    arrow_forward
+                </span>
             </div>
         </div>
     );

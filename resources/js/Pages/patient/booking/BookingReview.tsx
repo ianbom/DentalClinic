@@ -1,23 +1,28 @@
-import { BookingHeader } from "@/app/components/booking/BookingHeader";
-import { ReviewBookingCard } from "@/app/components/booking/ReviewBookingCard";
-import { ReviewActions } from "@/app/components/booking/ReviewActions";
-import { ReviewSidebar } from "@/app/components/booking/ReviewSidebar";
-import { getDoctorById } from "@/lib/doctors";
+import { BookingHeader } from '@/Components/booking/BookingHeader';
+import { ReviewActions } from '@/Components/booking/ReviewActions';
+import { ReviewBookingCard } from '@/Components/booking/ReviewBookingCard';
+import { ReviewSidebar } from '@/Components/booking/ReviewSidebar';
+import { BookingProvider } from '@/context/BookingContext';
+import PatientLayout from '@/Layouts/PatientLayout';
+import { getDoctorById } from '@/lib/doctors';
 
-export default async function ReviewBookingPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+interface ReviewBookingPageProps {
+    id: string;
+}
+
+function ReviewBookingPage({ id }: ReviewBookingPageProps) {
     const doctor = getDoctorById(id);
 
     return (
-        <div className="flex-grow w-full max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 font-display">
+        <div className="mx-auto w-full max-w-4xl flex-grow px-4 py-8 font-display sm:px-6 sm:py-12">
             {/* Progress Bar */}
             <div className="mb-8">
                 <BookingHeader currentStep={3} />
             </div>
 
-            <div className="grid lg:grid-cols-3 gap-8 mt-8">
+            <div className="mt-8 grid gap-8 lg:grid-cols-3">
                 {/* Main Content: Review Card */}
-                <div className="lg:col-span-2 space-y-6">
+                <div className="space-y-6 lg:col-span-2">
                     <ReviewBookingCard doctor={doctor} />
                     <ReviewActions doctorId={id} />
                 </div>
@@ -28,3 +33,11 @@ export default async function ReviewBookingPage({ params }: { params: Promise<{ 
         </div>
     );
 }
+
+ReviewBookingPage.layout = (page: React.ReactNode) => (
+    <PatientLayout>
+        <BookingProvider>{page}</BookingProvider>
+    </PatientLayout>
+);
+
+export default ReviewBookingPage;

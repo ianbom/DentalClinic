@@ -5,7 +5,7 @@ interface ScheduleItem {
     treatment: string;
     patientName: string;
     patientAvatar: string;
-    status: "ongoing" | "upcoming" | "past";
+    status: 'ongoing' | 'upcoming' | 'past';
 }
 
 interface TodayScheduleProps {
@@ -14,36 +14,37 @@ interface TodayScheduleProps {
 
 export function TodaySchedule({ schedule }: TodayScheduleProps) {
     return (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col h-full min-h-[400px]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+        <div className="flex h-full min-h-[400px] flex-col rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div className="flex items-center justify-between border-b border-slate-100 p-6">
                 <h3 className="text-lg font-bold text-slate-900">
                     Jadwal Hari Ini
                 </h3>
-                <button className="text-primary text-sm font-medium hover:underline cursor-pointer">
+                <button className="cursor-pointer text-sm font-medium text-primary hover:underline">
                     View All
                 </button>
             </div>
-            <div className="p-6 flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto p-6">
                 {/* Timeline Items */}
-                <div className="relative pl-4 border-l-2 border-slate-100 space-y-8">
+                <div className="relative space-y-8 border-l-2 border-slate-100 pl-4">
                     {schedule.map((item) => (
                         <div key={item.id} className="relative">
                             {/* Dot */}
                             <span
-                                className={`absolute -left-[21px] top-1 h-3 w-3 rounded-full ring-4 ring-white ${item.status === "ongoing"
-                                        ? "bg-green-500"
-                                        : item.status === "upcoming"
-                                            ? "bg-primary"
-                                            : "bg-slate-300"
-                                    }`}
+                                className={`absolute -left-[21px] top-1 h-3 w-3 rounded-full ring-4 ring-white ${
+                                    item.status === 'ongoing'
+                                        ? 'bg-green-500'
+                                        : item.status === 'upcoming'
+                                          ? 'bg-primary'
+                                          : 'bg-slate-300'
+                                }`}
                             ></span>
 
                             <div className="flex flex-col gap-1">
-                                {item.status === "ongoing" ? (
-                                    <span className="text-xs font-semibold text-green-600 bg-green-50 w-fit px-2 py-0.5 rounded">
+                                {item.status === 'ongoing' ? (
+                                    <span className="w-fit rounded bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-600">
                                         Ongoing • {item.time}
                                     </span>
-                                ) : item.status === "upcoming" ? (
+                                ) : item.status === 'upcoming' ? (
                                     <span className="text-xs font-semibold text-primary">
                                         {item.time}
                                     </span>
@@ -53,17 +54,17 @@ export function TodaySchedule({ schedule }: TodayScheduleProps) {
                                     </span>
                                 )}
 
-                                <h4 className="text-sm font-bold text-slate-900 mt-1">
+                                <h4 className="mt-1 text-sm font-bold text-slate-900">
                                     {item.doctorName}
                                 </h4>
                                 <p className="text-sm text-slate-500">
                                     {item.treatment}
                                 </p>
 
-                                <div className="flex items-center gap-2 mt-2">
-                                    <div className="size-6 rounded-full bg-slate-200 overflow-hidden">
+                                <div className="mt-2 flex items-center gap-2">
+                                    <div className="size-6 overflow-hidden rounded-full bg-slate-200">
                                         <img
-                                            className="w-full h-full object-cover"
+                                            className="h-full w-full object-cover"
                                             alt="Patient avatar"
                                             src={item.patientAvatar}
                                         />

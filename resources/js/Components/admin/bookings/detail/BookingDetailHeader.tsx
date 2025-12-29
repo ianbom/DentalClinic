@@ -1,13 +1,12 @@
-import Link from "next/link";
-import React from "react";
+import { Link } from '@inertiajs/react';
 
 export function BookingDetailHeader() {
     return (
         <div className="mb-8">
-            <nav className="flex items-center text-sm font-medium text-slate-500 mb-3">
+            <nav className="mb-3 flex items-center text-sm font-medium text-slate-500">
                 <Link
                     href="/admin/bookings"
-                    className="hover:text-primary transition-colors flex items-center gap-1"
+                    className="flex items-center gap-1 transition-colors hover:text-primary"
                 >
                     <span className="material-symbols-outlined text-[18px]">
                         arrow_back
@@ -15,7 +14,10 @@ export function BookingDetailHeader() {
                     Kembali
                 </Link>
                 <span className="mx-2">/</span>
-                <Link href="/admin/bookings" className="hover:text-primary transition-colors">
+                <Link
+                    href="/admin/bookings"
+                    className="transition-colors hover:text-primary"
+                >
                     Daftar Booking
                 </Link>
                 <span className="mx-2">/</span>

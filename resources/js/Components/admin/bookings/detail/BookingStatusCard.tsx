@@ -1,5 +1,3 @@
-import React from "react";
-
 interface BookingStatusCardProps {
     code: string;
     createdDate: string;
@@ -12,27 +10,33 @@ export function BookingStatusCard({
     status,
 }: BookingStatusCardProps) {
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
-                    <div className="flex items-center gap-3 mb-1">
-                        <h2 className="text-2xl font-black text-slate-900">{code}</h2>
-                        <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800 border border-amber-200">
+                    <div className="mb-1 flex items-center gap-3">
+                        <h2 className="text-2xl font-black text-slate-900">
+                            {code}
+                        </h2>
+                        <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
                             {status}
                         </span>
                     </div>
-                    <p className="text-sm text-slate-500">Dibuat pada {createdDate}</p>
+                    <p className="text-sm text-slate-500">
+                        Dibuat pada {createdDate}
+                    </p>
                 </div>
             </div>
-            <div className="flex flex-wrap gap-3 pt-4 border-t border-slate-100">
-                <button className="inline-flex items-center justify-center rounded-lg bg-primary hover:bg-sky-600 text-white px-5 py-2.5 text-sm font-semibold transition-colors shadow-sm gap-2">
+            <div className="flex flex-wrap gap-3 border-t border-slate-100 pt-4">
+                <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-600">
                     <span className="material-symbols-outlined text-[20px]">
                         check_circle
                     </span>
                     Konfirmasi Booking
                 </button>
-                <button className="inline-flex items-center justify-center rounded-lg bg-white border border-red-200 hover:bg-red-50 text-red-600 px-5 py-2.5 text-sm font-semibold transition-colors gap-2">
-                    <span className="material-symbols-outlined text-[20px]">cancel</span>
+                <button className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-5 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50">
+                    <span className="material-symbols-outlined text-[20px]">
+                        cancel
+                    </span>
                     Batalkan
                 </button>
             </div>

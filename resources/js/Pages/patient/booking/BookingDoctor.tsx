@@ -1,27 +1,37 @@
-import { BookingHeader } from "@/app/components/booking/BookingHeader";
-import { BookingCalendarWidget } from "@/app/components/booking/BookingCalendarWidget";
-import { BookingTimeSlots } from "@/app/components/booking/BookingTimeSlots";
-import { BookingSummarySidebar } from "@/app/components/booking/BookingSummarySidebar";
-import { getDoctorById } from "@/lib/doctors";
+import { BookingCalendarWidget } from '@/Components/booking/BookingCalendarWidget';
+import { BookingHeader } from '@/Components/booking/BookingHeader';
+import { BookingSummarySidebar } from '@/Components/booking/BookingSummarySidebar';
+import { BookingTimeSlots } from '@/Components/booking/BookingTimeSlots';
+import { BookingProvider } from '@/context/BookingContext';
+import PatientLayout from '@/Layouts/PatientLayout';
+import { getDoctorById } from '@/lib/doctors';
 
-export default async function BookingPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+interface BookingPageProps {
+    id: string;
+}
+
+function BookingPage({ id }: BookingPageProps) {
     const doctor = getDoctorById(id);
 
     return (
-        <div className="flex-1 flex flex-col items-center py-8 px-4 md:px-10 lg:px-20 min-h-screen bg-background-light font-display">
-            <div className="max-w-6xl w-full flex flex-col gap-8">
+        <div className="flex min-h-screen flex-1 flex-col items-center bg-background-light px-4 py-8 font-display md:px-10 lg:px-20">
+            <div className="flex w-full max-w-6xl flex-col gap-8">
                 {/* Progress Bar */}
                 <BookingHeader />
 
                 {/* Content Area: Split View */}
-                <div className="flex flex-col lg:flex-row gap-8 items-start">
+                <div className="flex flex-col items-start gap-8 lg:flex-row">
                     {/* Left Column: Calendar & Time Slots */}
-                    <div className="flex-1 w-full bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                    <div className="w-full flex-1 rounded-xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">
                         {/* Date Selection Header */}
                         <div className="mb-8">
-                            <h3 className="text-lg font-bold text-text-light mb-2">Pilih Tanggal</h3>
-                            <p className="text-gray-500 text-sm">Silakan pilih tanggal yang tersedia untuk konsultasi Anda.</p>
+                            <h3 className="mb-2 text-lg font-bold text-text-light">
+                                Pilih Tanggal
+                            </h3>
+                            <p className="text-sm text-gray-500">
+                                Silakan pilih tanggal yang tersedia untuk
+                                konsultasi Anda.
+                            </p>
                         </div>
 
                         <BookingCalendarWidget />
@@ -32,7 +42,7 @@ export default async function BookingPage({ params }: { params: Promise<{ id: st
                     </div>
 
                     {/* Right Column: Sticky Summary Sidebar */}
-                    <div className="w-full lg:w-[360px] shrink-0 sticky top-28">
+                    <div className="sticky top-28 w-full shrink-0 lg:w-[360px]">
                         <BookingSummarySidebar doctorId={id} doctor={doctor} />
                     </div>
                 </div>
@@ -40,3 +50,11 @@ export default async function BookingPage({ params }: { params: Promise<{ id: st
         </div>
     );
 }
+
+BookingPage.layout = (page: React.ReactNode) => (
+    <PatientLayout>
+        <BookingProvider>{page}</BookingProvider>
+    </PatientLayout>
+);
+
+export default BookingPage;

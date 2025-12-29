@@ -1,6 +1,13 @@
 import { ReactNode } from 'react';
 
-type BadgeVariant = 'default' | 'success' | 'warning' | 'error' | 'info' | 'primary' | 'secondary';
+type BadgeVariant =
+    | 'default'
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'info'
+    | 'primary'
+    | 'secondary';
 type BadgeSize = 'sm' | 'md';
 
 interface BadgeProps {
@@ -35,13 +42,7 @@ export default function Badge({
 }: BadgeProps) {
     return (
         <span
-            className={`
-        inline-flex items-center gap-1.5
-        font-medium rounded-full
-        ${variantStyles[variant]}
-        ${sizeStyles[size]}
-        ${className}
-      `}
+            className={`inline-flex items-center gap-1.5 rounded-full font-medium ${variantStyles[variant]} ${sizeStyles[size]} ${className} `}
         >
             {icon && <span className="flex-shrink-0">{icon}</span>}
             {children}

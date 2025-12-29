@@ -1,51 +1,65 @@
-import Link from "next/link";
-import { Doctor } from "@/lib/doctors";
+'use client';
+
+import { Doctor } from '@/lib/doctors';
+import { Link } from '@inertiajs/react';
 
 export function DoctorCard({ doctor }: { doctor: Doctor }) {
     return (
-        <div className="group bg-white rounded-2xl border border-subtle-light overflow-hidden hover:shadow-xl hover:shadow-primary/5 hover:border-primary/30 transition-all duration-300 flex flex-col">
+        <div className="group flex flex-col overflow-hidden rounded-2xl border border-subtle-light bg-white transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5">
             {/* Image Header */}
             <div className="relative h-48 bg-gray-100">
                 <img
                     alt={doctor.name}
-                    className="w-full h-full object-cover"
+                    className="h-full w-full object-cover"
                     src={doctor.image}
                 />
                 {/* Badge */}
-                <div className="absolute top-3 left-3">
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${doctor.badge.colorClass}`}>
+                <div className="absolute left-3 top-3">
+                    <span
+                        className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${doctor.badge.colorClass}`}
+                    >
                         {doctor.badge.text}
                     </span>
                 </div>
                 {/* Favorite Button */}
-                <button className="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-white transition-all cursor-pointer shadow-sm">
-                    <span className="material-symbols-outlined text-[18px]">favorite</span>
+                <button className="absolute right-3 top-3 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-white/90 text-gray-400 shadow-sm backdrop-blur-sm transition-all hover:bg-white hover:text-red-500">
+                    <span className="material-symbols-outlined text-[18px]">
+                        favorite
+                    </span>
                 </button>
             </div>
 
             {/* Content */}
-            <div className="p-5 flex flex-col flex-1">
+            <div className="flex flex-1 flex-col p-5">
                 {/* Doctor Info */}
                 <div className="mb-4">
-                    <h3 className="font-bold text-lg text-text-light mb-1 group-hover:text-primary transition-colors">
+                    <h3 className="mb-1 text-lg font-bold text-text-light transition-colors group-hover:text-primary">
                         {doctor.name}
                     </h3>
                     <p className="text-sm text-gray-500">{doctor.specialty}</p>
                 </div>
 
                 {/* Details */}
-                <div className="space-y-2.5 mb-5">
+                <div className="mb-5 space-y-2.5">
                     <div className="flex items-center gap-2.5 text-sm">
-                        <span className="material-symbols-outlined text-primary text-[18px]">location_on</span>
+                        <span className="material-symbols-outlined text-[18px] text-primary">
+                            location_on
+                        </span>
                         <span className="text-gray-600">{doctor.location}</span>
                     </div>
                     <div className="flex items-center gap-2.5 text-sm">
-                        <span className="material-symbols-outlined text-primary text-[18px]">calendar_month</span>
+                        <span className="material-symbols-outlined text-[18px] text-primary">
+                            calendar_month
+                        </span>
                         <span className="text-gray-600">{doctor.days}</span>
                     </div>
                     <div className="flex items-center gap-2.5 text-sm">
-                        <span className="material-symbols-outlined text-primary text-[18px]">schedule</span>
-                        <span className="text-gray-600">{doctor.practiceHours}</span>
+                        <span className="material-symbols-outlined text-[18px] text-primary">
+                            schedule
+                        </span>
+                        <span className="text-gray-600">
+                            {doctor.practiceHours}
+                        </span>
                     </div>
                 </div>
 
@@ -53,10 +67,12 @@ export function DoctorCard({ doctor }: { doctor: Doctor }) {
                 <div className="mt-auto">
                     <Link
                         href={`/doctors/${doctor.id}`}
-                        className="w-full bg-primary hover:bg-primary-dark text-white text-sm font-bold px-4 py-3 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2 group/btn"
+                        className="group/btn flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-dark"
                     >
                         <span>Lihat Profil</span>
-                        <span className="material-symbols-outlined text-[18px] group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+                        <span className="material-symbols-outlined text-[18px] transition-transform group-hover/btn:translate-x-1">
+                            arrow_forward
+                        </span>
                     </Link>
                 </div>
             </div>
