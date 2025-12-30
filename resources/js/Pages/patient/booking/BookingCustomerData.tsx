@@ -1,6 +1,6 @@
 import { BookingHeader } from '@/Components/booking/BookingHeader';
-import { CustomerBookingSidebar } from '@/Components/booking/CustomerBookingSidebar';
-import { CustomerDataForm } from '@/Components/booking/CustomerDataForm';
+import { CustomerBookingSidebar } from '@/Components/booking/PatientBookingSidebar';
+import { CustomerDataForm } from '@/Components/booking/PatientDataForm';
 import { BookingProvider } from '@/context/BookingContext';
 import PatientLayout from '@/Layouts/PatientLayout';
 import { getDoctorById } from '@/lib/doctors';

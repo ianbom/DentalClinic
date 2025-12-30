@@ -1,10 +1,12 @@
 import { DoctorListClient } from '@/Components/doctors/DoctorListClient';
 import PatientLayout from '@/Layouts/PatientLayout';
-import { getDoctors } from '@/lib/doctors';
+import { Doctor } from '@/types';
 
-function DoctorPage() {
-    const doctors = getDoctors();
+interface DoctorPageProps {
+    doctors: Doctor[];
+}
 
+function DoctorPage({ doctors }: DoctorPageProps) {
     return <DoctorListClient doctors={doctors} />;
 }
 

@@ -41,13 +41,13 @@ export function ReviewBookingCard({ doctor }: ReviewBookingCardProps) {
                         <h4 className="text-lg font-bold text-text-light">
                             {doctor?.name || 'Loading...'}
                         </h4>
-                        <p className="text-sm text-gray-500">
+                        {/* <p className="text-sm text-gray-500">
                             {doctor?.specialty || ''}
-                        </p>
+                        </p> */}
                     </div>
-                    <div className="mt-4 rounded-lg bg-primary/10 px-4 py-2 text-sm font-semibold text-primary sm:mt-0">
+                    {/* <div className="mt-4 rounded-lg bg-primary/10 px-4 py-2 text-sm font-semibold text-primary sm:mt-0">
                         Scaling Gigi
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Details Grid */}
@@ -61,8 +61,7 @@ export function ReviewBookingCard({ doctor }: ReviewBookingCardProps) {
                             <span>Tanggal</span>
                         </div>
                         <p className="pl-7 font-medium text-text-light">
-                            {bookingData.selectedDate ||
-                                'Senin, 24 Oktober 2023'}
+                            {bookingData.selectedDate}
                         </p>
                     </div>
                     {/* Time */}
@@ -74,7 +73,7 @@ export function ReviewBookingCard({ doctor }: ReviewBookingCardProps) {
                             <span>Waktu</span>
                         </div>
                         <p className="pl-7 font-medium text-text-light">
-                            {bookingData.selectedTime || '14:00 WIB'}
+                            {bookingData.selectedTime}
                         </p>
                     </div>
                     {/* Patient Name */}

@@ -27,14 +27,11 @@ export function Navbar() {
                 <div className="flex h-16 items-center justify-between">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-3">
-                        <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                            <span className="material-symbols-outlined text-2xl">
-                                dentistry
-                            </span>
-                        </div>
-                        <h2 className="text-lg font-bold tracking-tight text-text-light">
-                            DentalCare
-                        </h2>
+                        <img
+                            src="/img/logo-navbar.png"
+                            alt="Logo Klinik"
+                            className="h-10 w-auto object-contain"
+                        />
                     </Link>
 
                     {/* Desktop Navigation */}

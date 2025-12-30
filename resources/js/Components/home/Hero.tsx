@@ -35,9 +35,9 @@ export function Hero() {
 
                             <button className="flex h-12 w-full cursor-pointer items-center justify-center rounded-lg border border-subtle-light px-8 text-base font-medium text-text-light transition-all hover:bg-subtle-light sm:w-auto">
                                 <span className="material-symbols-outlined mr-2 text-primary">
-                                    play_circle
+                                    phone
                                 </span>
-                                Lihat Tur Klinik
+                                Konsultasi via WhatsApp
                             </button>
                         </div>
 

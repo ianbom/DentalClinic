@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class BookingCheckin extends Model
+{
+    protected $table = 'booking_checkins';
+    protected $primaryKey = 'booking_id';
+    public $incrementing = false;
+
+    protected $fillable = [
+        'booking_id',
+        'checked_in_at',
+    ];
+
+    protected $casts = [
+        'checked_in_at' => 'datetime',
+    ];
+
+    public function booking(): BelongsTo
+    {
+        return $this->belongsTo(Booking::class);
+    }
+}

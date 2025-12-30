@@ -3,75 +3,75 @@ import { ServiceCard, ServiceData } from './ServiceCard';
 const servicesData: ServiceData[] = [
     {
         id: '1',
-        icon: 'auto_awesome',
-        title: 'Pemutihan Gigi',
+        icon: 'medication',
+        title: 'Pengobatan Sakit Gigi',
         description:
-            'Cerahkan senyum Anda dengan aman menggunakan perawatan pemutihan canggih kami untuk hasil instan.',
-        category: 'cosmetic',
+            'Penanganan berbagai keluhan sakit gigi dengan metode yang tepat dan aman.',
+        category: 'general',
     },
     {
         id: '2',
-        icon: 'medical_services',
-        title: 'Implan Gigi',
+        icon: 'local_hospital',
+        title: 'Cabut Gigi Anak / Dewasa',
         description:
-            'Solusi permanen dan tampak alami untuk gigi yang hilang dengan fungsi penuh.',
+            'Pencabutan gigi yang aman dan nyaman untuk anak-anak maupun dewasa.',
         category: 'general',
     },
     {
         id: '3',
         icon: 'healing',
-        title: 'Perawatan Saluran Akar',
+        title: 'Perawatan Syaraf Gigi dan Tambal Sementara',
         description:
-            'Selamatkan gigi alami Anda dengan teknik terapi saluran akar modern tanpa rasa sakit.',
+            'Perawatan saluran akar gigi untuk mengatasi infeksi dan rasa nyeri.',
         category: 'general',
     },
     {
         id: '4',
-        icon: 'grid_on',
-        title: 'Kawat Gigi & Aligner',
+        icon: 'sentiment_satisfied',
+        title: 'Tambal Gigi Permanen',
         description:
-            'Luruskan gigi Anda secara efektif dengan kawat gigi tradisional atau aligner transparan.',
-        category: 'orthodontics',
+            'Perbaikan gigi berlubang dengan bahan tambal berkualitas tinggi yang tahan lama.',
+        category: 'general',
     },
     {
         id: '5',
-        icon: 'child_care',
-        title: 'Kedokteran Gigi Anak',
+        icon: 'dentistry',
+        title: 'Scalling / Membersihkan Karang Gigi',
         description:
-            'Perawatan gigi lembut yang dirancang khusus untuk kenyamanan dan kesehatan jangka panjang anak.',
-        category: 'pediatric',
+            'Pembersihan profesional untuk menghilangkan plak dan karang gigi.',
+        category: 'general',
     },
     {
         id: '6',
-        icon: 'dentistry',
-        title: 'Scaling Rutin',
+        icon: 'medical_services',
+        title: 'Pembuatan Gigi Palsu',
         description:
-            'Pembersihan profesional untuk menghilangkan plak dan karang gigi untuk menjaga kesehatan gusi dan gigi.',
+            'Solusi untuk gigi yang hilang dengan gigi palsu yang nyaman dan tampak alami.',
         category: 'general',
     },
     {
         id: '7',
-        icon: 'diamond',
-        title: 'Veneer Gigi',
+        icon: 'grid_on',
+        title: 'Bracket / Behel / Kawat Gigi',
         description:
-            'Lapisan tipis porselen untuk menyempurnakan bentuk, warna, dan ukuran gigi Anda.',
-        category: 'cosmetic',
+            'Luruskan gigi Anda secara efektif dengan kawat gigi untuk senyum yang lebih rapi.',
+        category: 'orthodontics',
     },
     {
         id: '8',
-        icon: 'local_hospital',
-        title: 'Cabut Gigi',
+        icon: 'auto_awesome',
+        title: 'Bleaching / Memutihkan Gigi',
         description:
-            'Pencabutan gigi yang aman dan nyaman dengan teknik minimal invasif.',
-        category: 'general',
+            'Cerahkan senyum Anda dengan perawatan pemutihan gigi yang aman dan efektif.',
+        category: 'cosmetic',
     },
     {
         id: '9',
-        icon: 'sentiment_satisfied',
-        title: 'Tambal Gigi',
+        icon: 'diamond',
+        title: 'Pasang Diamond Gigi',
         description:
-            'Perbaikan gigi berlubang dengan bahan tambal berkualitas tinggi yang tahan lama.',
-        category: 'general',
+            'Tambahkan aksen berlian pada gigi untuk tampilan yang lebih menarik dan stylish.',
+        category: 'cosmetic',
     },
 ];
 

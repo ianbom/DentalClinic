@@ -3,12 +3,35 @@
 import { DoctorCard } from '@/Components/doctors/DoctorCard';
 import { FilterSidebar } from '@/Components/doctors/FilterSidebar';
 import { FloatingWhatsApp } from '@/Components/layout/FloatingWhatsApp';
-import { Doctor } from '@/lib/doctors';
+import { Doctor } from '@/types';
 import { Link } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 
 interface DoctorListClientProps {
     doctors: Doctor[];
+}
+
+// Helper function to get days from working periods
+function getDaysFromWorkingPeriods(doctor: Doctor): string {
+    if (!doctor.working_periods || doctor.working_periods.length === 0) {
+        return '-';
+    }
+    const uniqueDays = [
+        ...new Set(doctor.working_periods.map((wp) => wp.day_of_week)),
+    ];
+    return uniqueDays.join(', ');
+}
+
+// Helper function to get practice hours from working periods
+function getPracticeHours(doctor: Doctor): string {
+    if (!doctor.working_periods || doctor.working_periods.length === 0) {
+        return '-';
+    }
+    const times = doctor.working_periods.map(
+        (wp) => `${wp.start_time.slice(0, 5)}-${wp.end_time.slice(0, 5)}`,
+    );
+    const uniqueTimes = [...new Set(times)];
+    return uniqueTimes.join(', ');
 }
 
 export function DoctorListClient({ doctors }: DoctorListClientProps) {
@@ -22,15 +45,14 @@ export function DoctorListClient({ doctors }: DoctorListClientProps) {
             const searchLower = searchQuery.toLowerCase();
             const matchesSearch =
                 searchQuery === '' ||
-                doctor.name.toLowerCase().includes(searchLower) ||
-                doctor.specialty.toLowerCase().includes(searchLower) ||
-                doctor.location.toLowerCase().includes(searchLower);
+                doctor.name.toLowerCase().includes(searchLower);
 
-            // Schedule filter
+            // Schedule filter based on working_periods
+            const doctorDays = getDaysFromWorkingPeriods(doctor).toLowerCase();
             const matchesSchedule =
                 selectedDays.length === 0 ||
                 selectedDays.some((day) =>
-                    doctor.days.toLowerCase().includes(day.toLowerCase()),
+                    doctorDays.includes(day.toLowerCase()),
                 );
 
             return matchesSearch && matchesSchedule;
@@ -77,7 +99,7 @@ export function DoctorListClient({ doctors }: DoctorListClientProps) {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="block w-full rounded-lg border border-gray-200 bg-white py-3 pl-10 pr-4 text-sm shadow-sm transition-shadow placeholder:text-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
-                                placeholder="Cari nama dokter, spesialisasi, atau lokasi..."
+                                placeholder="Cari nama dokter..."
                             />
                         </div>
                     </div>
@@ -114,6 +136,8 @@ export function DoctorListClient({ doctors }: DoctorListClientProps) {
                                     <DoctorCard
                                         key={doctor.id}
                                         doctor={doctor}
+                                        days={getDaysFromWorkingPeriods(doctor)}
+                                        practiceHours={getPracticeHours(doctor)}
                                     />
                                 ))}
                             </div>

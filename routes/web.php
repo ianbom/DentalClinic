@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Controllers\Patients\DoctorController as PatientDoctorController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return Inertia::render('patient/Home', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
@@ -43,9 +44,9 @@ Route::get('/services', function () {
     return Inertia::render('patient/services/page');
 })->name('services');
 
-Route::get('/doctors', function () {
-    return Inertia::render('patient/doctors/ListDoctor');
-})->name('doctors.list');
+
+Route::get('/doctors', [PatientDoctorController::class, 'listDoctors'])->name('doctors.list');
+
 
 Route::get('/doctors/{id}', function ($id) {
     return Inertia::render('patient/doctors/DetailDoctor', ['id' => $id]);

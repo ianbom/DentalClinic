@@ -62,7 +62,7 @@ export function DoctorProfileHeader({ doctor }: DoctorProfileHeaderProps) {
                                 <span className="material-symbols-outlined text-[18px]">
                                     location_on
                                 </span>
-                                <span>{doctor.location}</span>
+                                <span>Cantika Dental Care</span>
                             </div>
                         </div>
                     </div>

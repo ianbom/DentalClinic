@@ -10,23 +10,13 @@ interface BookingCalendarProps {
 }
 
 export function BookingCalendar({ doctor, doctorId }: BookingCalendarProps) {
-    const [activeTab, setActiveTab] = useState<'profil' | 'jadwal'>('profil');
+    const [activeTab, setActiveTab] = useState<'jadwal'>('jadwal');
 
     return (
         <>
             {/* Tabs Navigation */}
             <div className="sticky top-[65px] z-40 mb-6 rounded-xl border border-subtle-light bg-white shadow-sm">
                 <div className="hide-scrollbar flex overflow-x-auto border-b border-subtle-light px-2">
-                    <button
-                        onClick={() => setActiveTab('profil')}
-                        className={`min-w-[100px] flex-1 cursor-pointer border-b-2 py-4 text-center text-sm font-medium transition-colors ${
-                            activeTab === 'profil'
-                                ? 'border-primary font-bold text-primary'
-                                : 'border-transparent text-gray-500 hover:text-primary'
-                        }`}
-                    >
-                        Profil
-                    </button>
                     <button
                         onClick={() => setActiveTab('jadwal')}
                         className={`min-w-[100px] flex-1 cursor-pointer border-b-2 py-4 text-center text-sm font-medium transition-colors ${
@@ -39,89 +29,6 @@ export function BookingCalendar({ doctor, doctorId }: BookingCalendarProps) {
                     </button>
                 </div>
             </div>
-
-            {/* Tab Content */}
-            {activeTab === 'profil' && (
-                <section className="mb-6 rounded-xl border border-subtle-light bg-white p-6 shadow-sm">
-                    <h3 className="mb-4 text-lg font-bold text-text-light">
-                        Tentang Dokter
-                    </h3>
-                    <p className="mb-6 leading-relaxed text-gray-600">
-                        {doctor?.profile ||
-                            'Informasi profil dokter belum tersedia.'}
-                    </p>
-
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        {/* Pendidikan */}
-                        <div className="flex items-start gap-3">
-                            <div className="rounded-lg bg-primary/10 p-2">
-                                <span className="material-symbols-outlined text-primary">
-                                    school
-                                </span>
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-500">
-                                    Pendidikan
-                                </p>
-                                <p className="font-medium text-text-light">
-                                    {doctor?.education || '-'}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Pengalaman */}
-                        <div className="flex items-start gap-3">
-                            <div className="rounded-lg bg-primary/10 p-2">
-                                <span className="material-symbols-outlined text-primary">
-                                    work_history
-                                </span>
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-500">
-                                    Pengalaman
-                                </p>
-                                <p className="font-medium text-text-light">
-                                    {doctor?.experience || '-'}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Lokasi */}
-                        <div className="flex items-start gap-3">
-                            <div className="rounded-lg bg-primary/10 p-2">
-                                <span className="material-symbols-outlined text-primary">
-                                    location_on
-                                </span>
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-500">
-                                    Lokasi Praktek
-                                </p>
-                                <p className="font-medium text-text-light">
-                                    {doctor?.location || '-'}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Spesialisasi */}
-                        <div className="flex items-start gap-3">
-                            <div className="rounded-lg bg-primary/10 p-2">
-                                <span className="material-symbols-outlined text-primary">
-                                    medical_services
-                                </span>
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-500">
-                                    Spesialisasi
-                                </p>
-                                <p className="font-medium text-text-light">
-                                    {doctor?.specialty || '-'}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            )}
 
             {activeTab === 'jadwal' && (
                 <section className="mb-6 rounded-xl border border-subtle-light bg-white p-6 shadow-sm">
@@ -176,7 +83,7 @@ export function BookingCalendar({ doctor, doctorId }: BookingCalendarProps) {
                                     Lokasi Praktek
                                 </p>
                                 <p className="text-lg font-bold text-text-light">
-                                    {doctor?.location || '-'}
+                                    Cantika Dental Care
                                 </p>
                             </div>
                         </div>

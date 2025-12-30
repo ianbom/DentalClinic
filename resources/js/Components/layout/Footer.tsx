@@ -30,12 +30,11 @@ export function Footer() {
                             href="/"
                             className="flex items-center gap-2 text-primary"
                         >
-                            <span className="material-symbols-outlined text-3xl">
-                                dentistry
-                            </span>
-                            <span className="text-xl font-bold text-text-light">
-                                DentalCare
-                            </span>
+                            <img
+                                src="/img/logo-navbar.png"
+                                alt="Logo Klinik"
+                                className="h-10 w-auto object-contain"
+                            />
                         </Link>
                         <p className="text-sm leading-relaxed text-gray-500">
                             Klinik gigi terpercaya dengan standar pelayanan

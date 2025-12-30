@@ -40,12 +40,12 @@ export function BookingSummarySidebar({
                         <p className="font-bold text-text-light">
                             {doctor?.name || 'Loading...'}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        {/* <p className="text-sm text-gray-500">
                             {doctor?.specialty || ''}
-                        </p>
+                        </p> */}
                     </div>
                 </div>
-                <hr className="border-gray-100" />
+                {/* <hr className="border-gray-100" /> */}
 
                 {/* Booking Details */}
                 <div className="flex flex-col gap-4">

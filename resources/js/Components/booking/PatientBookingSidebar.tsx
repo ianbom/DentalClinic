@@ -1,3 +1,4 @@
+import { useBooking } from '@/context/BookingContext';
 import { Doctor } from '@/lib/doctors';
 
 interface CustomerBookingSidebarProps {
@@ -7,15 +8,16 @@ interface CustomerBookingSidebarProps {
 export function CustomerBookingSidebar({
     doctor,
 }: CustomerBookingSidebarProps) {
+    const { bookingData } = useBooking();
     return (
         <div className="sticky top-24 flex cursor-default flex-col gap-6 rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between border-b border-gray-100 pb-4">
                 <h3 className="text-lg font-bold text-text-light">
                     Ringkasan Booking
                 </h3>
-                <button className="cursor-pointer text-sm font-medium text-primary hover:text-primary-dark">
+                {/* <button className="cursor-pointer text-sm font-medium text-primary hover:text-primary-dark">
                     Edit
-                </button>
+                </button> */}
             </div>
 
             {/* Doctor Info */}
@@ -32,9 +34,9 @@ export function CustomerBookingSidebar({
                     <p className="font-bold text-text-light">
                         {doctor?.name || 'Loading...'}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    {/* <p className="text-sm text-gray-500">
                         {doctor?.specialty || ''}
-                    </p>
+                    </p> */}
                 </div>
             </div>
 
@@ -47,10 +49,10 @@ export function CustomerBookingSidebar({
                     </span>
                     <div>
                         <p className="text-sm font-semibold text-text-light">
-                            Jumat, 25 Oktober 2023
+                            {bookingData.selectedDate}
                         </p>
                         <p className="text-xs text-gray-500">
-                            14:00 - 15:00 WIB
+                            {bookingData.selectedTime}
                         </p>
                     </div>
                 </div>
@@ -61,10 +63,10 @@ export function CustomerBookingSidebar({
                     </span>
                     <div>
                         <p className="text-sm font-semibold text-text-light">
-                            Klinik Gigi Sehat
+                            Cantika Dental Care
                         </p>
                         <p className="text-xs text-gray-500">
-                            {doctor?.location || 'Jakarta'}
+                            Dandong, Kec. Srengat, Kabupaten Blitar
                         </p>
                     </div>
                 </div>

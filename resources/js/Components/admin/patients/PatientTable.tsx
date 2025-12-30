@@ -1,4 +1,4 @@
-import { Patient, patientsData } from '@/app/data/patients';
+import { Patient, patientsData } from '@/data/patients';
 
 export function PatientTable() {
     return (
