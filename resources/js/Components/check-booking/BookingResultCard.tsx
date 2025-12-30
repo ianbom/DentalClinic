@@ -1,6 +1,7 @@
 'use client';
 
 import { Booking } from '@/types';
+import { router, usePage } from '@inertiajs/react';
 import { toPng } from 'html-to-image';
 import { useRef, useState } from 'react';
 
@@ -11,6 +12,11 @@ interface BookingResultCardProps {
 export function BookingResultCard({ booking }: BookingResultCardProps) {
     const cardRef = useRef<HTMLDivElement>(null);
     const [isDownloading, setIsDownloading] = useState(false);
+    const [isCheckingIn, setIsCheckingIn] = useState(false);
+    const { errors, flash } = usePage().props as {
+        errors?: Record<string, string>;
+        flash?: { success?: string };
+    };
 
     const patientDetail = booking.patient_detail;
     const doctor = booking.doctor;
@@ -36,6 +42,68 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
         if (phone.length < 8) return phone;
         return phone.slice(0, 4) + '-****-' + phone.slice(-4);
     };
+
+    const maskNik = (nik: string): string => {
+        if (!nik || nik.length !== 16) return nik;
+        return nik.slice(0, 6) + '********' + nik.slice(14);
+    };
+
+    // Check if can check-in (booking is today and within 1 hour before)
+    const canCheckin = (): { allowed: boolean; reason: string } => {
+        if (booking.status === 'checked_in') {
+            return { allowed: false, reason: 'Anda sudah melakukan check-in.' };
+        }
+        if (booking.status === 'cancelled') {
+            return { allowed: false, reason: 'Booking ini sudah dibatalkan.' };
+        }
+
+        const today = new Date();
+        const bookingDate = new Date(booking.booking_date);
+
+        // Check if same day
+        if (
+            today.getFullYear() !== bookingDate.getFullYear() ||
+            today.getMonth() !== bookingDate.getMonth() ||
+            today.getDate() !== bookingDate.getDate()
+        ) {
+            return {
+                allowed: false,
+                reason: 'Check-in hanya bisa dilakukan pada hari H booking.',
+            };
+        }
+
+        // Parse booking time
+        const [hours, minutes] = booking.start_time.split(':').map(Number);
+        const bookingDateTime = new Date(bookingDate);
+        bookingDateTime.setHours(hours, minutes, 0, 0);
+
+        const oneHourBefore = new Date(
+            bookingDateTime.getTime() - 60 * 60 * 1000,
+        );
+        const now = new Date();
+
+        if (now < oneHourBefore) {
+            const availableTime = oneHourBefore.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit',
+            });
+            return {
+                allowed: false,
+                reason: `Check-in baru bisa dilakukan mulai pukul ${availableTime} WIB.`,
+            };
+        }
+
+        if (now > bookingDateTime) {
+            return {
+                allowed: false,
+                reason: 'Waktu booking sudah lewat.',
+            };
+        }
+
+        return { allowed: true, reason: '' };
+    };
+
+    const checkinStatus = canCheckin();
 
     // Get status display
     const getStatusDisplay = (status: string) => {
@@ -79,6 +147,20 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
     };
 
     const statusDisplay = getStatusDisplay(booking.status);
+
+    const handleCheckin = () => {
+        if (!checkinStatus.allowed || isCheckingIn) return;
+
+        setIsCheckingIn(true);
+        router.post(
+            '/booking/checkin',
+            { code: booking.code },
+            {
+                preserveScroll: true,
+                onFinish: () => setIsCheckingIn(false),
+            },
+        );
+    };
 
     const handleDownload = async () => {
         if (!cardRef.current || isDownloading) return;
@@ -129,6 +211,30 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
             ref={cardRef}
             className="animate-fade-in overflow-hidden rounded-xl border border-gray-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition-colors duration-200"
         >
+            {/* Success Message */}
+            {flash?.success && (
+                <div className="flex items-center gap-3 border-b border-green-200 bg-green-50 px-6 py-3">
+                    <span className="material-symbols-outlined text-green-600">
+                        check_circle
+                    </span>
+                    <p className="text-sm font-medium text-green-700">
+                        {flash.success}
+                    </p>
+                </div>
+            )}
+
+            {/* Error Message */}
+            {errors?.checkin && (
+                <div className="flex items-center gap-3 border-b border-red-200 bg-red-50 px-6 py-3">
+                    <span className="material-symbols-outlined text-red-600">
+                        error
+                    </span>
+                    <p className="text-sm font-medium text-red-700">
+                        {errors.checkin}
+                    </p>
+                </div>
+            )}
+
             {/* Header Status */}
             <div
                 style={{
@@ -165,6 +271,46 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
                 </div>
             </div>
 
+            {/* Check-in Section */}
+            {booking.status === 'confirmed' && (
+                <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                    <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+                        <div>
+                            <h3 className="text-sm font-bold text-gray-700">
+                                Check-in Online
+                            </h3>
+                            {checkinStatus.allowed ? (
+                                <p className="mt-1 text-sm text-green-600">
+                                    ✓ Anda bisa melakukan check-in sekarang
+                                </p>
+                            ) : (
+                                <p className="mt-1 text-sm text-gray-500">
+                                    {checkinStatus.reason}
+                                </p>
+                            )}
+                        </div>
+                        <button
+                            onClick={handleCheckin}
+                            disabled={!checkinStatus.allowed || isCheckingIn}
+                            className={`flex items-center justify-center gap-2 rounded-lg px-6 py-2.5 text-sm font-bold transition-all ${
+                                checkinStatus.allowed && !isCheckingIn
+                                    ? 'cursor-pointer bg-blue-600 text-white hover:bg-blue-700'
+                                    : 'cursor-not-allowed bg-gray-200 text-gray-400'
+                            }`}
+                        >
+                            <span className="material-symbols-outlined text-[18px]">
+                                {isCheckingIn
+                                    ? 'hourglass_empty'
+                                    : 'how_to_reg'}
+                            </span>
+                            {isCheckingIn
+                                ? 'Memproses...'
+                                : 'Check-in Sekarang'}
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/* Booking Details Grid */}
             <div className="grid grid-cols-1 gap-8 p-6 md:grid-cols-2 md:p-8">
                 {/* Left Column: Patient Info */}
@@ -195,7 +341,9 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
                                 NIK
                             </p>
                             <p className="text-base font-semibold text-gray-900">
-                                {patientDetail?.patient_nik || '-'}
+                                {patientDetail?.patient_nik
+                                    ? maskNik(patientDetail.patient_nik)
+                                    : '-'}
                             </p>
                         </div>
                     </div>

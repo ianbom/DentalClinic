@@ -7,17 +7,23 @@ use App\Http\Requests\CreateBookingRequest;
 use App\Models\Booking;
 use App\Models\Doctor;
 use App\Services\BookingService;
+use App\Services\WhatsappService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class BookingController extends Controller
 {
     protected BookingService $bookingService;
+    protected WhatsappService $whatsappService;
 
-    public function __construct(BookingService $bookingService)
+
+    public function __construct(BookingService $bookingService, WhatsappService $whatsappService)
     {
         $this->bookingService = $bookingService;
+        $this->whatsappService = $whatsappService;
+     
     }
 
     public function bookingDoctorPage($doctorId)
@@ -43,12 +49,23 @@ class BookingController extends Controller
         return Inertia::render('patient/booking/BookingReview', ['doctor' => $doctor]);
     }
 
+    public function verifyWhatsapp(Request $request){
+           try {
+            $this->whatsappService->sendCheckWa($request->patient_phone);
+            return redirect()->back()->with('success', 'Pesan otomatis berhasil dikirim');
+           } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return redirect()->back()->with('error', $th->getMessage());
+           }
+    }
+
     public function createBooking(CreateBookingRequest $request)
     {
         try {
             // return response()->json($request->all());
             $booking = $this->bookingService->createBooking($request->validated());
-            
+            $this->bookingService->sendBookingConfirmation($booking->id, $booking->patientDetail->patient_phone);
+
             return redirect()
                 ->route('booking.success', ['code' => $booking->code])
                 ->with('success', 'Booking berhasil dibuat!');
@@ -71,6 +88,8 @@ class BookingController extends Controller
             'booking' => $booking,
         ]);
     }
+
+
 
     public function checkBookingPage()
     {
@@ -101,4 +120,26 @@ class BookingController extends Controller
             'booking' => $booking,
         ]);
     }
+
+    public function checkinBooking(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string',
+        ]);
+
+        try {
+            $booking = $this->bookingService->checkinBooking($request->code);
+
+            return back()->with([
+                'success' => 'Check-in berhasil! Silakan menunggu panggilan.',
+                'booking' => $booking,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['err' => $e->getMessage()]);
+            return back()->withErrors([
+                'checkin' => $e->getMessage(),
+            ]);
+        }
+    }
 }
+

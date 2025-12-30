@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\Doctor;
 use App\Models\DoctorTimeOff;
 use App\Models\DoctorWorkingPeriod;
+use App\Services\WhatsappService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -253,4 +254,138 @@ class BookingService
         
         return "{$prefix}{$date}{$random}";
     }
+
+    /**
+     * Send booking confirmation WhatsApp notification
+     */
+    public function sendBookingConfirmation(int $bookingId, string $phone)
+    {
+        $booking = Booking::with(['doctor', 'patientDetail'])->findOrFail($bookingId);
+        
+        $whatsappService = new WhatsappService();
+        
+        $bookingDetails = [
+            'patient_name' => $booking->patientDetail->patient_name,
+            'doctor_name' => $booking->doctor->name,
+            'date' => $this->formatDateIndonesian(Carbon::parse($booking->booking_date)),
+            'time' => substr($booking->start_time, 0, 5),
+            'code' => $booking->code,
+            'confirm_link' => url("/booking/confirm/{$booking->code}"),
+            'checkin_link' => url("/booking/checkin/{$booking->code}"),
+        ];
+
+        return $whatsappService->sendBookingConfirmation($bookingId, $phone, $bookingDetails);
+    }
+
+    public function checkinBooking(string $code): Booking
+    {
+        $booking = Booking::with(['patientDetail', 'doctor'])
+            ->where('code', $code)
+            ->firstOrFail();
+
+        // Check if already checked in
+        if ($booking->status === 'checked_in') {
+            throw new \Exception('Anda sudah melakukan check-in sebelumnya.');
+        }
+
+        // Check if booking is cancelled
+        if ($booking->status === 'cancelled') {
+            throw new \Exception('Booking ini sudah dibatalkan.');
+        }
+
+        // Check if booking date is today
+        $bookingDate = Carbon::parse($booking->booking_date)->startOfDay();
+        $today = Carbon::today();
+        
+        if (!$bookingDate->isSameDay($today)) {
+            throw new \Exception('Check-in hanya bisa dilakukan pada hari H booking.');
+        }
+
+        // Check if within 1 hour before booking time
+        $dateString = $bookingDate->format('Y-m-d');
+        $bookingDateTime = Carbon::parse($dateString . ' ' . $booking->start_time);
+        $now = Carbon::now();
+        $oneHourBefore = $bookingDateTime->copy()->subHour();
+
+        if ($now->lt($oneHourBefore)) {
+            $formattedTime = $oneHourBefore->format('H:i');
+            throw new \Exception("Check-in baru bisa dilakukan mulai pukul {$formattedTime} WIB (1 jam sebelum jadwal).");
+        }
+
+        if ($now->gt($bookingDateTime)) {
+            throw new \Exception('Waktu booking sudah lewat. Silakan hubungi admin.');
+        }
+
+        // Update booking status
+        $booking->update([
+            'status' => 'checked_in',
+        ]);
+
+        // Create check-in record
+        $booking->checkin()->create([
+            'checked_in_at' => Carbon::now(),
+        ]);
+
+        return $booking->fresh(['patientDetail', 'doctor']);
+    }
+
+    /**
+     * Check if booking can be checked in
+     */
+    public function canCheckin(Booking $booking): array
+    {
+        $bookingDate = Carbon::parse($booking->booking_date)->startOfDay();
+        $today = Carbon::today();
+        
+        // Not today
+        if (!$bookingDate->isSameDay($today)) {
+            return [
+                'can_checkin' => false,
+                'reason' => 'Check-in hanya bisa dilakukan pada hari H booking.',
+            ];
+        }
+
+        // Already checked in
+        if ($booking->status === 'checked_in') {
+            return [
+                'can_checkin' => false,
+                'reason' => 'Anda sudah melakukan check-in.',
+            ];
+        }
+
+        // Cancelled
+        if ($booking->status === 'cancelled') {
+            return [
+                'can_checkin' => false,
+                'reason' => 'Booking ini sudah dibatalkan.',
+            ];
+        }
+
+        // Check time window
+        $dateString = $bookingDate->format('Y-m-d');
+        $bookingDateTime = Carbon::parse($dateString . ' ' . $booking->start_time);
+        $now = Carbon::now();
+        $oneHourBefore = $bookingDateTime->copy()->subHour();
+
+        if ($now->lt($oneHourBefore)) {
+            return [
+                'can_checkin' => false,
+                'reason' => 'Check-in baru bisa dilakukan 1 jam sebelum jadwal.',
+                'available_at' => $oneHourBefore->format('H:i'),
+            ];
+        }
+
+        if ($now->gt($bookingDateTime)) {
+            return [
+                'can_checkin' => false,
+                'reason' => 'Waktu booking sudah lewat.',
+            ];
+        }
+
+        return [
+            'can_checkin' => true,
+            'reason' => null,
+        ];
+    }
 }
+

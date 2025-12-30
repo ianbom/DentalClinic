@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('booking_id')->constrained('bookings')->onDelete('cascade');
+            $table->foreignId('booking_id')->nullable()->constrained('bookings')->onDelete('cascade');
             $table->string('channel', 20)->comment('whatsapp, email, sms');
             $table->string('type', 50)->comment('booking_confirmation, reminder, reschedule_request, reschedule_applied, cancellation');
             $table->string('recipient', 191)->comment('Phone number or email snapshot');
