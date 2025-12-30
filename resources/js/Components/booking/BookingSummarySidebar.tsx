@@ -83,10 +83,11 @@ export function BookingSummarySidebar({
                 {/* Tombol Lanjut */}
                 <Link
                     href={`/doctors/${doctorId}/booking/patient-data`}
-                    className={`group flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3.5 font-bold shadow-md transition-colors ${bookingData.selectedDate && bookingData.selectedTime
+                    className={`group flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3.5 font-bold shadow-md transition-colors ${
+                        bookingData.selectedDate && bookingData.selectedTime
                             ? 'cursor-pointer bg-primary text-white shadow-primary/20 hover:bg-primary-dark'
                             : 'pointer-events-none cursor-not-allowed bg-gray-200 text-gray-400'
-                        }`}
+                    }`}
                 >
                     <span>Lanjut ke Data Customer</span>
                     <span className="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">

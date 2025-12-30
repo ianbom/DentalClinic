@@ -1,14 +1,30 @@
 'use client';
 
-import { useBooking } from '@/context/BookingContext';
-import { Doctor } from '@/lib/doctors';
+import { Booking } from '@/types';
 
 interface BookingDetailsCardProps {
-    doctor?: Doctor;
+    booking: Booking;
 }
 
-export function BookingDetailsCard({ doctor }: BookingDetailsCardProps) {
-    const { bookingData } = useBooking();
+export function BookingDetailsCard({ booking }: BookingDetailsCardProps) {
+    const patientDetail = booking.patient_detail;
+    const doctor = booking.doctor;
+
+    // Format date from Y-m-d to readable format
+    const formatDate = (dateString: string): string => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('id-ID', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        });
+    };
+
+    // Format time from HH:mm:ss to HH:mm WIB
+    const formatTime = (timeString: string): string => {
+        return timeString.slice(0, 5) + ' WIB';
+    };
 
     return (
         <div className="mb-8 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
@@ -41,7 +57,7 @@ export function BookingDetailsCard({ doctor }: BookingDetailsCardProps) {
                             Nama Pasien
                         </span>
                         <span className="font-medium text-text-light">
-                            {bookingData.fullName || '-'}
+                            {patientDetail?.patient_name || '-'}
                         </span>
                     </div>
 
@@ -49,7 +65,7 @@ export function BookingDetailsCard({ doctor }: BookingDetailsCardProps) {
                     <div className="flex flex-col gap-1">
                         <span className="text-sm text-gray-500">NIK</span>
                         <span className="font-medium text-text-light">
-                            {bookingData.nik || '-'}
+                            {patientDetail?.patient_nik || '-'}
                         </span>
                     </div>
 
@@ -59,8 +75,8 @@ export function BookingDetailsCard({ doctor }: BookingDetailsCardProps) {
                             Nomor WhatsApp
                         </span>
                         <span className="font-medium text-text-light">
-                            {bookingData.whatsapp
-                                ? `+62 ${bookingData.whatsapp}`
+                            {patientDetail?.patient_phone
+                                ? `+62 ${patientDetail.patient_phone}`
                                 : '-'}
                         </span>
                     </div>
@@ -69,7 +85,7 @@ export function BookingDetailsCard({ doctor }: BookingDetailsCardProps) {
                     <div className="flex flex-col gap-1">
                         <span className="text-sm text-gray-500">Email</span>
                         <span className="font-medium text-text-light">
-                            {bookingData.email || '-'}
+                            {patientDetail?.patient_email || '-'}
                         </span>
                     </div>
 
@@ -78,9 +94,17 @@ export function BookingDetailsCard({ doctor }: BookingDetailsCardProps) {
                         <span className="text-sm text-gray-500">Dokter</span>
                         <div className="flex items-center gap-2">
                             <div className="relative h-6 w-6 overflow-hidden rounded-full bg-gray-200">
-                                <div className="absolute inset-0 flex items-center justify-center bg-primary/20 text-[10px] font-bold text-primary">
-                                    DR
-                                </div>
+                                {doctor?.profile_pic ? (
+                                    <img
+                                        src={doctor.profile_pic}
+                                        alt={doctor.name}
+                                        className="h-full w-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-primary/20 text-[10px] font-bold text-primary">
+                                        DR
+                                    </div>
+                                )}
                             </div>
                             <span className="font-medium text-text-light">
                                 {doctor?.name || 'Drg.'}
@@ -92,10 +116,22 @@ export function BookingDetailsCard({ doctor }: BookingDetailsCardProps) {
                     <div className="flex flex-col gap-1">
                         <span className="text-sm text-gray-500">Jadwal</span>
                         <span className="font-medium text-text-light">
-                            {bookingData.selectedDate || '-'} -{' '}
-                            {bookingData.selectedTime || '-'}
+                            {formatDate(booking.booking_date)} -{' '}
+                            {formatTime(booking.start_time)}
                         </span>
                     </div>
+
+                    {/* Keluhan */}
+                    {patientDetail?.complaint && (
+                        <div className="flex flex-col gap-1 md:col-span-2">
+                            <span className="text-sm text-gray-500">
+                                Keluhan
+                            </span>
+                            <span className="font-medium text-text-light">
+                                {patientDetail.complaint}
+                            </span>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

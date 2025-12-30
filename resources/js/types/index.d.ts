@@ -84,7 +84,7 @@ export interface Booking extends BaseModel {
     is_active: number;
     // Relations
     doctor?: Doctor;
-    patient_details?: BookingPatientDetail;
+    patient_detail?: BookingPatientDetail;
     checkin?: BookingCheckin;
     cancellation?: BookingCancellation;
     reschedules?: BookingReschedule[];

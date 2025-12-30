@@ -3,11 +3,15 @@
 import { BookingResultCard } from '@/Components/check-booking/BookingResultCard';
 import { BookingSearchForm } from '@/Components/check-booking/BookingSearchForm';
 import PatientLayout from '@/Layouts/PatientLayout';
-import { Link } from '@inertiajs/react';
-import { useState } from 'react';
+import { Booking } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 
-function CheckBookingPage() {
-    const [showResult, setShowResult] = useState(false);
+interface CheckBookingPageProps {
+    booking?: Booking;
+}
+
+function CheckBookingPage({ booking }: CheckBookingPageProps) {
+    const { errors } = usePage().props as { errors?: Record<string, string> };
 
     return (
         <main className="flex min-h-[calc(100vh-64px)] flex-grow flex-col items-center justify-start bg-background-light px-4 py-10 font-display sm:px-6">
@@ -24,10 +28,17 @@ function CheckBookingPage() {
                 </div>
 
                 {/* Search Form Card */}
-                <BookingSearchForm onSearch={() => setShowResult(true)} />
+                <BookingSearchForm />
 
-                {/* Result Card (Simulating a found booking) */}
-                {showResult && <BookingResultCard />}
+                {/* Error Message */}
+                {errors?.booking && (
+                    <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-red-700">
+                        <p className="font-medium">{errors.booking}</p>
+                    </div>
+                )}
+
+                {/* Result Card */}
+                {booking && <BookingResultCard booking={booking} />}
 
                 {/* New Booking Prompt */}
                 <div className="mt-4 text-center">

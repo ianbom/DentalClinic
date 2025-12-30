@@ -56,13 +56,12 @@ Route::get('/doctors/{id}/booking/patient-data', [PatientBookingController::clas
 
 Route::get('/doctors/{id}/booking/patient-data/review', [PatientBookingController::class, 'bookingPatientReviewPage'])->name('booking.review');
 
-Route::get('/doctors/{id}/booking/success', function ($id) {
-    return Inertia::render('patient/booking/BookingSuccess', ['id' => $id]);
-})->name('booking.success');
+Route::post('/booking/create', [PatientBookingController::class, 'createBooking'])->name('booking.create');
 
-Route::get('/check-booking', function () {
-    return Inertia::render('patient/check-booking/CheckBooking');
-})->name('check-booking');
+Route::get('/booking/success/{code}', [PatientBookingController::class, 'bookingSuccessPage'])->name('booking.success');
+
+Route::get('/check-booking', [PatientBookingController::class, 'checkBookingPage'])->name('check-booking');
+Route::post('/check-booking', [PatientBookingController::class, 'checkBooking'])->name('check-booking.search');
 
 /*
 |--------------------------------------------------------------------------

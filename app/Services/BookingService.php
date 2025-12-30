@@ -200,4 +200,57 @@ class BookingService
         
         return false;
     }
+
+    /**
+     * Create a new booking with patient details
+     * 
+     * @throws \Exception if slot is not available
+     */
+    public function createBooking(array $data): Booking
+    {
+        $doctorId = $data['doctor_id'];
+        $bookingDate = $data['booking_date'];
+        $startTime = $data['start_time'];
+
+        // Validate slot is available
+        if (!$this->isSlotAvailable($doctorId, $bookingDate, $startTime)) {
+            throw new \Exception('Jadwal yang dipilih sudah tidak tersedia. Silakan pilih jadwal lain.');
+        }
+
+        // Generate unique booking code
+        $bookingCode = $this->generateBookingCode();
+
+        // Create booking
+        $booking = Booking::create([
+            'code' => $bookingCode,
+            'doctor_id' => $doctorId,
+            'booking_date' => $bookingDate,
+            'start_time' => $startTime,
+            'status' => 'confirmed',
+            'is_active' => true,
+        ]);
+
+        // Create patient details
+        $booking->patientDetail()->create([
+            'patient_name' => $data['patient_name'],
+            'patient_nik' => $data['patient_nik'],
+            'patient_email' => $data['patient_email'] ?? null,
+            'patient_phone' => $data['patient_phone'],
+            'complaint' => $data['complaint'] ?? null,
+        ]);
+
+        return $booking->load('patientDetail', 'doctor');
+    }
+
+    /**
+     * Generate unique booking code
+     */
+    private function generateBookingCode(): string
+    {
+        $prefix = 'BK';
+        $date = Carbon::now()->format('Ymd');
+        $random = strtoupper(substr(md5(uniqid()), 0, 6));
+        
+        return "{$prefix}{$date}{$random}";
+    }
 }

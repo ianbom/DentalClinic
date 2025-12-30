@@ -2,9 +2,12 @@
 
 import { useState } from 'react';
 
-export function BookingCodeCard() {
+interface BookingCodeCardProps {
+    code: string;
+}
+
+export function BookingCodeCard({ code }: BookingCodeCardProps) {
     const [copied, setCopied] = useState(false);
-    const code = 'XC-9281';
 
     const handleCopy = () => {
         navigator.clipboard.writeText(code);

@@ -5,7 +5,7 @@ const categories = [
     { id: 'general', label: 'Umum' },
     { id: 'cosmetic', label: 'Kosmetik' },
     { id: 'orthodontics', label: 'Ortodonti' },
-    { id: 'pediatric', label: 'Anak' },
+    // { id: 'pediatric', label: 'Anak' },
 ];
 
 interface ServicesCategoryFilterProps {

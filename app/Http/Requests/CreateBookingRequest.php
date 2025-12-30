@@ -24,8 +24,8 @@ class CreateBookingRequest extends FormRequest
         return [
             // Booking info
             'doctor_id' => 'required|exists:doctors,id',
-            'booking_date' => 'required|date|after_or_equal:today',
-            'start_time' => 'required|date_format:H:i',
+            'booking_date' => 'required',
+            'start_time' => 'required',
             
             // Patient details
             'patient_name' => 'required|string|max:150',

@@ -6,10 +6,18 @@ import { Link } from '@inertiajs/react';
 interface DoctorCardProps {
     doctor: Doctor;
     days: string;
-    practiceHours: string;
 }
 
-export function DoctorCard({ doctor, days, practiceHours }: DoctorCardProps) {
+// Clear booking data from sessionStorage when starting new booking
+const clearBookingData = () => {
+    try {
+        sessionStorage.removeItem('bookingData');
+    } catch (error) {
+        console.error('Error clearing booking data:', error);
+    }
+};
+
+export function DoctorCard({ doctor, days }: DoctorCardProps) {
     return (
         <div className="group flex flex-col overflow-hidden rounded-2xl border border-subtle-light bg-white transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5">
             {/* Image Header */}
@@ -49,18 +57,13 @@ export function DoctorCard({ doctor, days, practiceHours }: DoctorCardProps) {
                         </span>
                         <span className="text-gray-600">{days}</span>
                     </div>
-                    {/* <div className="flex items-center gap-2.5 text-sm">
-                        <span className="material-symbols-outlined text-[18px] text-primary">
-                            schedule
-                        </span>
-                        <span className="text-gray-600">{practiceHours}</span>
-                    </div> */}
                 </div>
 
                 {/* CTA Button */}
                 <div className="mt-auto">
                     <Link
                         href={`/doctors/${doctor.id}`}
+                        onClick={clearBookingData}
                         className="group/btn flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-dark"
                     >
                         <span>Booking</span>

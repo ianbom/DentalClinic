@@ -1,14 +1,30 @@
 'use client';
 
+import { router } from '@inertiajs/react';
 import { useState } from 'react';
 
-export function BookingSearchForm({ onSearch }: { onSearch?: () => void }) {
+export function BookingSearchForm() {
     const [whatsapp, setWhatsapp] = useState('');
     const [bookingCode, setBookingCode] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (onSearch) onSearch();
+
+        if (!whatsapp || !bookingCode) return;
+
+        setIsSearching(true);
+
+        router.post(
+            '/check-booking',
+            {
+                phone: whatsapp,
+                code: bookingCode,
+            },
+            {
+                onFinish: () => setIsSearching(false),
+            },
+        );
     };
 
     return (
@@ -25,10 +41,11 @@ export function BookingSearchForm({ onSearch }: { onSearch?: () => void }) {
                             </span>
                             <input
                                 className="border-border-light h-12 w-full rounded-lg border bg-background-light pl-10 pr-4 text-base text-text-main-light outline-none transition-all placeholder:text-text-sub-light/50 focus:border-primary focus:ring-2 focus:ring-primary/20"
-                                placeholder="0812-3456-7890"
+                                placeholder="81234567890"
                                 type="tel"
                                 value={whatsapp}
                                 onChange={(e) => setWhatsapp(e.target.value)}
+                                required
                             />
                         </div>
                     </label>
@@ -42,10 +59,11 @@ export function BookingSearchForm({ onSearch }: { onSearch?: () => void }) {
                             </span>
                             <input
                                 className="border-border-light h-12 w-full rounded-lg border bg-background-light pl-10 pr-4 text-base text-text-main-light outline-none transition-all placeholder:text-text-sub-light/50 focus:border-primary focus:ring-2 focus:ring-primary/20"
-                                placeholder="#BKG-XXXX"
+                                placeholder="BK20251230XXXXXX"
                                 type="text"
                                 value={bookingCode}
                                 onChange={(e) => setBookingCode(e.target.value)}
+                                required
                             />
                         </div>
                     </label>
@@ -53,12 +71,17 @@ export function BookingSearchForm({ onSearch }: { onSearch?: () => void }) {
                 <div className="flex justify-end pt-2">
                     <button
                         type="submit"
-                        className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-8 text-base font-bold text-white shadow-md transition-all hover:bg-primary-dark hover:shadow-lg active:scale-[0.98] md:w-auto"
+                        disabled={isSearching || !whatsapp || !bookingCode}
+                        className={`flex h-12 w-full items-center justify-center gap-2 rounded-lg px-8 text-base font-bold text-white shadow-md transition-all md:w-auto ${
+                            isSearching || !whatsapp || !bookingCode
+                                ? 'cursor-not-allowed bg-gray-400'
+                                : 'cursor-pointer bg-primary hover:bg-primary-dark hover:shadow-lg active:scale-[0.98]'
+                        }`}
                     >
                         <span className="material-symbols-outlined text-[20px]">
-                            search
+                            {isSearching ? 'hourglass_empty' : 'search'}
                         </span>
-                        Cek Status
+                        {isSearching ? 'Mencari...' : 'Cek Status'}
                     </button>
                 </div>
             </form>

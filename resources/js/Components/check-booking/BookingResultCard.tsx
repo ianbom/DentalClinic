@@ -1,15 +1,84 @@
 'use client';
 
+import { Booking } from '@/types';
 import { toPng } from 'html-to-image';
 import { useRef, useState } from 'react';
 
 interface BookingResultCardProps {
-    onDownload?: () => void;
+    booking: Booking;
 }
 
-export function BookingResultCard({ onDownload }: BookingResultCardProps) {
+export function BookingResultCard({ booking }: BookingResultCardProps) {
     const cardRef = useRef<HTMLDivElement>(null);
     const [isDownloading, setIsDownloading] = useState(false);
+
+    const patientDetail = booking.patient_detail;
+    const doctor = booking.doctor;
+
+    // Format date
+    const formatDate = (dateString: string): string => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('id-ID', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+        });
+    };
+
+    // Format time
+    const formatTime = (timeString: string): string => {
+        return timeString.slice(0, 5) + ' WIB';
+    };
+
+    // Mask phone number for privacy
+    const maskPhone = (phone: string): string => {
+        if (phone.length < 8) return phone;
+        return phone.slice(0, 4) + '-****-' + phone.slice(-4);
+    };
+
+    // Get status display
+    const getStatusDisplay = (status: string) => {
+        const statusMap: Record<
+            string,
+            { label: string; bgColor: string; textColor: string; icon: string }
+        > = {
+            confirmed: {
+                label: 'Terkonfirmasi',
+                bgColor: '#f0fdf4',
+                textColor: 'text-green-700',
+                icon: 'check_circle',
+            },
+            checked_in: {
+                label: 'Sudah Check-in',
+                bgColor: '#eff6ff',
+                textColor: 'text-blue-700',
+                icon: 'how_to_reg',
+            },
+            cancelled: {
+                label: 'Dibatalkan',
+                bgColor: '#fef2f2',
+                textColor: 'text-red-700',
+                icon: 'cancel',
+            },
+            no_show: {
+                label: 'Tidak Hadir',
+                bgColor: '#fef3c7',
+                textColor: 'text-yellow-700',
+                icon: 'warning',
+            },
+        };
+        return (
+            statusMap[status] || {
+                label: status,
+                bgColor: '#f3f4f6',
+                textColor: 'text-gray-700',
+                icon: 'help',
+            }
+        );
+    };
+
+    const statusDisplay = getStatusDisplay(booking.status);
 
     const handleDownload = async () => {
         if (!cardRef.current || isDownloading) return;
@@ -17,7 +86,6 @@ export function BookingResultCard({ onDownload }: BookingResultCardProps) {
         setIsDownloading(true);
 
         try {
-            // Hide action buttons temporarily for clean screenshot
             const actionsFooter =
                 cardRef.current.querySelector('.actions-footer');
             if (actionsFooter) {
@@ -30,7 +98,6 @@ export function BookingResultCard({ onDownload }: BookingResultCardProps) {
                 backgroundColor: '#ffffff',
                 skipFonts: true,
                 filter: (node) => {
-                    // Skip external stylesheets that may cause CORS issues
                     if (
                         node instanceof HTMLLinkElement &&
                         node.rel === 'stylesheet'
@@ -41,18 +108,14 @@ export function BookingResultCard({ onDownload }: BookingResultCardProps) {
                 },
             });
 
-            // Restore action buttons
             if (actionsFooter) {
                 (actionsFooter as HTMLElement).style.display = '';
             }
 
-            // Create download link
             const link = document.createElement('a');
-            link.download = `booking-dentalcare-${Date.now()}.png`;
+            link.download = `booking-${booking.code}-${Date.now()}.png`;
             link.href = dataUrl;
             link.click();
-
-            if (onDownload) onDownload();
         } catch (error) {
             console.error('Error generating image:', error);
             alert('Gagal mengunduh bukti booking. Silakan coba lagi.');
@@ -69,7 +132,7 @@ export function BookingResultCard({ onDownload }: BookingResultCardProps) {
             {/* Header Status */}
             <div
                 style={{
-                    backgroundColor: '#f0fdf4',
+                    backgroundColor: statusDisplay.bgColor,
                     borderBottom: '1px solid #dcfce7',
                 }}
                 className="flex flex-col items-start justify-between gap-4 px-6 py-4 sm:flex-row sm:items-center"
@@ -77,25 +140,27 @@ export function BookingResultCard({ onDownload }: BookingResultCardProps) {
                 <div className="flex items-center gap-3">
                     <div
                         style={{ backgroundColor: '#dcfce7' }}
-                        className="flex size-10 items-center justify-center rounded-full text-green-600"
+                        className={`flex size-10 items-center justify-center rounded-full ${statusDisplay.textColor}`}
                     >
                         <span className="material-symbols-outlined">
-                            check_circle
+                            {statusDisplay.icon}
                         </span>
                     </div>
                     <div>
                         <p className="text-sm font-medium text-gray-500">
                             Status Booking
                         </p>
-                        <p className="text-lg font-bold leading-tight text-green-700">
-                            Terkonfirmasi
+                        <p
+                            className={`text-lg font-bold leading-tight ${statusDisplay.textColor}`}
+                        >
+                            {statusDisplay.label}
                         </p>
                     </div>
                 </div>
                 <div className="text-right sm:text-left">
                     <p className="text-sm text-gray-500">Kode Booking</p>
                     <p className="font-mono text-lg font-bold text-gray-900">
-                        #BKG-8821
+                        {booking.code}
                     </p>
                 </div>
             </div>
@@ -116,7 +181,7 @@ export function BookingResultCard({ onDownload }: BookingResultCardProps) {
                                 Nama Pasien
                             </p>
                             <p className="text-base font-semibold text-gray-900">
-                                Sarah Wijaya
+                                {patientDetail?.patient_name || '-'}
                             </p>
                         </div>
                     </div>
@@ -130,7 +195,7 @@ export function BookingResultCard({ onDownload }: BookingResultCardProps) {
                                 NIK
                             </p>
                             <p className="text-base font-semibold text-gray-900">
-                                3171234567890001
+                                {patientDetail?.patient_nik || '-'}
                             </p>
                         </div>
                     </div>
@@ -144,7 +209,9 @@ export function BookingResultCard({ onDownload }: BookingResultCardProps) {
                                 Nomor WhatsApp
                             </p>
                             <p className="text-base font-semibold text-gray-900">
-                                0812-****-7890
+                                {patientDetail?.patient_phone
+                                    ? maskPhone(patientDetail.patient_phone)
+                                    : '-'}
                             </p>
                         </div>
                     </div>
@@ -158,7 +225,7 @@ export function BookingResultCard({ onDownload }: BookingResultCardProps) {
                                 Email
                             </p>
                             <p className="text-base font-semibold text-gray-900">
-                                sarahw@gmail.com
+                                {patientDetail?.patient_email || '-'}
                             </p>
                         </div>
                     </div>
@@ -178,7 +245,7 @@ export function BookingResultCard({ onDownload }: BookingResultCardProps) {
                                 Dokter
                             </p>
                             <p className="text-base font-semibold text-gray-900">
-                                Dr. Budi Santoso, Sp.KG
+                                {doctor?.name || '-'}
                             </p>
                         </div>
                     </div>
@@ -191,10 +258,10 @@ export function BookingResultCard({ onDownload }: BookingResultCardProps) {
                                 Jadwal
                             </p>
                             <p className="text-base font-semibold text-gray-900">
-                                Kamis, 24 Okt 2023
+                                {formatDate(booking.booking_date)}
                             </p>
                             <p className="text-sm text-gray-500">
-                                Pukul 10:00 WIB
+                                Pukul {formatTime(booking.start_time)}
                             </p>
                         </div>
                     </div>
@@ -207,10 +274,10 @@ export function BookingResultCard({ onDownload }: BookingResultCardProps) {
                                 Lokasi
                             </p>
                             <p className="text-base font-semibold text-gray-900">
-                                DentalCare Clinic
+                                Cantika Dental Care
                             </p>
                             <p className="text-sm text-gray-500">
-                                Jl. Kesehatan No. 123, Jakarta Selatan
+                                Dandong, Kec. Srengat, Kabupaten Blitar
                             </p>
                         </div>
                     </div>

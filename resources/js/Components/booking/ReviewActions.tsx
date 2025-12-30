@@ -1,6 +1,7 @@
 'use client';
 
-import { Link } from '@inertiajs/react';
+import { useBooking } from '@/context/BookingContext';
+import { Link, router } from '@inertiajs/react';
 import { useState } from 'react';
 
 interface ReviewActionsProps {
@@ -10,6 +11,71 @@ interface ReviewActionsProps {
 export function ReviewActions({ doctorId }: ReviewActionsProps) {
     const [isTermsAgreed, setIsTermsAgreed] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { bookingData, resetBookingData } = useBooking();
+
+    const handleConfirmBooking = () => {
+        if (!isTermsAgreed || isSubmitting) return;
+
+        setIsSubmitting(true);
+
+        // Parse the date from formatted_date to Y-m-d format
+        const parseDate = (formattedDate: string): string => {
+            // Handle formatted date like "Rabu, 31 Desember 2025"
+            const months: Record<string, string> = {
+                Januari: '01',
+                Februari: '02',
+                Maret: '03',
+                April: '04',
+                Mei: '05',
+                Juni: '06',
+                Juli: '07',
+                Agustus: '08',
+                September: '09',
+                Oktober: '10',
+                November: '11',
+                Desember: '12',
+            };
+
+            const parts = formattedDate.split(', ')[1]?.split(' ') || [];
+            if (parts.length === 3) {
+                const day = parts[0].padStart(2, '0');
+                const month = months[parts[1]] || '01';
+                const year = parts[2];
+                return `${year}-${month}-${day}`;
+            }
+            return formattedDate;
+        };
+
+        // Parse time from "09:00 WIB" to "09:00"
+        const parseTime = (time: string): string => {
+            return time.replace(' WIB', '');
+        };
+
+        const formData = {
+            doctor_id: doctorId,
+            booking_date: parseDate(bookingData.selectedDate),
+            start_time: parseTime(bookingData.selectedTime),
+            patient_name: bookingData.fullName,
+            patient_nik: bookingData.nik,
+            patient_email: bookingData.email || null,
+            patient_phone: bookingData.whatsapp,
+            complaint: bookingData.complaint || null,
+        };
+
+        router.post('/booking/create', formData, {
+            onSuccess: () => {
+                // Reset booking context after successful submission
+                resetBookingData();
+            },
+            onError: () => {
+                setIsSubmitting(false);
+            },
+            onFinish: () => {
+                setIsSubmitting(false);
+            },
+        });
+    };
 
     return (
         <>
@@ -58,15 +124,30 @@ export function ReviewActions({ doctorId }: ReviewActionsProps) {
                         Ubah Data
                     </Link>
                     {isTermsAgreed ? (
-                        <Link
-                            href={`/doctors/${doctorId}/booking/success`}
-                            className="flex-2 flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-white shadow-lg shadow-primary/25 transition-all hover:bg-primary-dark hover:shadow-primary/40"
+                        <button
+                            type="button"
+                            onClick={handleConfirmBooking}
+                            disabled={isSubmitting}
+                            className={`flex-2 flex items-center justify-center gap-2 rounded-xl px-6 py-3 font-bold text-white shadow-lg transition-all ${
+                                isSubmitting
+                                    ? 'cursor-not-allowed bg-gray-400'
+                                    : 'cursor-pointer bg-primary shadow-primary/25 hover:bg-primary-dark hover:shadow-primary/40'
+                            }`}
                         >
-                            <span>Konfirmasi Booking</span>
-                            <span className="material-symbols-outlined text-[20px]">
-                                arrow_forward
-                            </span>
-                        </Link>
+                            {isSubmitting ? (
+                                <>
+                                    <span className="animate-spin">⏳</span>
+                                    <span>Memproses...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span>Konfirmasi Booking</span>
+                                    <span className="material-symbols-outlined text-[20px]">
+                                        arrow_forward
+                                    </span>
+                                </>
+                            )}
+                        </button>
                     ) : (
                         <button
                             type="button"

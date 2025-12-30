@@ -3,10 +3,7 @@
 import { DoctorCard } from '@/Components/doctors/DoctorCard';
 import { FilterSidebar } from '@/Components/doctors/FilterSidebar';
 import { FloatingWhatsApp } from '@/Components/layout/FloatingWhatsApp';
-import {
-    getDaysFromWorkingPeriods,
-    getPracticeHours,
-} from '@/lib/utils/schedule';
+import { getDaysFromWorkingPeriods } from '@/lib/utils/schedule';
 import { Doctor } from '@/types';
 import { Link } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
@@ -118,7 +115,6 @@ export function DoctorListClient({ doctors }: DoctorListClientProps) {
                                         key={doctor.id}
                                         doctor={doctor}
                                         days={getDaysFromWorkingPeriods(doctor)}
-                                        practiceHours={getPracticeHours(doctor)}
                                     />
                                 ))}
                             </div>
