@@ -49,6 +49,24 @@ export interface DoctorTimeOff extends BaseModel {
     created_by?: User;
 }
 
+// Time slot for booking
+export interface TimeSlot {
+    time: string;
+    available: boolean;
+    reason?: 'time_off' | 'booked' | 'past' | null;
+}
+
+// Available date with slots
+export interface AvailableDate {
+    date: string;
+    day_name: string;
+    formatted_date: string;
+    slots: TimeSlot[];
+}
+
+// Available slots keyed by date string
+export type AvailableSlots = Record<string, AvailableDate>;
+
 // Booking status type
 export type BookingStatus =
     | 'confirmed'

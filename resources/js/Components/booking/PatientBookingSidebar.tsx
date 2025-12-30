@@ -1,5 +1,5 @@
 import { useBooking } from '@/context/BookingContext';
-import { Doctor } from '@/lib/doctors';
+import { Doctor } from '@/types';
 
 interface CustomerBookingSidebarProps {
     doctor?: Doctor;
@@ -26,7 +26,7 @@ export function CustomerBookingSidebar({
                     <div
                         className="h-full w-full bg-cover bg-center"
                         style={{
-                            backgroundImage: `url("${doctor?.image || ''}")`,
+                            backgroundImage: `url("${doctor?.profile_pic || '/img/default-doctor.png'}")`,
                         }}
                     ></div>
                 </div>

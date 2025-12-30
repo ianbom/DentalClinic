@@ -4,15 +4,14 @@ import { BookingSummarySidebar } from '@/Components/booking/BookingSummarySideba
 import { BookingTimeSlots } from '@/Components/booking/BookingTimeSlots';
 import { BookingProvider } from '@/context/BookingContext';
 import PatientLayout from '@/Layouts/PatientLayout';
-import { getDoctorById } from '@/lib/doctors';
+import { AvailableSlots, Doctor } from '@/types';
 
 interface BookingPageProps {
-    id: string;
+    doctor: Doctor;
+    availableSlots: AvailableSlots;
 }
 
-function BookingPage({ id }: BookingPageProps) {
-    const doctor = getDoctorById(id);
-
+function BookingPage({ doctor, availableSlots }: BookingPageProps) {
     return (
         <div className="flex min-h-screen flex-1 flex-col items-center bg-background-light px-4 py-8 font-display md:px-10 lg:px-20">
             <div className="flex w-full max-w-6xl flex-col gap-8">
@@ -34,23 +33,27 @@ function BookingPage({ id }: BookingPageProps) {
                             </p>
                         </div>
 
-                        <BookingCalendarWidget />
+                        <BookingCalendarWidget
+                            availableSlots={availableSlots}
+                        />
 
                         <div className="border-t border-gray-100 pt-8">
-                            <BookingTimeSlots />
+                            <BookingTimeSlots availableSlots={availableSlots} />
                         </div>
                     </div>
 
                     {/* Right Column: Sticky Summary Sidebar */}
                     <div className="sticky top-28 w-full shrink-0 lg:w-[360px]">
-                        <BookingSummarySidebar doctorId={id} doctor={doctor} />
+                        <BookingSummarySidebar
+                            doctorId={String(doctor.id)}
+                            doctor={doctor}
+                        />
                     </div>
                 </div>
             </div>
         </div>
     );
 }
-
 BookingPage.layout = (page: React.ReactNode) => (
     <PatientLayout>
         <BookingProvider>{page}</BookingProvider>

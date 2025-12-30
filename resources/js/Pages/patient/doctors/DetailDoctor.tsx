@@ -1,15 +1,13 @@
 import { BookingCalendar } from '@/Components/doctor-detail/BookingCalendar';
 import { DoctorProfileHeader } from '@/Components/doctor-detail/DoctorProfileHeader';
 import PatientLayout from '@/Layouts/PatientLayout';
-import { getDoctorById } from '@/lib/doctors';
+import { Doctor } from '@/types';
 
 interface DoctorDetailPageProps {
-    id: string;
+    doctor: Doctor;
 }
 
-function DoctorDetailPage({ id }: DoctorDetailPageProps) {
-    const doctor = getDoctorById(id);
-
+function DoctorDetailPage({ doctor }: DoctorDetailPageProps) {
     if (!doctor) {
         return <div>Dokter tidak ditemukan</div>;
     }
@@ -17,7 +15,7 @@ function DoctorDetailPage({ id }: DoctorDetailPageProps) {
     return (
         <div className="mx-auto w-full max-w-[960px] flex-grow px-4 py-8 pb-24 font-display">
             <DoctorProfileHeader doctor={doctor} />
-            <BookingCalendar doctor={doctor} doctorId={id} />
+            <BookingCalendar doctor={doctor} doctorId={String(doctor.id)} />
             <div className="h-20"></div>
         </div>
     );

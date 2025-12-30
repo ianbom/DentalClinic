@@ -16,4 +16,12 @@ class DoctorController extends Controller
             'doctors' => $doctors,
         ]);
     }
+
+    public function detailDoctor($doctorId){ 
+        $doctor = Doctor::with('workingPeriods')->find($doctorId);
+        return Inertia::render('patient/doctors/DetailDoctor',[
+            'doctor' => $doctor
+        ]);
+    }
+
 }

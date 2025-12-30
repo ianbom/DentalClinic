@@ -1,28 +1,59 @@
 'use client';
 
 import { useBooking } from '@/context/BookingContext';
+import { AvailableSlots, TimeSlot } from '@/types';
+import { useMemo } from 'react';
 
-const timeSlots = [
-    { time: '08:00', available: true },
-    { time: '09:00', available: false },
-    { time: '10:00', available: true },
-    { time: '11:00', available: true },
-    { time: '13:00', available: true },
-    { time: '14:00', available: true },
-    { time: '15:00', available: false },
-    { time: '16:00', available: true },
-    { time: '17:00', available: true },
-    { time: '18:00', available: true },
-    { time: '19:00', available: true },
-    { time: '20:00', available: true },
-];
+interface BookingTimeSlotsProps {
+    availableSlots: AvailableSlots;
+}
 
-export function BookingTimeSlots() {
+export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
     const { bookingData, setBookingData } = useBooking();
+
+    // Get time slots for selected date
+    const timeSlots = useMemo((): TimeSlot[] => {
+        if (!bookingData.selectedDate) {
+            return [];
+        }
+
+        // Find the date key that matches the formatted date
+        const dateEntry = Object.values(availableSlots).find(
+            (slot) => slot.formatted_date === bookingData.selectedDate,
+        );
+
+        return dateEntry?.slots ?? [];
+    }, [availableSlots, bookingData.selectedDate]);
 
     const handleTimeSelect = (time: string) => {
         setBookingData({ selectedTime: `${time} WIB` });
     };
+
+    if (!bookingData.selectedDate) {
+        return (
+            <div className="py-8 text-center">
+                <span className="material-symbols-outlined mb-2 text-4xl text-gray-300">
+                    calendar_month
+                </span>
+                <p className="text-gray-500">
+                    Silakan pilih tanggal terlebih dahulu
+                </p>
+            </div>
+        );
+    }
+
+    if (timeSlots.length === 0) {
+        return (
+            <div className="py-8 text-center">
+                <span className="material-symbols-outlined mb-2 text-4xl text-gray-300">
+                    event_busy
+                </span>
+                <p className="text-gray-500">
+                    Tidak ada jadwal tersedia untuk tanggal ini
+                </p>
+            </div>
+        );
+    }
 
     return (
         <>
@@ -58,6 +89,13 @@ export function BookingTimeSlots() {
                                 key={slot.time}
                                 className="cursor-not-allowed rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-400 line-through"
                                 disabled
+                                title={
+                                    slot.reason === 'booked'
+                                        ? 'Sudah dibooking'
+                                        : slot.reason === 'time_off'
+                                          ? 'Dokter tidak tersedia'
+                                          : 'Tidak tersedia'
+                                }
                             >
                                 {slot.time}
                             </button>

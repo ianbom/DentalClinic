@@ -1,7 +1,7 @@
 'use client';
 
 import { useBooking } from '@/context/BookingContext';
-import { Doctor } from '@/lib/doctors';
+import { Doctor } from '@/types';
 import { Link } from '@inertiajs/react';
 
 interface BookingSummarySidebarProps {
@@ -29,7 +29,7 @@ export function BookingSummarySidebar({
                         <div
                             className="h-full w-full bg-cover bg-center"
                             style={{
-                                backgroundImage: `url("${doctor?.image || ''}")`,
+                                backgroundImage: `url("${doctor?.profile_pic || '/img/default-doctor.png'}")`,
                             }}
                         ></div>
                     </div>
@@ -40,12 +40,8 @@ export function BookingSummarySidebar({
                         <p className="font-bold text-text-light">
                             {doctor?.name || 'Loading...'}
                         </p>
-                        {/* <p className="text-sm text-gray-500">
-                            {doctor?.specialty || ''}
-                        </p> */}
                     </div>
                 </div>
-                {/* <hr className="border-gray-100" /> */}
 
                 {/* Booking Details */}
                 <div className="flex flex-col gap-4">
@@ -86,12 +82,11 @@ export function BookingSummarySidebar({
 
                 {/* Tombol Lanjut */}
                 <Link
-                    href={`/doctors/${doctorId}/booking/customer-data`}
-                    className={`group flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3.5 font-bold shadow-md transition-colors ${
-                        bookingData.selectedDate && bookingData.selectedTime
+                    href={`/doctors/${doctorId}/booking/patient-data`}
+                    className={`group flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3.5 font-bold shadow-md transition-colors ${bookingData.selectedDate && bookingData.selectedTime
                             ? 'cursor-pointer bg-primary text-white shadow-primary/20 hover:bg-primary-dark'
                             : 'pointer-events-none cursor-not-allowed bg-gray-200 text-gray-400'
-                    }`}
+                        }`}
                 >
                     <span>Lanjut ke Data Customer</span>
                     <span className="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">

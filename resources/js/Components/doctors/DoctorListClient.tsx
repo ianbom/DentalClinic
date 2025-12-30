@@ -3,35 +3,16 @@
 import { DoctorCard } from '@/Components/doctors/DoctorCard';
 import { FilterSidebar } from '@/Components/doctors/FilterSidebar';
 import { FloatingWhatsApp } from '@/Components/layout/FloatingWhatsApp';
+import {
+    getDaysFromWorkingPeriods,
+    getPracticeHours,
+} from '@/lib/utils/schedule';
 import { Doctor } from '@/types';
 import { Link } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 
 interface DoctorListClientProps {
     doctors: Doctor[];
-}
-
-// Helper function to get days from working periods
-function getDaysFromWorkingPeriods(doctor: Doctor): string {
-    if (!doctor.working_periods || doctor.working_periods.length === 0) {
-        return '-';
-    }
-    const uniqueDays = [
-        ...new Set(doctor.working_periods.map((wp) => wp.day_of_week)),
-    ];
-    return uniqueDays.join(', ');
-}
-
-// Helper function to get practice hours from working periods
-function getPracticeHours(doctor: Doctor): string {
-    if (!doctor.working_periods || doctor.working_periods.length === 0) {
-        return '-';
-    }
-    const times = doctor.working_periods.map(
-        (wp) => `${wp.start_time.slice(0, 5)}-${wp.end_time.slice(0, 5)}`,
-    );
-    const uniqueTimes = [...new Set(times)];
-    return uniqueTimes.join(', ');
 }
 
 export function DoctorListClient({ doctors }: DoctorListClientProps) {

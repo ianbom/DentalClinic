@@ -1,7 +1,7 @@
 'use client';
 
 import { useBooking } from '@/context/BookingContext';
-import { Doctor } from '@/lib/doctors';
+import { Doctor } from '@/types';
 
 interface ReviewBookingCardProps {
     doctor?: Doctor;
@@ -30,7 +30,7 @@ export function ReviewBookingCard({ doctor }: ReviewBookingCardProps) {
                         <div
                             className="h-full w-full bg-cover bg-center"
                             style={{
-                                backgroundImage: `url("${doctor?.image || ''}")`,
+                                backgroundImage: `url("${doctor?.profile_pic || '/img/default-doctor.png'}")`,
                             }}
                         ></div>
                     </div>

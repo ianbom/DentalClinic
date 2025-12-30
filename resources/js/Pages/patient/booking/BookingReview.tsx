@@ -4,15 +4,13 @@ import { ReviewBookingCard } from '@/Components/booking/ReviewBookingCard';
 import { ReviewSidebar } from '@/Components/booking/ReviewSidebar';
 import { BookingProvider } from '@/context/BookingContext';
 import PatientLayout from '@/Layouts/PatientLayout';
-import { getDoctorById } from '@/lib/doctors';
+import { Doctor } from '@/types';
 
 interface ReviewBookingPageProps {
-    id: string;
+    doctor: Doctor;
 }
 
-function ReviewBookingPage({ id }: ReviewBookingPageProps) {
-    const doctor = getDoctorById(id);
-
+function ReviewBookingPage({ doctor }: ReviewBookingPageProps) {
     return (
         <div className="mx-auto w-full max-w-4xl flex-grow px-4 py-8 font-display sm:px-6 sm:py-12">
             {/* Progress Bar */}
@@ -24,7 +22,7 @@ function ReviewBookingPage({ id }: ReviewBookingPageProps) {
                 {/* Main Content: Review Card */}
                 <div className="space-y-6 lg:col-span-2">
                     <ReviewBookingCard doctor={doctor} />
-                    <ReviewActions doctorId={id} />
+                    <ReviewActions doctorId={String(doctor.id)} />
                 </div>
 
                 {/* Sidebar Info */}

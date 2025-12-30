@@ -171,7 +171,7 @@ export function CustomerDataForm({ doctorId }: CustomerDataFormProps) {
 
                     {/* Tombol Lanjut */}
                     <Link
-                        href={`/doctors/${doctorId}/booking/customer-data/review`}
+                        href={`/doctors/${doctorId}/booking/patient-data/review`}
                         className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-8 py-3 font-bold text-white transition-all hover:bg-primary-dark focus:ring-4 focus:ring-primary/20 md:w-auto"
                     >
                         <span>Lanjut ke Review</span>

@@ -49,12 +49,12 @@ export function DoctorCard({ doctor, days, practiceHours }: DoctorCardProps) {
                         </span>
                         <span className="text-gray-600">{days}</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-sm">
+                    {/* <div className="flex items-center gap-2.5 text-sm">
                         <span className="material-symbols-outlined text-[18px] text-primary">
                             schedule
                         </span>
                         <span className="text-gray-600">{practiceHours}</span>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* CTA Button */}

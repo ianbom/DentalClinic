@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Patients\BookingController as PatientBookingController;
 use App\Http\Controllers\Patients\DoctorController as PatientDoctorController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -46,23 +47,14 @@ Route::get('/services', function () {
 
 
 Route::get('/doctors', [PatientDoctorController::class, 'listDoctors'])->name('doctors.list');
+Route::get('/doctors/{id}', [PatientDoctorController::class, 'detailDoctor'])->name('doctors.detail');
+
+Route::get('/doctors/{id}/booking', [PatientBookingController::class, 'bookingDoctorPage'])->name('booking.doctor');
 
 
-Route::get('/doctors/{id}', function ($id) {
-    return Inertia::render('patient/doctors/DetailDoctor', ['id' => $id]);
-})->name('doctors.detail');
+Route::get('/doctors/{id}/booking/patient-data', [PatientBookingController::class, 'bookingPatientDataPage'])->name('booking.patient-data');
 
-Route::get('/doctors/{id}/booking', function ($id) {
-    return Inertia::render('patient/booking/BookingDoctor', ['id' => $id]);
-})->name('booking.doctor');
-
-Route::get('/doctors/{id}/booking/customer-data', function ($id) {
-    return Inertia::render('patient/booking/BookingCustomerData', ['id' => $id]);
-})->name('booking.customer-data');
-
-Route::get('/doctors/{id}/booking/customer-data/review', function ($id) {
-    return Inertia::render('patient/booking/BookingReview', ['id' => $id]);
-})->name('booking.review');
+Route::get('/doctors/{id}/booking/patient-data/review', [PatientBookingController::class, 'bookingPatientReviewPage'])->name('booking.review');
 
 Route::get('/doctors/{id}/booking/success', function ($id) {
     return Inertia::render('patient/booking/BookingSuccess', ['id' => $id]);

@@ -1,39 +1,29 @@
 'use client';
 
 import { useBooking } from '@/context/BookingContext';
+import {
+    DAY_NAMES_SHORT_ID,
+    formatDateString,
+    getDaysInMonth,
+    getFirstDayOfMonth,
+    isPastDate,
+    MONTH_NAMES_ID,
+} from '@/lib/utils/calendar';
+import { AvailableSlots } from '@/types';
 import { useState } from 'react';
 
-export function BookingCalendarWidget() {
+interface BookingCalendarWidgetProps {
+    availableSlots: AvailableSlots;
+}
+
+export function BookingCalendarWidget({
+    availableSlots,
+}: BookingCalendarWidgetProps) {
     const { bookingData, setBookingData } = useBooking();
-    const [currentMonth, setCurrentMonth] = useState(new Date()); // Current month
-
-    const monthNames = [
-        'Januari',
-        'Februari',
-        'Maret',
-        'April',
-        'Mei',
-        'Juni',
-        'Juli',
-        'Agustus',
-        'September',
-        'Oktober',
-        'November',
-        'Desember',
-    ];
-    const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-
-    const getDaysInMonth = (date: Date) => {
-        return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-    };
-
-    const getFirstDayOfMonth = (date: Date) => {
-        return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-    };
+    const [currentMonth, setCurrentMonth] = useState(new Date());
 
     const daysInMonth = getDaysInMonth(currentMonth);
     const firstDay = getFirstDayOfMonth(currentMonth);
-    const today = new Date();
 
     const handlePrevMonth = () => {
         setCurrentMonth(
@@ -55,46 +45,45 @@ export function BookingCalendarWidget() {
         );
     };
 
-    const handleDateSelect = (day: number) => {
-        const date = new Date(
+    const getDateString = (day: number) => {
+        return formatDateString(
             currentMonth.getFullYear(),
-            currentMonth.getMonth(),
+            currentMonth.getMonth() + 1,
             day,
         );
-        const formattedDate = date.toLocaleDateString('id-ID', {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-        });
-        setBookingData({ selectedDate: formattedDate });
+    };
+
+    const handleDateSelect = (day: number) => {
+        const dateString = getDateString(day);
+        const slotData = availableSlots[dateString];
+
+        if (slotData) {
+            setBookingData({
+                selectedDate: slotData.formatted_date,
+                selectedTime: '', // Reset time when date changes
+            });
+        }
+    };
+
+    const isDateAvailable = (day: number) => {
+        const dateString = getDateString(day);
+        const slotData = availableSlots[dateString];
+        return slotData?.slots.some((slot) => slot.available) ?? false;
     };
 
     const isDateSelected = (day: number) => {
-        const date = new Date(
-            currentMonth.getFullYear(),
-            currentMonth.getMonth(),
-            day,
-        );
-        const formattedDate = date.toLocaleDateString('id-ID', {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-        });
-        return bookingData.selectedDate === formattedDate;
+        const dateString = getDateString(day);
+        const slotData = availableSlots[dateString];
+        return bookingData.selectedDate === slotData?.formatted_date;
     };
 
-    const isPastDate = (day: number) => {
+    const checkIsPastDate = (day: number) => {
         const date = new Date(
             currentMonth.getFullYear(),
             currentMonth.getMonth(),
             day,
         );
-        date.setHours(0, 0, 0, 0);
-        const todayStart = new Date(today);
-        todayStart.setHours(0, 0, 0, 0);
-        return date < todayStart;
+        return isPastDate(date);
     };
 
     return (
@@ -109,7 +98,7 @@ export function BookingCalendarWidget() {
                     </span>
                 </button>
                 <span className="text-base font-bold text-text-light">
-                    {monthNames[currentMonth.getMonth()]}{' '}
+                    {MONTH_NAMES_ID[currentMonth.getMonth()]}{' '}
                     {currentMonth.getFullYear()}
                 </span>
                 <button
@@ -124,7 +113,7 @@ export function BookingCalendarWidget() {
 
             {/* Days of Week */}
             <div className="mb-2 grid grid-cols-7">
-                {dayNames.map((day, i) => (
+                {DAY_NAMES_SHORT_ID.map((day, i) => (
                     <div
                         key={i}
                         className="py-2 text-center text-xs font-bold uppercase tracking-wide text-gray-400"
@@ -144,10 +133,12 @@ export function BookingCalendarWidget() {
                 {/* Days */}
                 {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(
                     (day) => {
-                        const past = isPastDate(day);
+                        const past = checkIsPastDate(day);
+                        const available = isDateAvailable(day);
                         const selected = isDateSelected(day);
 
-                        if (past) {
+                        // Past or no available slots
+                        if (past || !available) {
                             return (
                                 <button
                                     key={day}

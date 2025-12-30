@@ -52,7 +52,7 @@ export function ReviewActions({ doctorId }: ReviewActionsProps) {
                 {/* Buttons */}
                 <div className="flex flex-col-reverse gap-4 pt-2 sm:flex-row">
                     <Link
-                        href={`/doctors/${doctorId}/booking/customer-data`}
+                        href={`/doctors/${doctorId}/booking/patient-data`}
                         className="flex flex-1 cursor-pointer items-center justify-center rounded-xl border border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50"
                     >
                         Ubah Data

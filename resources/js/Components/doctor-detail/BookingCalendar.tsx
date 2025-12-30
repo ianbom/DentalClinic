@@ -1,16 +1,30 @@
 'use client';
 
-import { Doctor } from '@/lib/doctors';
+import { formatTime } from '@/lib/utils/date';
+import { DAY_ORDER, groupByDay } from '@/lib/utils/schedule';
+import { Doctor } from '@/types';
 import { Link } from '@inertiajs/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 interface BookingCalendarProps {
-    doctor?: Doctor;
+    doctor: Doctor;
     doctorId: string;
 }
 
 export function BookingCalendar({ doctor, doctorId }: BookingCalendarProps) {
     const [activeTab, setActiveTab] = useState<'jadwal'>('jadwal');
+
+    // Group schedules by day
+    const scheduleByDay = useMemo(() => {
+        if (!doctor.working_periods || doctor.working_periods.length === 0) {
+            return {};
+        }
+        return groupByDay(doctor.working_periods);
+    }, [doctor.working_periods]);
+
+    const sortedDays = Object.keys(scheduleByDay).sort(
+        (a, b) => DAY_ORDER.indexOf(a) - DAY_ORDER.indexOf(b),
+    );
 
     return (
         <>
@@ -36,56 +50,63 @@ export function BookingCalendar({ doctor, doctorId }: BookingCalendarProps) {
                         Jadwal Praktek
                     </h3>
 
-                    <div className="space-y-4">
-                        {/* Hari Praktek */}
-                        <div className="flex items-start gap-4 rounded-lg bg-gray-50 p-4">
-                            <div className="rounded-lg bg-primary/10 p-2">
-                                <span className="material-symbols-outlined text-primary">
-                                    calendar_month
-                                </span>
+                    {/* Schedule Cards by Day */}
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {sortedDays.length > 0 ? (
+                            sortedDays.map((day) => (
+                                <div
+                                    key={day}
+                                    className="rounded-xl border border-subtle-light bg-gray-50 p-4 transition-all hover:border-primary/30 hover:shadow-md"
+                                >
+                                    <div className="mb-3 flex items-center gap-2">
+                                        <div className="rounded-lg bg-primary/10 p-2">
+                                            <span className="material-symbols-outlined text-primary">
+                                                calendar_month
+                                            </span>
+                                        </div>
+                                        <h4 className="text-lg font-bold text-text-light">
+                                            {day}
+                                        </h4>
+                                    </div>
+                                    <div className="space-y-2">
+                                        {scheduleByDay[day].map((wp, idx) => (
+                                            <div
+                                                key={idx}
+                                                className="flex items-center gap-2 rounded-lg bg-white px-3 py-2"
+                                            >
+                                                <span className="material-symbols-outlined text-[16px] text-primary">
+                                                    schedule
+                                                </span>
+                                                <span className="text-sm font-medium text-gray-700">
+                                                    {formatTime(wp.start_time)}{' '}
+                                                    - {formatTime(wp.end_time)}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="col-span-full py-8 text-center text-gray-500">
+                                Jadwal belum tersedia
                             </div>
-                            <div>
-                                <p className="text-sm text-gray-500">
-                                    Hari Praktek
-                                </p>
-                                <p className="text-lg font-bold text-text-light">
-                                    {doctor?.days || '-'}
-                                </p>
-                            </div>
-                        </div>
+                        )}
+                    </div>
 
-                        {/* Jam Praktek */}
-                        <div className="flex items-start gap-4 rounded-lg bg-gray-50 p-4">
-                            <div className="rounded-lg bg-primary/10 p-2">
-                                <span className="material-symbols-outlined text-primary">
-                                    schedule
-                                </span>
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-500">
-                                    Jam Praktek
-                                </p>
-                                <p className="text-lg font-bold text-text-light">
-                                    {doctor?.practiceHours || '-'}
-                                </p>
-                            </div>
+                    {/* Lokasi */}
+                    <div className="mt-6 flex items-start gap-4 rounded-lg bg-gray-50 p-4">
+                        <div className="rounded-lg bg-primary/10 p-2">
+                            <span className="material-symbols-outlined text-primary">
+                                location_on
+                            </span>
                         </div>
-
-                        {/* Lokasi */}
-                        <div className="flex items-start gap-4 rounded-lg bg-gray-50 p-4">
-                            <div className="rounded-lg bg-primary/10 p-2">
-                                <span className="material-symbols-outlined text-primary">
-                                    location_on
-                                </span>
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-500">
-                                    Lokasi Praktek
-                                </p>
-                                <p className="text-lg font-bold text-text-light">
-                                    Cantika Dental Care
-                                </p>
-                            </div>
+                        <div>
+                            <p className="text-sm text-gray-500">
+                                Lokasi Praktek
+                            </p>
+                            <p className="text-lg font-bold text-text-light">
+                                Cantika Dental Care
+                            </p>
                         </div>
                     </div>
 
