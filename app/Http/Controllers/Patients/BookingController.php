@@ -123,30 +123,26 @@ class BookingController extends Controller
 
 
 
-    public function checkBookingPage()
+    public function checkBookingPage(Request $request)
     {
-        return Inertia::render('patient/check-booking/CheckBooking');
-    }
+        $booking = null;
 
-    public function checkBooking(Request $request)
-    {   
+        // If code and phone are provided, search for booking
+        if ($request->filled('code') && $request->filled('phone')) {
+            $booking = Booking::with(['doctor', 'patient'])
+                ->where('code', $request->code)
+                ->whereHas('patient', function ($query) use ($request) {
+                    $query->where('patient_phone', $request->phone);
+                })
+                ->first();
 
-        $request->validate([
-            'code' => 'required|string',
-            'phone' => 'required|string',
-        ]);
-
-        $booking = Booking::with(['doctor', 'patient'])
-            ->where('code', $request->code)
-            ->whereHas('patient', function ($query) use ($request) {
-                $query->where('patient_phone', $request->phone);
-            })
-            ->first();
-
-        if (!$booking) {
-            return back()->withErrors([
-                'booking' => 'Booking tidak ditemukan. Pastikan kode booking dan nomor WhatsApp sudah benar.',
-            ]);
+            if (!$booking) {
+                return Inertia::render('patient/check-booking/CheckBooking', [
+                    'booking' => null,
+                ])->withViewData('errors', [
+                    'booking' => 'Booking tidak ditemukan. Pastikan kode booking dan nomor WhatsApp sudah benar.',
+                ]);
+            }
         }
 
         return Inertia::render('patient/check-booking/CheckBooking', [

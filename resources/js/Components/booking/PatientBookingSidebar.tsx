@@ -84,8 +84,8 @@ export function CustomerBookingSidebar({
                             {bookingData.serviceType === 'long'
                                 ? '45 Menit'
                                 : bookingData.serviceType === 'short'
-                                    ? '15 Menit'
-                                    : '-'}
+                                  ? '15 Menit'
+                                  : '-'}
                         </p>
                     </div>
                 </div>

@@ -118,8 +118,8 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
                                     slot.reason === 'booked'
                                         ? 'Sudah dibooking'
                                         : slot.reason === 'time_off'
-                                            ? 'Dokter tidak tersedia'
-                                            : 'Tidak tersedia'
+                                          ? 'Dokter tidak tersedia'
+                                          : 'Tidak tersedia'
                                 }
                             >
                                 {slot.time}

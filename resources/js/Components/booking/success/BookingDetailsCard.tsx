@@ -114,7 +114,9 @@ export function BookingDetailsCard({ booking }: BookingDetailsCardProps) {
                             {booking.service || '-'}
                             {booking.type && (
                                 <span className="ml-2 rounded bg-primary/10 px-2 py-0.5 text-xs text-primary">
-                                    {booking.type === 'long' ? '45 menit' : '15 menit'}
+                                    {booking.type === 'long'
+                                        ? '45 menit'
+                                        : '15 menit'}
                                 </span>
                             )}
                         </span>

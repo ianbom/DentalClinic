@@ -66,7 +66,6 @@ Route::post('/booking/create', [PatientBookingController::class, 'createBooking'
 Route::get('/booking/success/{code}', [PatientBookingController::class, 'bookingSuccessPage'])->name('booking.success');
 
 Route::get('/check-booking', [PatientBookingController::class, 'checkBookingPage'])->name('check-booking');
-Route::post('/check-booking', [PatientBookingController::class, 'checkBooking'])->name('check-booking.search');
 
 Route::post('/booking/checkin', [PatientBookingController::class, 'checkinBooking'])->name('booking.checkin');
 

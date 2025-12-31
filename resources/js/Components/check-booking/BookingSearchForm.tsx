@@ -15,7 +15,7 @@ export function BookingSearchForm() {
 
         setIsSearching(true);
 
-        router.post(
+        router.get(
             '/check-booking',
             {
                 phone: whatsapp,

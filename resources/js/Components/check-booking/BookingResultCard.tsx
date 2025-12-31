@@ -429,6 +429,26 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
                             </p>
                         </div>
                     </div>
+                    <div className="flex items-start gap-3">
+                        <span className="material-symbols-outlined mt-0.5 text-[#0da2e7]">
+                            medical_services
+                        </span>
+                        <div>
+                            <p className="text-xs font-medium text-gray-500">
+                                Layanan
+                            </p>
+                            <p className="text-base font-semibold text-gray-900">
+                                {booking.service || '-'}
+                                {booking.type && (
+                                    <span className="ml-2 rounded bg-primary/10 px-2 py-0.5 text-xs text-primary">
+                                        {booking.type === 'long'
+                                            ? '45 menit'
+                                            : '15 menit'}
+                                    </span>
+                                )}
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
