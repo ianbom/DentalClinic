@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class BookingPatientDetail extends Model
+class Patient extends Model
 {
-    protected $table = 'booking_patient_details';
+    protected $table = 'patients';
 
     protected $fillable = [
         'medical_records',

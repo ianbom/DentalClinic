@@ -25,7 +25,7 @@ export function DoctorListClient({ doctors }: DoctorListClientProps) {
         });
     }, [doctors, searchQuery]);
 
-    const waNumber = '6281234567890'; // Ganti dengan nomor WA yang benar
+    const waNumber = '6285231519966';
     const waMessage = encodeURIComponent(
         'Halo, saya ingin konsultasi online mengenai kesehatan gigi.',
     );

@@ -10,19 +10,22 @@ export function AboutStory() {
                         Perjalanan Menuju Senyum Indonesia yang Lebih Sehat
                     </h2>
                     <p className="mt-2 text-base font-normal leading-relaxed text-text-light/80">
-                        Didirikan pada tahun 2010, klinik kami berawal dari visi
-                        sederhana: menghadirkan perawatan gigi yang nyaman dan
-                        terjangkau bagi semua orang di tengah hiruk pikuk kota.
-                        Kami percaya bahwa kunjungan ke dokter gigi tidak
-                        seharusnya menakutkan.
+                        Cantika Dental Care merupakan fasilitas pelayanan
+                        kesehatan gigi dan mulut yang mengedepankan pelayanan
+                        prima, pemanfaatan teknologi digital, serta
+                        profesionalitas dalam setiap aspek layanan. Didirikan
+                        sejak tahun 2013 oleh drg. Anna Fikril Indayati, lulusan
+                        Fakultas Kedokteran Gigi Universitas Jember, klinik ini
+                        berkomitmen memberikan pelayanan yang aman, berkualitas,
+                        dan berorientasi pada kenyamanan serta kepuasan pasien.
                     </p>
                     <p className="text-base font-normal leading-relaxed text-text-light/80">
-                        Kini, kami telah berkembang menjadi pusat kesehatan gigi
-                        terpercaya di wilayah ini, melayani ribuan pasien dengan
-                        teknologi sterilisasi modern dan pendekatan yang ramah
-                        keluarga. Setiap sudut klinik kami dirancang untuk
-                        memberikan ketenangan, dari ruang tunggu hingga ruang
-                        perawatan.
+                        Dengan didukung oleh tenaga medis yang kompeten, sistem
+                        pelayanan berbasis digital, serta fasilitas dan
+                        peralatan yang terstandar, Cantika Dental Care hadir
+                        sebagai mitra terpercaya masyarakat dalam menjaga dan
+                        meningkatkan kesehatan gigi dan mulut secara
+                        berkelanjutan.
                     </p>
                 </div>
                 <div className="w-full flex-1">

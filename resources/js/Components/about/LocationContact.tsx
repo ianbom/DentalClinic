@@ -1,6 +1,9 @@
 import { Link } from '@inertiajs/react';
 
 export function LocationContact() {
+    // const phoneNumber = '6285231519966';
+    const mapsUrl = 'https://maps.app.goo.gl/52AVmyvG9z9WZ8uv9';
+
     return (
         <section className="flex justify-center bg-background-light px-4 py-16 md:px-40">
             <div className="flex w-full max-w-[1024px] flex-col gap-8 lg:flex-row">
@@ -11,8 +14,8 @@ export function LocationContact() {
                             Kunjungi Kami
                         </h2>
                         <p className="text-gray-600">
-                            Kami berlokasi strategis di pusat kota dengan akses
-                            parkir yang mudah.
+                            Kami berlokasi strategis dengan akses yang mudah
+                            dijangkau.
                         </p>
                     </div>
                     <div className="flex flex-col gap-6">
@@ -28,8 +31,8 @@ export function LocationContact() {
                                     Alamat Klinik
                                 </h3>
                                 <p className="mt-1 text-sm text-gray-600">
-                                    Jl. Sehat Sejahtera No. 123, Jakarta
-                                    Selatan, DKI Jakarta 12430
+                                    Dandong, Kec. Srengat, Kabupaten Blitar,
+                                    Jawa Timur 66152
                                 </p>
                             </div>
                         </div>
@@ -47,21 +50,15 @@ export function LocationContact() {
                                 </h3>
                                 <ul className="mt-1 space-y-1 text-sm text-gray-600">
                                     <li className="flex w-48 justify-between">
-                                        <span>Senin - Jumat:</span>
+                                        <span>Senin - Sabtu:</span>
                                         <span className="font-medium">
-                                            09:00 - 20:00
-                                        </span>
-                                    </li>
-                                    <li className="flex w-48 justify-between">
-                                        <span>Sabtu:</span>
-                                        <span className="font-medium">
-                                            09:00 - 15:00
+                                            08:00 - 21:00
                                         </span>
                                     </li>
                                     <li className="flex w-48 justify-between">
                                         <span>Minggu:</span>
-                                        <span className="text-red-500">
-                                            Tutup
+                                        <span className="font-medium">
+                                            08:00 - 14:00
                                         </span>
                                     </li>
                                 </ul>
@@ -82,16 +79,17 @@ export function LocationContact() {
                                 <p className="mb-3 mt-1 text-sm text-gray-600">
                                     Punya pertanyaan? Hubungi kami via WhatsApp.
                                 </p>
-                                <Link
-                                    href="https://wa.me/6281234567890"
+                                <a
+                                    href="https://wa.me/6285231519966"
                                     target="_blank"
                                     className="inline-flex items-center gap-2 rounded-lg bg-[#25D366] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#128c7e]"
+                                    rel="noreferrer"
                                 >
                                     <span className="material-symbols-outlined text-lg">
                                         chat
                                     </span>
-                                    Chat via WhatsApp
-                                </Link>
+                                    085231519966
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -99,17 +97,23 @@ export function LocationContact() {
 
                 {/* Map Side */}
                 <div className="lg:min-h-auto group relative min-h-[400px] flex-1 overflow-hidden rounded-xl border border-gray-200 shadow-lg">
-                    <img
-                        alt="Map location of the dental clinic in Jakarta"
-                        className="h-full w-full object-cover grayscale-[20%] transition-all duration-500 group-hover:grayscale-0"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVSFvBmAdo5LBhBKBQuXSykfMz9WRUiVTyA2kzZ2pBTdH4IwHGNcMjKCs6PII7zBf6dFZfG-OI8ukdpMx8SvQRGoF4m67TqEiYYlm9pKLQwkD4CRdcsEfOus3kMUm59hV92VTLWbqtcMbjIHF6q8AFYSS_OOGR8ZnjzKgbDqV8UxAqr3RtYgIFhTUl7h38Y3Bqw7esTr1gkpVVyoiuWhhMMxRVnuqyB93ySRwcYWZnyGDQAM2HGNnQHbzp7UnC_c-JLzACIwFCpjXW"
+                    <iframe
+                        title="Lokasi Dokter Gigi Anna Fikril I"
+                        src="https://www.google.com/maps?q=Dokter%20Gigi%20Anna%20Fikril%20I%20@-8.0740271,112.0736051&z=19&output=embed"
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0, minHeight: '400px' }}
+                        allowFullScreen
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        className="grayscale-[20%] transition-all duration-500 group-hover:grayscale-0"
                     />
                     <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-lg bg-white/90 p-4 shadow-sm backdrop-blur">
                         <span className="text-xs font-medium text-gray-500">
                             Peta Lokasi
                         </span>
                         <Link
-                            href="https://maps.google.com"
+                            href={mapsUrl}
                             target="_blank"
                             className="text-xs font-bold text-primary hover:underline"
                         >

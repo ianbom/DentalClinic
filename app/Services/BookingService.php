@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Booking;
-use App\Models\BookingPatientDetail;
+use App\Models\Patient;
 use App\Models\Doctor;
 use App\Models\DoctorTimeOff;
 use App\Models\DoctorWorkingPeriod;
@@ -247,7 +247,7 @@ class BookingService
         }
 
         // Find or create/update patient by NIK
-        $patient = BookingPatientDetail::where('patient_nik', $data['patient_nik'])->first();
+        $patient = Patient::where('patient_nik', $data['patient_nik'])->first();
         
         if ($patient) {
             // Update existing patient data if there are changes
@@ -260,8 +260,8 @@ class BookingService
             ]);
         } else {
             // Create new patient
-            $patient = BookingPatientDetail::create([
-                'medical_records' => BookingPatientDetail::generateMedicalRecords(),
+            $patient = Patient::create([
+                'medical_records' => Patient::generateMedicalRecords(),
                 'patient_name' => $data['patient_name'],
                 'patient_nik' => $data['patient_nik'],
                 'patient_email' => $data['patient_email'] ?? null,

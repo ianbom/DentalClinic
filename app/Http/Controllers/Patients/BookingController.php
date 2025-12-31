@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Patients;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateBookingRequest;
 use App\Models\Booking;
-use App\Models\BookingPatientDetail;
+use App\Models\Patient;
 use App\Models\Doctor;
 use App\Services\BookingService;
 use App\Services\WhatsappService;
@@ -66,7 +66,7 @@ class BookingController extends Controller
             'nik' => 'required|string|max:32',
         ]);
 
-        $patient = BookingPatientDetail::where('patient_nik', $request->nik)->first();
+        $patient = Patient::where('patient_nik', $request->nik)->first();
 
         if ($patient) {
             return redirect()->back()->with('nikCheck', [

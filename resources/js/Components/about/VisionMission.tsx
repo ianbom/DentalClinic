@@ -1,14 +1,10 @@
 interface VisionMissionCardProps {
     icon: string;
     title: string;
-    description: string;
+    children: React.ReactNode;
 }
 
-function VisionMissionCard({
-    icon,
-    title,
-    description,
-}: VisionMissionCardProps) {
+function VisionMissionCard({ icon, title, children }: VisionMissionCardProps) {
     return (
         <div className="flex flex-col gap-5 rounded-xl border border-gray-200 bg-white p-8 shadow-sm transition-shadow hover:shadow-md">
             <div className="mb-2 flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -18,9 +14,9 @@ function VisionMissionCard({
             </div>
             <div className="flex flex-col gap-2">
                 <h3 className="text-xl font-bold text-text-light">{title}</h3>
-                <p className="text-base leading-relaxed text-gray-500">
-                    {description}
-                </p>
+                <div className="text-base leading-relaxed text-gray-500">
+                    {children}
+                </div>
             </div>
         </div>
     );
@@ -40,16 +36,51 @@ export function VisionMission() {
                     </p>
                 </div>
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    {/* Visi */}
+                    <VisionMissionCard icon="visibility" title="Visi Kami">
+                        <p>
+                            Menjadi klinik gigi terpercaya yang unggul dalam
+                            pelayanan kesehatan gigi dan mulut dengan
+                            mengedepankan profesionalitas tenaga medis,
+                            pemanfaatan teknologi digital, serta pelayanan yang
+                            aman, nyaman, dan berorientasi pada kepuasan pasien.
+                        </p>
+                    </VisionMissionCard>
+
+                    {/* Misi */}
                     <VisionMissionCard
                         icon="medical_services"
                         title="Misi Kami"
-                        description="Menyediakan perawatan gigi berkualitas tinggi dengan harga yang transparan dan terjangkau, serta mengedukasi masyarakat tentang pentingnya kesehatan mulut."
-                    />
-                    <VisionMissionCard
-                        icon="visibility"
-                        title="Visi Kami"
-                        description="Menjadi klinik gigi paling terpercaya dan menjadi pilihan utama keluarga di wilayah ini melalui inovasi teknologi dan pelayanan yang humanis."
-                    />
+                    >
+                        <ol className="list-inside list-decimal space-y-2">
+                            <li>
+                                Menyelenggarakan pelayanan kesehatan gigi dan
+                                mulut yang berkualitas, aman, dan berfokus pada
+                                kebutuhan serta kenyamanan pasien.
+                            </li>
+                            <li>
+                                Menerapkan sistem pelayanan berbasis digital
+                                untuk meningkatkan efisiensi, akurasi, dan
+                                kemudahan akses layanan bagi pasien.
+                            </li>
+                            <li>
+                                Mengembangkan kompetensi dan profesionalitas
+                                tenaga medis serta seluruh staf melalui
+                                pelatihan berkelanjutan dan penerapan standar
+                                pelayanan yang tinggi.
+                            </li>
+                            <li>
+                                Menyediakan fasilitas dan peralatan kedokteran
+                                gigi yang terstandar, higienis, dan sesuai
+                                dengan perkembangan teknologi.
+                            </li>
+                            <li>
+                                Membangun budaya pelayanan yang ramah, etis,
+                                transparan, dan bertanggung jawab dalam setiap
+                                proses pelayanan klinik.
+                            </li>
+                        </ol>
+                    </VisionMissionCard>
                 </div>
             </div>
         </section>

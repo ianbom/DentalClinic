@@ -57,7 +57,8 @@ export function Footer() {
                                 <span className="text-sm font-bold">IG</span>
                             </Link>
                             <Link
-                                href="#"
+                                href="https://wa.me/6285231519966"
+                                target="_blank"
                                 className="flex size-10 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors hover:bg-primary hover:text-white"
                                 aria-label="WhatsApp"
                             >
@@ -115,28 +116,31 @@ export function Footer() {
                                     location_on
                                 </span>
                                 <span>
-                                    Jl. Kesehatan No. 123,
+                                    Dandong, Kec. Srengat,
                                     <br />
-                                    Jakarta Selatan, Indonesia
+                                    Kabupaten Blitar, Jawa Timur 66152
                                 </span>
                             </li>
                             <li className="flex items-center gap-2">
                                 <span className="material-symbols-outlined shrink-0 text-lg text-primary">
                                     call
                                 </span>
-                                <span>+62 812 3456 7890</span>
+                                <span>+62 852-3151-9966</span>
                             </li>
                             <li className="flex items-center gap-2">
                                 <span className="material-symbols-outlined shrink-0 text-lg text-primary">
                                     mail
                                 </span>
-                                <span>info@dentalcare.id</span>
+                                <span>info@cantikadental.id</span>
                             </li>
-                            <li className="flex items-center gap-2">
+                            <li className="flex items-start gap-2">
                                 <span className="material-symbols-outlined shrink-0 text-lg text-primary">
                                     schedule
                                 </span>
-                                <span>Senin - Sabtu: 09:00 - 20:00</span>
+                                <div className="flex flex-col text-sm">
+                                    <span>Senin - Sabtu: 08:00 - 21:00</span>
+                                    <span>Minggu: 08:00 - 14:00</span>
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -145,7 +149,7 @@ export function Footer() {
                 {/* Bottom Bar */}
                 <div className="flex flex-col items-center justify-between gap-4 border-t border-subtle-light pt-6 sm:flex-row md:pt-8">
                     <p className="text-center text-sm text-gray-400 sm:text-left">
-                        © {currentYear} DentalCare Clinic. All rights reserved.
+                        © {currentYear} Cantika Dental Care. All rights reserved.
                     </p>
                     <div className="flex gap-4 text-sm text-gray-400">
                         <Link

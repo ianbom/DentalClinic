@@ -89,15 +89,15 @@ export interface Booking extends BaseModel {
     is_active: number;
     // Relations
     doctor?: Doctor;
-    patient?: BookingPatientDetail;
-    patient_detail?: BookingPatientDetail; // Alias for backward compatibility
+    patient?: Patient;
+    patient_detail?: Patient; // Alias for backward compatibility
     checkin?: BookingCheckin;
     cancellation?: BookingCancellation;
     reschedules?: BookingReschedule[];
     notifications?: Notification[];
 }
 
-export interface BookingPatientDetail extends BaseModel {
+export interface Patient extends BaseModel {
     medical_records?: string;
     patient_name: string;
     patient_nik: string;

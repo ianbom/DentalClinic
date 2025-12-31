@@ -24,9 +24,9 @@ export function CTA() {
                             </button>
                         </Link>
 
-                        <button className="w-full cursor-pointer rounded-lg border border-white bg-transparent px-8 py-3 font-bold text-white transition-colors hover:bg-white/10 sm:w-auto">
+                        <a href='https://wa.me/6285231519966' target='_blank' className="w-full cursor-pointer rounded-lg border border-white bg-transparent px-8 py-3 font-bold text-white transition-colors hover:bg-white/10 sm:w-auto">
                             Konsultasi via WhatsApp
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

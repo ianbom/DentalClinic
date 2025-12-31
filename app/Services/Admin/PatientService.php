@@ -2,7 +2,7 @@
 
 namespace App\Services\Admin;
 
-use App\Models\BookingPatientDetail;
+use App\Models\Patient;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +14,7 @@ class PatientService
     public function getAllPatients(): array
     {
         // Get unique patients by NIK with their latest info and visit count
-        $patients = BookingPatientDetail::select(
+        $patients = Patient::select(
             'patient_nik',
             DB::raw('MAX(patient_name) as patient_name'),
             DB::raw('MAX(patient_phone) as patient_phone'),
