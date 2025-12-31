@@ -13,10 +13,14 @@ export interface BookingData {
     nik: string;
     whatsapp: string;
     email: string;
-    complaint: string;
+    birthdate: string;
+    address: string;
+    service: string;
+    serviceType: 'short' | 'long' | '';
     selectedDate: string;
     selectedTime: string;
     isWhatsappVerified: boolean;
+    isNikChecked: boolean;
 }
 
 interface BookingContextType {
@@ -30,10 +34,14 @@ const defaultBookingData: BookingData = {
     nik: '',
     whatsapp: '',
     email: '',
-    complaint: '',
+    birthdate: '',
+    address: '',
+    service: '',
+    serviceType: '',
     selectedDate: '',
     selectedTime: '',
     isWhatsappVerified: false,
+    isNikChecked: false,
 };
 
 const STORAGE_KEY = 'bookingData';

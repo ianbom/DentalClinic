@@ -56,11 +56,14 @@ export function ReviewActions({ doctorId }: ReviewActionsProps) {
             doctor_id: doctorId,
             booking_date: parseDate(bookingData.selectedDate),
             start_time: parseTime(bookingData.selectedTime),
+            service: bookingData.service,
+            type: bookingData.serviceType,
             patient_name: bookingData.fullName,
             patient_nik: bookingData.nik,
             patient_email: bookingData.email || null,
             patient_phone: bookingData.whatsapp,
-            complaint: bookingData.complaint || null,
+            patient_birthdate: bookingData.birthdate,
+            patient_address: bookingData.address,
         };
 
         router.post('/booking/create', formData, {

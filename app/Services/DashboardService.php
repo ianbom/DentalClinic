@@ -57,7 +57,7 @@ class DashboardService
     {
         $today = Carbon::today();
 
-        $bookings = Booking::with(['doctor', 'patientDetail'])
+        $bookings = Booking::with(['doctor', 'patient'])
             ->whereDate('booking_date', $today)
             ->orderBy('start_time', 'asc')
             ->get();
@@ -67,7 +67,7 @@ class DashboardService
 
     public function getRecentBookings(int $limit = 10): array
     {
-        $bookings = Booking::with(['doctor', 'patientDetail'])
+        $bookings = Booking::with(['doctor', 'patient'])
             ->orderBy('created_at', 'desc')
             ->take($limit)
             ->get();
@@ -85,16 +85,17 @@ class DashboardService
             return [
                 'id' => $booking->id,
                 'code' => $booking->code,
-                'patient_name' => $booking->patientDetail?->patient_name ?? '-',
-                'patient_nik' => $booking->patientDetail?->patient_nik ?? '-',
-                'patient_phone' => $booking->patientDetail?->patient_phone ?? '-',
-                'patient_email' => $booking->patientDetail?->patient_email ?? '-',
+                'patient_name' => $booking->patient?->patient_name ?? '-',
+                'patient_nik' => $booking->patient?->patient_nik ?? '-',
+                'patient_phone' => $booking->patient?->patient_phone ?? '-',
+                'patient_email' => $booking->patient?->patient_email ?? '-',
+                'patient_medical_records' => $booking->patient?->medical_records ?? '-',
                 'doctor_name' => $booking->doctor?->name ?? '-',
                 'booking_date' => Carbon::parse($booking->booking_date)->format('Y-m-d'),
                 'booking_date_formatted' => Carbon::parse($booking->booking_date)->format('d M Y'),
                 'start_time' => substr($booking->start_time, 0, 5),
                 'status' => $booking->status,
-                'complaint' => $booking->patientDetail?->complaint ?? '-',
+                'doctor_id' => $booking->doctor?->id,
                 'created_at' => $booking->created_at->format('Y-m-d H:i:s'),
                 'created_at_formatted' => $booking->created_at->format('d M Y H:i'),
             ];

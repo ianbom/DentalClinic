@@ -77,10 +77,15 @@ export function CustomerBookingSidebar({
                     </span>
                     <div>
                         <p className="text-sm font-semibold text-text-light">
-                            Konsultasi
+                            {bookingData.service || 'Pilih Layanan'}
                         </p>
                         <p className="text-xs text-gray-500">
-                            Durasi: 60 Menit
+                            Durasi:{' '}
+                            {bookingData.serviceType === 'long'
+                                ? '45 Menit'
+                                : bookingData.serviceType === 'short'
+                                    ? '15 Menit'
+                                    : '-'}
                         </p>
                     </div>
                 </div>

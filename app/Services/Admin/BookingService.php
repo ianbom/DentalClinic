@@ -17,7 +17,7 @@ class BookingService
 
     public function getAllBookings(): array
     {
-        $bookings = Booking::with(['doctor', 'patientDetail'])
+        $bookings = Booking::with(['doctor', 'patient'])
             ->orderBy('booking_date', 'asc')
             ->orderBy('start_time', 'asc')
             ->get();
@@ -27,7 +27,7 @@ class BookingService
 
     public function getBookingDetail(int $bookingId): ?array
     {
-        $booking = Booking::with(['doctor', 'patientDetail', 'checkin', 'cancellation', 'reschedules'])
+        $booking = Booking::with(['doctor', 'patient', 'checkin', 'cancellation', 'reschedules'])
             ->find($bookingId);
 
         if (!$booking) {
@@ -46,11 +46,15 @@ class BookingService
             
             // Patient info
             'patient' => [
-                'name' => $booking->patientDetail?->patient_name ?? '-',
-                'nik' => $booking->patientDetail?->patient_nik ?? '-',
-                'phone' => $booking->patientDetail?->patient_phone ?? '-',
-                'email' => $booking->patientDetail?->patient_email ?? '-',
-                'complaint' => $booking->patientDetail?->complaint ?? '-',
+                'id' => $booking->patient?->id,
+                'medical_records' => $booking->patient?->medical_records ?? '-',
+                'name' => $booking->patient?->patient_name ?? '-',
+                'nik' => $booking->patient?->patient_nik ?? '-',
+                'phone' => $booking->patient?->patient_phone ?? '-',
+                'email' => $booking->patient?->patient_email ?? '-',
+                'birthdate' => $booking->patient?->patient_birthdate?->format('Y-m-d'),
+                'birthdate_formatted' => $booking->patient?->patient_birthdate?->translatedFormat('d F Y'),
+                'address' => $booking->patient?->patient_address ?? '-',
             ],
             
             // Doctor info

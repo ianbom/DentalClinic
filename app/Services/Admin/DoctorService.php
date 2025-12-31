@@ -37,7 +37,7 @@ class DoctorService
     public function getDoctorById(int $id): ?array
     {
         $doctor = Doctor::with(['workingPeriods', 'bookings' => function ($query) {
-            $query->with('patientDetail')->latest()->limit(5);
+            $query->with('patient')->latest()->limit(5);
         }])
             ->withCount(['bookings', 'bookings as completed_bookings_count' => function ($query) {
                 $query->where('status', 'completed');
@@ -48,11 +48,10 @@ class DoctorService
             return null;
         }
 
-        // Get unique patients count by patient_nik from booking_patient_details
+        // Get unique patients count by patient_id
         $uniquePatientsCount = $doctor->bookings()
-            ->join('booking_patient_details', 'bookings.id', '=', 'booking_patient_details.booking_id')
-            ->distinct('booking_patient_details.patient_nik')
-            ->count('booking_patient_details.patient_nik');
+            ->distinct('patient_id')
+            ->count('patient_id');
 
         // Format working periods for today
         $today = Carbon::now()->dayOfWeek;
@@ -72,9 +71,9 @@ class DoctorService
         $recentBookings = $doctor->bookings->map(function ($booking) {
             return [
                 'id' => $booking->id,
-                'patient_name' => $booking->patientDetail->patient_name ?? 'Unknown',
+                'patient_name' => $booking->patient->patient_name ?? 'Unknown',
                 'patient_avatar' => null,
-                'treatment' => $booking->patientDetail->complaint ?? 'Konsultasi',
+                'treatment' => 'Konsultasi',
                 'date' => Carbon::parse($booking->booking_date)->translatedFormat('d M Y'),
                 'time' => Carbon::parse($booking->start_time)->format('H:i'),
                 'status' => $booking->status,

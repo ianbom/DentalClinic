@@ -79,31 +79,34 @@ export type BookingStatus =
 
 export interface Booking extends BaseModel {
     doctor_id: number;
+    patient_id: number;
     code: string;
+    service?: string;
+    type?: 'long' | 'short';
     booking_date: string;
     start_time: string;
     status: BookingStatus;
     is_active: number;
     // Relations
     doctor?: Doctor;
-    patient_detail?: BookingPatientDetail;
+    patient?: BookingPatientDetail;
+    patient_detail?: BookingPatientDetail; // Alias for backward compatibility
     checkin?: BookingCheckin;
     cancellation?: BookingCancellation;
     reschedules?: BookingReschedule[];
     notifications?: Notification[];
 }
 
-export interface BookingPatientDetail {
-    booking_id: number;
+export interface BookingPatientDetail extends BaseModel {
+    medical_records?: string;
     patient_name: string;
     patient_nik: string;
     patient_email?: string;
     patient_phone: string;
-    complaint?: string;
-    created_at: string;
-    updated_at: string;
+    patient_birthdate?: string;
+    patient_address?: string;
     // Relations
-    booking?: Booking;
+    bookings?: Booking[];
 }
 
 export interface BookingCheckin {
@@ -170,6 +173,9 @@ export interface TimeSlot {
     time: string;
     available: boolean;
     reason?: SlotUnavailableReason | null;
+    slot_type?: 'short' | 'long';
+    available_for_short?: boolean;
+    available_for_long?: boolean;
 }
 
 export interface AvailableDate {

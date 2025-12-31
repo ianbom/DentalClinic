@@ -18,7 +18,7 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
         flash?: { success?: string };
     };
 
-    const patientDetail = booking.patient_detail;
+    const patientDetail = booking.patient || booking.patient_detail;
     const doctor = booking.doctor;
 
     // Format date

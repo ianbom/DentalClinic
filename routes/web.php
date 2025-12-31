@@ -58,6 +58,7 @@ Route::get('/doctors/{id}/booking', [PatientBookingController::class, 'bookingDo
 
 Route::get('/doctors/{id}/booking/patient-data', [PatientBookingController::class, 'bookingPatientDataPage'])->name('booking.patient-data');
 Route::post('/verify-wa', [PatientBookingController::class, 'verifyWhatsapp'])->name('verify.whatsapp');
+Route::post('/check-nik', [PatientBookingController::class, 'checkNik'])->name('check-nik');
 Route::get('/doctors/{id}/booking/patient-data/review', [PatientBookingController::class, 'bookingPatientReviewPage'])->name('booking.review');
 
 Route::post('/booking/create', [PatientBookingController::class, 'createBooking'])->name('booking.create');
@@ -66,6 +67,7 @@ Route::get('/booking/success/{code}', [PatientBookingController::class, 'booking
 
 Route::get('/check-booking', [PatientBookingController::class, 'checkBookingPage'])->name('check-booking');
 Route::post('/check-booking', [PatientBookingController::class, 'checkBooking'])->name('check-booking.search');
+
 Route::post('/booking/checkin', [PatientBookingController::class, 'checkinBooking'])->name('booking.checkin');
 
 /*

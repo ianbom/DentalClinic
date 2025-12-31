@@ -7,7 +7,7 @@ interface BookingDetailsCardProps {
 }
 
 export function BookingDetailsCard({ booking }: BookingDetailsCardProps) {
-    const patientDetail = booking.patient_detail;
+    const patient = booking.patient || booking.patient_detail;
     const doctor = booking.doctor;
 
     // Format date from Y-m-d to readable format
@@ -57,7 +57,7 @@ export function BookingDetailsCard({ booking }: BookingDetailsCardProps) {
                             Nama Pasien
                         </span>
                         <span className="font-medium text-text-light">
-                            {patientDetail?.patient_name || '-'}
+                            {patient?.patient_name || '-'}
                         </span>
                     </div>
 
@@ -65,7 +65,7 @@ export function BookingDetailsCard({ booking }: BookingDetailsCardProps) {
                     <div className="flex flex-col gap-1">
                         <span className="text-sm text-gray-500">NIK</span>
                         <span className="font-medium text-text-light">
-                            {patientDetail?.patient_nik || '-'}
+                            {patient?.patient_nik || '-'}
                         </span>
                     </div>
 
@@ -75,8 +75,8 @@ export function BookingDetailsCard({ booking }: BookingDetailsCardProps) {
                             Nomor WhatsApp
                         </span>
                         <span className="font-medium text-text-light">
-                            {patientDetail?.patient_phone
-                                ? `+62 ${patientDetail.patient_phone}`
+                            {patient?.patient_phone
+                                ? `+62 ${patient.patient_phone}`
                                 : '-'}
                         </span>
                     </div>
@@ -85,7 +85,38 @@ export function BookingDetailsCard({ booking }: BookingDetailsCardProps) {
                     <div className="flex flex-col gap-1">
                         <span className="text-sm text-gray-500">Email</span>
                         <span className="font-medium text-text-light">
-                            {patientDetail?.patient_email || '-'}
+                            {patient?.patient_email || '-'}
+                        </span>
+                    </div>
+
+                    {/* Tanggal Lahir */}
+                    <div className="flex flex-col gap-1">
+                        <span className="text-sm text-gray-500">
+                            Tanggal Lahir
+                        </span>
+                        <span className="font-medium text-text-light">
+                            {patient?.patient_birthdate || '-'}
+                        </span>
+                    </div>
+
+                    {/* Alamat */}
+                    <div className="flex flex-col gap-1">
+                        <span className="text-sm text-gray-500">Alamat</span>
+                        <span className="font-medium text-text-light">
+                            {patient?.patient_address || '-'}
+                        </span>
+                    </div>
+
+                    {/* Layanan */}
+                    <div className="flex flex-col gap-1">
+                        <span className="text-sm text-gray-500">Layanan</span>
+                        <span className="font-medium text-text-light">
+                            {booking.service || '-'}
+                            {booking.type && (
+                                <span className="ml-2 rounded bg-primary/10 px-2 py-0.5 text-xs text-primary">
+                                    {booking.type === 'long' ? '45 menit' : '15 menit'}
+                                </span>
+                            )}
                         </span>
                     </div>
 
@@ -113,25 +144,13 @@ export function BookingDetailsCard({ booking }: BookingDetailsCardProps) {
                     </div>
 
                     {/* Jadwal */}
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 md:col-span-2">
                         <span className="text-sm text-gray-500">Jadwal</span>
                         <span className="font-medium text-text-light">
                             {formatDate(booking.booking_date)} -{' '}
                             {formatTime(booking.start_time)}
                         </span>
                     </div>
-
-                    {/* Keluhan */}
-                    {patientDetail?.complaint && (
-                        <div className="flex flex-col gap-1 md:col-span-2">
-                            <span className="text-sm text-gray-500">
-                                Keluhan
-                            </span>
-                            <span className="font-medium text-text-light">
-                                {patientDetail.complaint}
-                            </span>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>

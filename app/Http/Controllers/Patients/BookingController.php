@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Patients;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateBookingRequest;
 use App\Models\Booking;
+use App\Models\BookingPatientDetail;
 use App\Models\Doctor;
 use App\Services\BookingService;
 use App\Services\WhatsappService;
@@ -59,6 +60,33 @@ class BookingController extends Controller
            }
     }
 
+    public function checkNik(Request $request)
+    {
+        $request->validate([
+            'nik' => 'required|string|max:32',
+        ]);
+
+        $patient = BookingPatientDetail::where('patient_nik', $request->nik)->first();
+
+        if ($patient) {
+            return redirect()->back()->with('nikCheck', [
+                'found' => true,
+                'patient' => [
+                    'patient_name' => $patient->patient_name,
+                    'patient_email' => $patient->patient_email,
+                    'patient_phone' => $patient->patient_phone,
+                    'patient_birthdate' => $patient->patient_birthdate?->format('Y-m-d'),
+                    'patient_address' => $patient->patient_address,
+                ],
+            ]);
+        }
+
+        return redirect()->back()->with('nikCheck', [
+            'found' => false,
+            'patient' => null,
+        ]);
+    }
+
     public function createBooking(CreateBookingRequest $request)
     {
         try {
@@ -66,7 +94,7 @@ class BookingController extends Controller
             $booking = $this->bookingService->createBooking($request->validated());
             
             // Send booking confirmation WhatsApp
-            $this->bookingService->sendBookingConfirmation($booking->id, $booking->patientDetail->patient_phone);
+            $this->bookingService->sendBookingConfirmation($booking->id, $booking->patient->patient_phone);
             
             // Schedule H-1 reminder notification
             $this->bookingService->scheduleReminderNotification($booking->id);
@@ -84,7 +112,7 @@ class BookingController extends Controller
 
     public function bookingSuccessPage($code)
     {
-        $booking = Booking::with(['doctor', 'patientDetail'])
+        $booking = Booking::with(['doctor', 'patient'])
             ->where('code', $code)
             ->firstOrFail();
 
@@ -101,15 +129,16 @@ class BookingController extends Controller
     }
 
     public function checkBooking(Request $request)
-    {
+    {   
+
         $request->validate([
             'code' => 'required|string',
             'phone' => 'required|string',
         ]);
 
-        $booking = Booking::with(['doctor', 'patientDetail'])
+        $booking = Booking::with(['doctor', 'patient'])
             ->where('code', $request->code)
-            ->whereHas('patientDetail', function ($query) use ($request) {
+            ->whereHas('patient', function ($query) use ($request) {
                 $query->where('patient_phone', $request->phone);
             })
             ->first();
@@ -139,7 +168,7 @@ class BookingController extends Controller
                 'booking' => $booking,
             ]);
         } catch (\Exception $e) {
-            return response()->json(['err' => $e->getMessage()]);
+            // return response()->json(['err' => $e->getMessage()]);
             return back()->withErrors([
                 'checkin' => $e->getMessage(),
             ]);

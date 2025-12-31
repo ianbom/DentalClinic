@@ -41,13 +41,7 @@ export function ReviewBookingCard({ doctor }: ReviewBookingCardProps) {
                         <h4 className="text-lg font-bold text-text-light">
                             {doctor?.name || 'Loading...'}
                         </h4>
-                        {/* <p className="text-sm text-gray-500">
-                            {doctor?.specialty || ''}
-                        </p> */}
                     </div>
-                    {/* <div className="mt-4 rounded-lg bg-primary/10 px-4 py-2 text-sm font-semibold text-primary sm:mt-0">
-                        Scaling Gigi
-                    </div> */}
                 </div>
 
                 {/* Details Grid */}
@@ -136,17 +130,48 @@ export function ReviewBookingCard({ doctor }: ReviewBookingCardProps) {
                             {bookingData.email || '-'}
                         </p>
                     </div>
-                    {/* Complaint */}
+                    {/* Service */}
+                    <div className="group">
+                        <div className="mb-1 flex items-center gap-2 text-sm text-gray-500">
+                            <span className="material-symbols-outlined text-[18px]">
+                                medical_services
+                            </span>
+                            <span>Layanan</span>
+                        </div>
+                        <p className="pl-7 font-medium text-text-light">
+                            {bookingData.service || '-'}
+                            {bookingData.serviceType && (
+                                <span className="ml-2 rounded bg-primary/10 px-2 py-0.5 text-xs text-primary">
+                                    {bookingData.serviceType === 'long'
+                                        ? '45 menit'
+                                        : '15 menit'}
+                                </span>
+                            )}
+                        </p>
+                    </div>
+                    {/* Birthdate */}
+                    <div className="group">
+                        <div className="mb-1 flex items-center gap-2 text-sm text-gray-500">
+                            <span className="material-symbols-outlined text-[18px]">
+                                cake
+                            </span>
+                            <span>Tanggal Lahir</span>
+                        </div>
+                        <p className="pl-7 font-medium text-text-light">
+                            {bookingData.birthdate || '-'}
+                        </p>
+                    </div>
+                    {/* Address */}
                     <div className="group sm:col-span-2">
                         <div className="mb-1 flex items-center gap-2 text-sm text-gray-500">
                             <span className="material-symbols-outlined text-[18px]">
-                                sticky_note_2
+                                home
                             </span>
-                            <span>Keluhan</span>
+                            <span>Alamat</span>
                         </div>
                         <div className="pl-7">
                             <p className="font-medium text-text-light">
-                                {bookingData.complaint || '-'}
+                                {bookingData.address || '-'}
                             </p>
                         </div>
                     </div>

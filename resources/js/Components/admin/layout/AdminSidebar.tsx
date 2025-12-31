@@ -29,8 +29,9 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
 
     return (
         <aside
-            className={`fixed inset-y-0 left-0 z-50 flex w-64 shrink-0 flex-col border-r border-slate-200 bg-white transition-transform duration-300 lg:static lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'
-                }`}
+            className={`fixed inset-y-0 left-0 z-50 flex w-64 shrink-0 flex-col border-r border-slate-200 bg-white transition-transform duration-300 lg:static lg:translate-x-0 ${
+                isOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}
         >
             {/* Logo & Close Button */}
             <div className="flex h-16 items-center justify-between border-b border-slate-200 px-4 lg:px-6">
@@ -56,22 +57,25 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                             key={link.href}
                             href={link.href}
                             onClick={onClose}
-                            className={`group flex items-center gap-3 rounded-lg px-4 py-3 transition-colors ${active
+                            className={`group flex items-center gap-3 rounded-lg px-4 py-3 transition-colors ${
+                                active
                                     ? 'bg-primary/10 text-primary'
                                     : 'text-slate-600 hover:bg-slate-50 hover:text-primary'
-                                }`}
+                            }`}
                         >
                             <span
-                                className={`material-symbols-outlined ${active
+                                className={`material-symbols-outlined ${
+                                    active
                                         ? 'fill'
                                         : 'text-slate-400 transition-colors group-hover:text-primary'
-                                    }`}
+                                }`}
                             >
                                 {link.icon}
                             </span>
                             <span
-                                className={`text-sm ${active ? 'font-bold' : 'font-medium'
-                                    }`}
+                                className={`text-sm ${
+                                    active ? 'font-bold' : 'font-medium'
+                                }`}
                             >
                                 {link.label}
                             </span>

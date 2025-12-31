@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Booking;
+use App\Models\BookingPatientDetail;
 use App\Models\Doctor;
 use App\Models\DoctorTimeOff;
 use App\Models\DoctorWorkingPeriod;
@@ -117,13 +118,25 @@ class BookingService
             $startTime = Carbon::parse($period->start_time);
             $endTime = Carbon::parse($period->end_time);
             
-            // Generate 1-hour slots
+            // Generate slots with alternating intervals: 45 min, 15 min
+            // Output: 8:00, 8:45, 9:00, 9:45, 10:00, ...
+            // Slots ending with :00 are for LONG (Pengobatan - 45 min duration)
+            // Slots ending with :45 are for SHORT (Konsultasi - 15 min duration)
+            $isLongSlot = true; // First slot (e.g., 8:00) is for long service
+            
             while ($startTime->lt($endTime)) {
                 $slotTime = $startTime->format('H:i');
-                $slotEndTime = $startTime->copy()->addHour();
+                $slotMinute = (int) $startTime->format('i');
+                
+                // Determine slot type based on minute
+                // :00 slots are for LONG service, :45 slots are for SHORT service
+                $slotType = ($slotMinute === 0) ? 'long' : 'short';
                 
                 // Check if slot is during time off
-                $isDuringTimeOff = $this->isSlotDuringTimeOff($timeOffs, $slotTime, $slotEndTime->format('H:i'));
+                $slotDuration = $slotType === 'long' ? 45 : 15;
+                $slotEnd = $startTime->copy()->addMinutes($slotDuration);
+                
+                $isDuringTimeOff = $this->isSlotDuringTimeOff($timeOffs, $slotTime, $slotEnd->format('H:i'));
                 
                 // Check if slot is already booked
                 $isBooked = in_array($slotTime, $bookedSlots);
@@ -131,13 +144,27 @@ class BookingService
                 // Check if slot is in the past (for today)
                 $isPast = $date->isToday() && Carbon::parse($slotTime)->lt(Carbon::now());
                 
+                // Check if there's enough time remaining for this slot
+                $hasEnoughTime = $slotEnd->lte($endTime);
+                
+                $isAvailable = !$isDuringTimeOff && !$isBooked && !$isPast && $hasEnoughTime;
+                
                 $slots[] = [
                     'time' => $slotTime,
-                    'available' => !$isDuringTimeOff && !$isBooked && !$isPast,
+                    'available' => $isAvailable,
                     'reason' => $isDuringTimeOff ? 'time_off' : ($isBooked ? 'booked' : ($isPast ? 'past' : null)),
+                    'slot_type' => $slotType, // 'long' for :00, 'short' for :45
+                    'available_for_short' => $slotType === 'short' && $isAvailable,
+                    'available_for_long' => $slotType === 'long' && $isAvailable,
                 ];
                 
-                $startTime->addHour();
+                // Alternate between 45 min and 15 min intervals
+                if ($isLongSlot) {
+                    $startTime->addMinutes(45); // Next slot after 45 min (e.g., 8:00 -> 8:45)
+                } else {
+                    $startTime->addMinutes(15); // Next slot after 15 min (e.g., 8:45 -> 9:00)
+                }
+                $isLongSlot = !$isLongSlot; // Toggle
             }
         }
         
@@ -219,29 +246,48 @@ class BookingService
             throw new \Exception('Jadwal yang dipilih sudah tidak tersedia. Silakan pilih jadwal lain.');
         }
 
+        // Find or create/update patient by NIK
+        $patient = BookingPatientDetail::where('patient_nik', $data['patient_nik'])->first();
+        
+        if ($patient) {
+            // Update existing patient data if there are changes
+            $patient->update([
+                'patient_name' => $data['patient_name'],
+                'patient_email' => $data['patient_email'] ?? $patient->patient_email,
+                'patient_phone' => $data['patient_phone'],
+                'patient_birthdate' => $data['patient_birthdate'] ?? $patient->patient_birthdate,
+                'patient_address' => $data['patient_address'] ?? $patient->patient_address,
+            ]);
+        } else {
+            // Create new patient
+            $patient = BookingPatientDetail::create([
+                'medical_records' => BookingPatientDetail::generateMedicalRecords(),
+                'patient_name' => $data['patient_name'],
+                'patient_nik' => $data['patient_nik'],
+                'patient_email' => $data['patient_email'] ?? null,
+                'patient_phone' => $data['patient_phone'],
+                'patient_birthdate' => $data['patient_birthdate'] ?? null,
+                'patient_address' => $data['patient_address'] ?? null,
+            ]);
+        }
+
         // Generate unique booking code
         $bookingCode = $this->generateBookingCode();
 
-        // Create booking
+        // Create booking with patient_id
         $booking = Booking::create([
             'code' => $bookingCode,
             'doctor_id' => $doctorId,
+            'patient_id' => $patient->id,
+            'service' => $data['service'] ?? 'Konsultasi',
+            'type' => $data['type'] ?? 'short',
             'booking_date' => $bookingDate,
             'start_time' => $startTime,
             'status' => 'confirmed',
             'is_active' => true,
         ]);
 
-        // Create patient details
-        $booking->patientDetail()->create([
-            'patient_name' => $data['patient_name'],
-            'patient_nik' => $data['patient_nik'],
-            'patient_email' => $data['patient_email'] ?? null,
-            'patient_phone' => $data['patient_phone'],
-            'complaint' => $data['complaint'] ?? null,
-        ]);
-
-        return $booking->load('patientDetail', 'doctor');
+        return $booking->load('patient', 'doctor');
     }
 
     /**
@@ -261,12 +307,12 @@ class BookingService
      */
     public function sendBookingConfirmation(int $bookingId, string $phone)
     {
-        $booking = Booking::with(['doctor', 'patientDetail'])->findOrFail($bookingId);
+        $booking = Booking::with(['doctor', 'patient'])->findOrFail($bookingId);
         
         $whatsappService = new WhatsappService();
         
         $bookingDetails = [
-            'patient_name' => $booking->patientDetail->patient_name,
+            'patient_name' => $booking->patient->patient_name,
             'doctor_name' => $booking->doctor->name,
             'date' => $this->formatDateIndonesian(Carbon::parse($booking->booking_date)),
             'time' => substr($booking->start_time, 0, 5),
@@ -283,7 +329,7 @@ class BookingService
      */
     public function scheduleReminderNotification(int $bookingId): void
     {
-        $booking = Booking::with(['doctor', 'patientDetail'])->findOrFail($bookingId);
+        $booking = Booking::with(['doctor', 'patient'])->findOrFail($bookingId);
         
         // Calculate scheduled time: 1 hour before booking time
         $bookingDate = Carbon::parse($booking->booking_date);
@@ -297,7 +343,7 @@ class BookingService
         }
 
         $bookingDetails = [
-            'patient_name' => $booking->patientDetail->patient_name,
+            'patient_name' => $booking->patient->patient_name,
             'doctor_name' => $booking->doctor->name,
             'date' => $this->formatDateIndonesian($bookingDate),
             'time' => substr($booking->start_time, 0, 5),
@@ -314,7 +360,7 @@ class BookingService
             'booking_id' => $bookingId,
             'channel' => 'whatsapp',
             'type' => 'reminder',
-            'recipient' => $booking->patientDetail->patient_phone,
+            'recipient' => $booking->patient->patient_phone,
             'payload' => $message,
             'scheduled_at' => $scheduledAt,
             'status' => 'pending',
@@ -355,7 +401,7 @@ class BookingService
 
     public function checkinBooking(string $code): Booking
     {
-        $booking = Booking::with(['patientDetail', 'doctor'])
+        $booking = Booking::with(['patient', 'doctor'])
             ->where('code', $code)
             ->firstOrFail();
 
@@ -402,7 +448,7 @@ class BookingService
             'checked_in_at' => Carbon::now(),
         ]);
 
-        return $booking->fresh(['patientDetail', 'doctor']);
+        return $booking->fresh(['patient', 'doctor']);
     }
 
     /**

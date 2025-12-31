@@ -11,7 +11,10 @@ class Booking extends Model
 {
     protected $fillable = [
         'doctor_id',
+        'patient_id',
         'code',
+        'service',
+        'type',
         'booking_date',
         'start_time',
         'status',
@@ -28,9 +31,20 @@ class Booking extends Model
         return $this->belongsTo(Doctor::class);
     }
 
-    public function patientDetail(): HasOne
+    /**
+     * Get the patient for this booking
+     */
+    public function patient(): BelongsTo
     {
-        return $this->hasOne(BookingPatientDetail::class);
+        return $this->belongsTo(BookingPatientDetail::class, 'patient_id');
+    }
+
+    /**
+     * Alias for backward compatibility
+     */
+    public function patientDetail(): BelongsTo
+    {
+        return $this->patient();
     }
 
     public function checkin(): HasOne

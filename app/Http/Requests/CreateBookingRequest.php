@@ -26,13 +26,15 @@ class CreateBookingRequest extends FormRequest
             'doctor_id' => 'required|exists:doctors,id',
             'booking_date' => 'required',
             'start_time' => 'required',
-            
+            'service' => 'required|string|max:100',
+            'type' => 'required|in:short,long',
             // Patient details
             'patient_name' => 'required|string|max:150',
+            'patient_birthdate' => 'required',
+            'patient_address' => 'required',
             'patient_nik' => 'required|string|max:32',
             'patient_email' => 'nullable|email|max:191',
             'patient_phone' => 'required|string|max:32',
-            'complaint' => 'nullable|string|max:1000',
         ];
     }
 

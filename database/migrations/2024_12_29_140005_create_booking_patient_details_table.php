@@ -12,12 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('booking_patient_details', function (Blueprint $table) {
-            $table->foreignId('booking_id')->primary()->constrained('bookings')->onDelete('cascade');
+            $table->id();
+            $table->string('medical_records',100)->unique()->nullable();
             $table->string('patient_name', 150);
             $table->string('patient_nik', 32);
             $table->string('patient_email', 191)->nullable();
             $table->string('patient_phone', 32);
-            $table->text('complaint')->nullable();
+            $table->date('patient_birthdate')->nullable();
+            $table->text('patient_address')->nullable();
             $table->timestamps();
 
             $table->index('patient_phone');

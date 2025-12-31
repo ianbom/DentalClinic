@@ -3,25 +3,43 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BookingPatientDetail extends Model
 {
     protected $table = 'booking_patient_details';
-    protected $primaryKey = 'booking_id';
-    public $incrementing = false;
 
     protected $fillable = [
-        'booking_id',
+        'medical_records',
         'patient_name',
         'patient_nik',
         'patient_email',
         'patient_phone',
-        'complaint',
+        'patient_birthdate',
+        'patient_address',
     ];
 
-    public function booking(): BelongsTo
+    protected $casts = [
+        'patient_birthdate' => 'date',
+    ];
+
+    /**
+     * Get all bookings for this patient
+     */
+    public function bookings(): HasMany
     {
-        return $this->belongsTo(Booking::class);
+        return $this->hasMany(Booking::class, 'patient_id');
+    }
+
+    /**
+     * Generate unique medical records number
+     */
+    public static function generateMedicalRecords(): string
+    {
+        $prefix = 'RM';
+        $date = now()->format('Ymd');
+        $random = strtoupper(substr(md5(uniqid()), 0, 6));
+        
+        return "{$prefix}{$date}{$random}";
     }
 }

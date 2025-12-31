@@ -11,7 +11,12 @@ interface CustomerDataFormProps {
 export function CustomerDataForm({ doctorId }: CustomerDataFormProps) {
     const { bookingData, setBookingData } = useBooking();
     const [isVerifying, setIsVerifying] = useState(false);
+    const [isCheckingNik, setIsCheckingNik] = useState(false);
     const [verificationError, setVerificationError] = useState('');
+    const [nikMessage, setNikMessage] = useState<{
+        type: 'success' | 'info' | 'error';
+        text: string;
+    } | null>(null);
 
     const handleInputChange = (field: string, value: string) => {
         setBookingData({ [field]: value });
@@ -19,6 +24,80 @@ export function CustomerDataForm({ doctorId }: CustomerDataFormProps) {
         if (field === 'whatsapp') {
             setVerificationError('');
         }
+        // Reset NIK check when NIK changes
+        if (field === 'nik') {
+            setBookingData({ isNikChecked: false });
+            setNikMessage(null);
+        }
+    };
+
+    const handleCheckNik = () => {
+        if (!bookingData.nik || bookingData.nik.length < 16) {
+            setNikMessage({
+                type: 'error',
+                text: 'NIK harus 16 digit',
+            });
+            return;
+        }
+
+        setIsCheckingNik(true);
+        setNikMessage(null);
+
+        router.post(
+            '/check-nik',
+            { nik: bookingData.nik },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: (page) => {
+                    const flash = page.props.flash as {
+                        nikCheck?: {
+                            found: boolean;
+                            patient?: {
+                                patient_name: string;
+                                patient_email: string;
+                                patient_phone: string;
+                                patient_birthdate: string;
+                                patient_address: string;
+                            };
+                        };
+                    };
+
+                    if (flash?.nikCheck?.found && flash.nikCheck.patient) {
+                        // Auto-fill form with existing patient data
+                        setBookingData({
+                            fullName: flash.nikCheck.patient.patient_name || '',
+                            email: flash.nikCheck.patient.patient_email || '',
+                            whatsapp:
+                                flash.nikCheck.patient.patient_phone || '',
+                            birthdate:
+                                flash.nikCheck.patient.patient_birthdate || '',
+                            address:
+                                flash.nikCheck.patient.patient_address || '',
+                            isNikChecked: true,
+                        });
+                        setNikMessage({
+                            type: 'success',
+                            text: 'Data ditemukan! Form telah terisi otomatis.',
+                        });
+                    } else {
+                        setBookingData({ isNikChecked: true });
+                        setNikMessage({
+                            type: 'info',
+                            text: 'NIK belum terdaftar. Silakan isi data lengkap.',
+                        });
+                    }
+                    setIsCheckingNik(false);
+                },
+                onError: () => {
+                    setNikMessage({
+                        type: 'error',
+                        text: 'Gagal memeriksa NIK. Coba lagi.',
+                    });
+                    setIsCheckingNik(false);
+                },
+            },
+        );
     };
 
     const handleVerifyWhatsApp = () => {
@@ -54,9 +133,13 @@ export function CustomerDataForm({ doctorId }: CustomerDataFormProps) {
     const isFormValid =
         bookingData.fullName.trim() !== '' &&
         bookingData.nik.trim() !== '' &&
+        bookingData.nik.length >= 16 &&
         bookingData.whatsapp.trim() !== '' &&
         bookingData.whatsapp.length >= 10 &&
-        bookingData.isWhatsappVerified;
+        bookingData.birthdate.trim() !== '' &&
+        bookingData.address.trim() !== '' &&
+        bookingData.isWhatsappVerified &&
+        bookingData.isNikChecked;
 
     return (
         <div className="flex flex-col gap-6">
@@ -73,153 +156,137 @@ export function CustomerDataForm({ doctorId }: CustomerDataFormProps) {
 
             {/* Form Fields */}
             <form className="flex flex-col gap-6">
-                {/* Nama Lengkap & NIK */}
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <div className="flex flex-col gap-2">
-                        <label
-                            className="text-sm font-medium text-text-light"
-                            htmlFor="fullname"
-                        >
-                            Nama Lengkap*
-                        </label>
+                {/* NIK with Check Button */}
+                <div className="flex flex-col gap-2">
+                    <label
+                        className="text-sm font-medium text-text-light"
+                        htmlFor="nik"
+                    >
+                        NIK (Nomor Induk Kependudukan)*
+                    </label>
+                    <div className="flex gap-2">
                         <input
-                            className="flex h-12 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                            id="fullname"
-                            placeholder="Masukkan nama lengkap Anda sesuai KTP"
-                            type="text"
-                            required
-                            value={bookingData.fullName}
-                            onChange={(e) =>
-                                handleInputChange('fullName', e.target.value)
-                            }
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                        <label
-                            className="text-sm font-medium text-text-light"
-                            htmlFor="nik"
-                        >
-                            NIK*
-                        </label>
-                        <input
-                            className="flex h-12 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                            className={`flex h-12 flex-1 rounded-lg border bg-white px-4 py-3 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:outline-none focus:ring-1 ${
+                                nikMessage?.type === 'success'
+                                    ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
+                                    : nikMessage?.type === 'error'
+                                      ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
+                                      : 'border-gray-200 focus:border-primary focus:ring-primary'
+                            }`}
                             id="nik"
-                            placeholder="Masukkan NIK Anda sesuai KTP"
+                            placeholder="Masukkan 16 digit NIK Anda"
                             type="text"
+                            maxLength={16}
                             required
                             value={bookingData.nik}
                             onChange={(e) =>
-                                handleInputChange('nik', e.target.value)
+                                handleInputChange(
+                                    'nik',
+                                    e.target.value.replace(/\D/g, ''),
+                                )
                             }
                         />
+                        <button
+                            type="button"
+                            onClick={handleCheckNik}
+                            disabled={
+                                isCheckingNik || bookingData.nik.length < 16
+                            }
+                            className={`flex h-12 items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition-all ${
+                                isCheckingNik || bookingData.nik.length < 16
+                                    ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                    : bookingData.isNikChecked
+                                      ? 'cursor-pointer bg-green-100 text-green-700'
+                                      : 'cursor-pointer bg-primary text-white hover:bg-primary-dark'
+                            }`}
+                        >
+                            <span className="material-symbols-outlined text-[18px]">
+                                {isCheckingNik
+                                    ? 'hourglass_empty'
+                                    : bookingData.isNikChecked
+                                      ? 'check_circle'
+                                      : 'search'}
+                            </span>
+                            {isCheckingNik
+                                ? 'Memeriksa...'
+                                : bookingData.isNikChecked
+                                  ? 'Terverifikasi'
+                                  : 'Cek NIK'}
+                        </button>
                     </div>
+
+                    {/* NIK Message */}
+                    {nikMessage && (
+                        <div
+                            className={`mt-2 rounded-lg border p-3 text-sm ${
+                                nikMessage.type === 'success'
+                                    ? 'border-green-200 bg-green-50 text-green-700'
+                                    : nikMessage.type === 'info'
+                                      ? 'border-blue-200 bg-blue-50 text-blue-700'
+                                      : 'border-red-200 bg-red-50 text-red-700'
+                            }`}
+                        >
+                            <div className="flex items-start gap-2">
+                                <span className="material-symbols-outlined text-[18px]">
+                                    {nikMessage.type === 'success'
+                                        ? 'check_circle'
+                                        : nikMessage.type === 'info'
+                                          ? 'info'
+                                          : 'error'}
+                                </span>
+                                <p>{nikMessage.text}</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {!bookingData.isNikChecked && !nikMessage && (
+                        <p className="mt-1 text-xs text-gray-400">
+                            Klik tombol "Cek NIK" untuk memverifikasi dan
+                            melihat apakah data Anda sudah terdaftar.
+                        </p>
+                    )}
                 </div>
 
-                {/* Nomor WhatsApp & Email Grid */}
+                {/* Nama Lengkap */}
+                <div className="flex flex-col gap-2">
+                    <label
+                        className="text-sm font-medium text-text-light"
+                        htmlFor="fullname"
+                    >
+                        Nama Lengkap*
+                    </label>
+                    <input
+                        className="flex h-12 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                        id="fullname"
+                        placeholder="Masukkan nama lengkap Anda sesuai KTP"
+                        type="text"
+                        required
+                        value={bookingData.fullName}
+                        onChange={(e) =>
+                            handleInputChange('fullName', e.target.value)
+                        }
+                    />
+                </div>
+
+                {/* Tanggal Lahir & Alamat */}
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    {/* Nomor WhatsApp */}
                     <div className="flex flex-col gap-2">
                         <label
                             className="text-sm font-medium text-text-light"
-                            htmlFor="whatsapp"
+                            htmlFor="birthdate"
                         >
-                            Nomor WhatsApp*
+                            Tanggal Lahir*
                         </label>
-                        <div className="relative">
-                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                                <span className="font-medium text-gray-500">
-                                    📞
-                                </span>
-                                <div className="ml-2 h-4 w-px bg-gray-300"></div>
-                            </div>
-                            <input
-                                className={`flex h-12 w-full rounded-lg border bg-white py-3 pl-[70px] pr-4 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:outline-none focus:ring-1 ${
-                                    bookingData.isWhatsappVerified
-                                        ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
-                                        : 'border-gray-200 focus:border-primary focus:ring-primary'
-                                }`}
-                                id="whatsapp"
-                                placeholder="0812-3456-7890"
-                                type="tel"
-                                required
-                                value={bookingData.whatsapp}
-                                onChange={(e) =>
-                                    handleInputChange(
-                                        'whatsapp',
-                                        e.target.value,
-                                    )
-                                }
-                            />
-                            {bookingData.isWhatsappVerified && (
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
-                                    <span className="material-symbols-outlined text-green-500">
-                                        verified
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Verify WhatsApp Button */}
-                        {!bookingData.isWhatsappVerified && (
-                            <button
-                                type="button"
-                                onClick={handleVerifyWhatsApp}
-                                disabled={
-                                    isVerifying ||
-                                    !bookingData.whatsapp ||
-                                    bookingData.whatsapp.length < 10
-                                }
-                                className={`mt-2 flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                                    isVerifying ||
-                                    !bookingData.whatsapp ||
-                                    bookingData.whatsapp.length < 10
-                                        ? 'cursor-not-allowed bg-gray-200 text-gray-400'
-                                        : 'cursor-pointer bg-green-100 text-green-700 hover:bg-green-200'
-                                }`}
-                            >
-                                <span className="material-symbols-outlined text-[18px]">
-                                    {isVerifying ? 'hourglass_empty' : 'send'}
-                                </span>
-                                {isVerifying
-                                    ? 'Mengirim...'
-                                    : 'Kirim Verifikasi WhatsApp'}
-                            </button>
-                        )}
-
-                        {/* Success Message */}
-                        {bookingData.isWhatsappVerified && (
-                            <div className="mt-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
-                                <div className="flex items-start gap-2">
-                                    <span className="material-symbols-outlined text-[18px]">
-                                        check_circle
-                                    </span>
-                                    <p>
-                                        Nomor WhatsApp telah terverifikasi. Anda
-                                        dapat melanjutkan proses booking.
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Error Message */}
-                        {verificationError && (
-                            <div className="mt-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                                <div className="flex items-start gap-2">
-                                    <span className="material-symbols-outlined text-[18px]">
-                                        error
-                                    </span>
-                                    <p>{verificationError}</p>
-                                </div>
-                            </div>
-                        )}
-
-                        {!bookingData.isWhatsappVerified && (
-                            <p className="mt-1 text-xs text-gray-400">
-                                Klik tombol di atas untuk memverifikasi nomor
-                                WhatsApp Anda sebelum melanjutkan.
-                            </p>
-                        )}
+                        <input
+                            className="flex h-12 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                            id="birthdate"
+                            type="date"
+                            required
+                            value={bookingData.birthdate}
+                            onChange={(e) =>
+                                handleInputChange('birthdate', e.target.value)
+                            }
+                        />
                     </div>
 
                     {/* Email */}
@@ -246,40 +313,142 @@ export function CustomerDataForm({ doctorId }: CustomerDataFormProps) {
                     </div>
                 </div>
 
-                {/* Keluhan / Catatan */}
+                {/* Alamat */}
                 <div className="flex flex-col gap-2">
                     <label
                         className="text-sm font-medium text-text-light"
-                        htmlFor="notes"
+                        htmlFor="address"
                     >
-                        Keluhan / Catatan{' '}
-                        <span className="font-normal text-gray-400">
-                            (Opsional)
-                        </span>
+                        Alamat Lengkap*
                     </label>
                     <textarea
                         className="flex w-full resize-none rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-text-light placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                        id="notes"
-                        placeholder="Jelaskan keluhan singkat atau catatan khusus untuk dokter..."
-                        rows={4}
-                        value={bookingData.complaint}
+                        id="address"
+                        placeholder="Masukkan alamat lengkap sesuai KTP"
+                        rows={3}
+                        required
+                        value={bookingData.address}
                         onChange={(e) =>
-                            handleInputChange('complaint', e.target.value)
+                            handleInputChange('address', e.target.value)
                         }
                     ></textarea>
                 </div>
 
+                {/* Nomor WhatsApp */}
+                <div className="flex flex-col gap-2">
+                    <label
+                        className="text-sm font-medium text-text-light"
+                        htmlFor="whatsapp"
+                    >
+                        Nomor WhatsApp*
+                    </label>
+                    <div className="relative">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                            <span className="font-medium text-gray-500">
+                                📞
+                            </span>
+                            <div className="ml-2 h-4 w-px bg-gray-300"></div>
+                        </div>
+                        <input
+                            className={`flex h-12 w-full rounded-lg border bg-white py-3 pl-[70px] pr-4 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:outline-none focus:ring-1 ${
+                                bookingData.isWhatsappVerified
+                                    ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
+                                    : 'border-gray-200 focus:border-primary focus:ring-primary'
+                            }`}
+                            id="whatsapp"
+                            placeholder="0812-3456-7890"
+                            type="tel"
+                            required
+                            value={bookingData.whatsapp}
+                            onChange={(e) =>
+                                handleInputChange('whatsapp', e.target.value)
+                            }
+                        />
+                        {bookingData.isWhatsappVerified && (
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+                                <span className="material-symbols-outlined text-green-500">
+                                    verified
+                                </span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Verify WhatsApp Button */}
+                    {!bookingData.isWhatsappVerified && (
+                        <button
+                            type="button"
+                            onClick={handleVerifyWhatsApp}
+                            disabled={
+                                isVerifying ||
+                                !bookingData.whatsapp ||
+                                bookingData.whatsapp.length < 10
+                            }
+                            className={`mt-2 flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+                                isVerifying ||
+                                !bookingData.whatsapp ||
+                                bookingData.whatsapp.length < 10
+                                    ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                    : 'cursor-pointer bg-green-100 text-green-700 hover:bg-green-200'
+                            }`}
+                        >
+                            <span className="material-symbols-outlined text-[18px]">
+                                {isVerifying ? 'hourglass_empty' : 'send'}
+                            </span>
+                            {isVerifying
+                                ? 'Mengirim...'
+                                : 'Kirim Verifikasi WhatsApp'}
+                        </button>
+                    )}
+
+                    {/* Success Message */}
+                    {bookingData.isWhatsappVerified && (
+                        <div className="mt-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+                            <div className="flex items-start gap-2">
+                                <span className="material-symbols-outlined text-[18px]">
+                                    check_circle
+                                </span>
+                                <p>
+                                    Nomor WhatsApp telah terverifikasi. Anda
+                                    dapat melanjutkan proses booking.
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Error Message */}
+                    {verificationError && (
+                        <div className="mt-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                            <div className="flex items-start gap-2">
+                                <span className="material-symbols-outlined text-[18px]">
+                                    error
+                                </span>
+                                <p>{verificationError}</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {!bookingData.isWhatsappVerified && (
+                        <p className="mt-1 text-xs text-gray-400">
+                            Klik tombol di atas untuk memverifikasi nomor
+                            WhatsApp Anda sebelum melanjutkan.
+                        </p>
+                    )}
+                </div>
+
                 {/* Verification Warning */}
-                {!bookingData.isWhatsappVerified && (
+                {(!bookingData.isWhatsappVerified ||
+                    !bookingData.isNikChecked) && (
                     <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
                         <div className="flex items-start gap-2">
                             <span className="material-symbols-outlined text-[20px]">
                                 warning
                             </span>
                             <p>
-                                <strong>Verifikasi diperlukan:</strong> Anda
-                                harus memverifikasi nomor WhatsApp sebelum
-                                melanjutkan ke halaman review.
+                                <strong>Verifikasi diperlukan:</strong>
+                                {!bookingData.isNikChecked &&
+                                    ' Klik "Cek NIK" untuk memverifikasi NIK Anda.'}
+                                {!bookingData.isWhatsappVerified &&
+                                    ' Verifikasi nomor WhatsApp sebelum melanjutkan.'}
                             </p>
                         </div>
                     </div>

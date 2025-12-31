@@ -25,9 +25,33 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
         return dateEntry?.slots ?? [];
     }, [availableSlots, bookingData.selectedDate]);
 
+    // Check if slot is available based on service type
+    const isSlotAvailable = (slot: TimeSlot): boolean => {
+        if (bookingData.serviceType === 'short') {
+            return slot.available_for_short ?? slot.available;
+        } else if (bookingData.serviceType === 'long') {
+            return slot.available_for_long ?? slot.available;
+        }
+        return slot.available;
+    };
+
     const handleTimeSelect = (time: string) => {
         setBookingData({ selectedTime: `${time} WIB` });
     };
+
+    // Check if service is selected
+    if (!bookingData.serviceType) {
+        return (
+            <div className="py-8 text-center">
+                <span className="material-symbols-outlined mb-2 text-4xl text-amber-400">
+                    warning
+                </span>
+                <p className="text-gray-500">
+                    Silakan pilih jenis layanan terlebih dahulu
+                </p>
+            </div>
+        );
+    }
 
     if (!bookingData.selectedDate) {
         return (
@@ -82,8 +106,9 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
                 {timeSlots.map((slot) => {
                     const isSelected =
                         bookingData.selectedTime === `${slot.time} WIB`;
+                    const slotAvailable = isSlotAvailable(slot);
 
-                    if (!slot.available) {
+                    if (!slotAvailable) {
                         return (
                             <button
                                 key={slot.time}
@@ -93,8 +118,8 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
                                     slot.reason === 'booked'
                                         ? 'Sudah dibooking'
                                         : slot.reason === 'time_off'
-                                          ? 'Dokter tidak tersedia'
-                                          : 'Tidak tersedia'
+                                            ? 'Dokter tidak tersedia'
+                                            : 'Tidak tersedia'
                                 }
                             >
                                 {slot.time}
