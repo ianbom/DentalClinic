@@ -1,45 +1,96 @@
 import { getStatusLabel, getStatusStyles } from '@/lib/utils';
 import { BookingFullItem } from '@/types';
 import { Link } from '@inertiajs/react';
+import { useState } from 'react';
+
+// =============================================================================
+// Main BookingTable Component (Unified)
+// =============================================================================
 
 interface BookingTableProps {
+    /** Table title shown in header */
+    title?: string;
+    /** List of bookings to display */
     bookings: BookingFullItem[];
-    currentPage: number;
-    itemsPerPage: number;
-    expandedRow: number | null;
-    onToggleExpand: (id: number) => void;
+    /** Message shown when no bookings */
+    emptyMessage?: string;
+    /** Show expandable details row */
+    showExpandable?: boolean;
+    /** Show action buttons (expand, view) */
+    showActions?: boolean;
+    /** Current page for row numbering (default: 1) */
+    currentPage?: number;
+    /** Items per page for row numbering (default: 10) */
+    itemsPerPage?: number;
 }
 
 export function BookingTable({
+    title,
     bookings,
-    currentPage,
-    itemsPerPage,
-    expandedRow,
-    onToggleExpand,
+    emptyMessage = 'Tidak ada booking ditemukan',
+    showExpandable = false,
+    showActions = false,
+    currentPage = 1,
+    itemsPerPage = 10,
 }: BookingTableProps) {
-    if (bookings.length === 0) {
-        return <BookingTableEmpty />;
-    }
+    const [expandedRow, setExpandedRow] = useState<number | null>(null);
+
+    const handleToggleExpand = (id: number) => {
+        setExpandedRow(expandedRow === id ? null : id);
+    };
 
     return (
-        <table className="w-full border-collapse text-left">
-            <BookingTableHeader />
-            <tbody className="divide-y divide-slate-100 text-sm">
-                {bookings.map((booking, index) => (
-                    <BookingTableRow
-                        key={booking.id}
-                        booking={booking}
-                        rowNumber={(currentPage - 1) * itemsPerPage + index + 1}
-                        isExpanded={expandedRow === booking.id}
-                        onToggleExpand={() => onToggleExpand(booking.id)}
-                    />
-                ))}
-            </tbody>
-        </table>
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+            {/* Header */}
+            {title && (
+                <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+                    <h3 className="text-lg font-bold text-slate-900">
+                        {title}
+                    </h3>
+                    <span className="rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+                        {bookings.length} booking
+                    </span>
+                </div>
+            )}
+
+            {/* Table */}
+            {bookings.length > 0 ? (
+                <div className="overflow-x-auto">
+                    <table className="w-full border-collapse text-left">
+                        <BookingTableHeader showActions={showActions} />
+                        <tbody className="divide-y divide-slate-100 text-sm">
+                            {bookings.map((booking, index) => (
+                                <BookingTableRow
+                                    key={booking.id}
+                                    booking={booking}
+                                    rowNumber={
+                                        (currentPage - 1) * itemsPerPage +
+                                        index +
+                                        1
+                                    }
+                                    showActions={showActions}
+                                    showExpandable={showExpandable}
+                                    isExpanded={expandedRow === booking.id}
+                                    onToggleExpand={() =>
+                                        handleToggleExpand(booking.id)
+                                    }
+                                />
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            ) : (
+                <BookingTableEmpty message={emptyMessage} />
+            )}
+        </div>
     );
 }
 
-function BookingTableHeader() {
+// =============================================================================
+// Sub-Components
+// =============================================================================
+
+function BookingTableHeader({ showActions }: { showActions: boolean }) {
     return (
         <thead className="bg-slate-50">
             <tr>
@@ -64,23 +115,23 @@ function BookingTableHeader() {
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
                     Status
                 </th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Aksi
-                </th>
+                {showActions && (
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        Aksi
+                    </th>
+                )}
             </tr>
         </thead>
     );
 }
 
-function BookingTableEmpty() {
+function BookingTableEmpty({ message }: { message: string }) {
     return (
-        <div className="px-4 py-12 text-center">
+        <div className="p-8 text-center">
             <span className="material-symbols-outlined text-4xl text-slate-300">
                 event_busy
             </span>
-            <p className="mt-2 text-sm text-slate-500">
-                Tidak ada booking ditemukan
-            </p>
+            <p className="mt-2 text-sm text-slate-500">{message}</p>
         </div>
     );
 }
@@ -88,6 +139,8 @@ function BookingTableEmpty() {
 interface BookingTableRowProps {
     booking: BookingFullItem;
     rowNumber: number;
+    showActions: boolean;
+    showExpandable: boolean;
     isExpanded: boolean;
     onToggleExpand: () => void;
 }
@@ -95,6 +148,8 @@ interface BookingTableRowProps {
 function BookingTableRow({
     booking,
     rowNumber,
+    showActions,
+    showExpandable,
     isExpanded,
     onToggleExpand,
 }: BookingTableRowProps) {
@@ -134,44 +189,54 @@ function BookingTableRow({
                     {booking.created_at_formatted}
                 </td>
                 <td className="px-4 py-3">
-                    <span
-                        className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${getStatusStyles(booking.status)}`}
-                    >
-                        {getStatusLabel(booking.status)}
-                    </span>
+                    <StatusBadge status={booking.status} />
                 </td>
-                <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={onToggleExpand}
-                            className="cursor-pointer rounded-md bg-slate-100 p-1.5 text-slate-600 transition-colors hover:bg-slate-200"
-                            title="Detail"
-                        >
-                            <span className="material-symbols-outlined text-lg">
-                                {isExpanded ? 'expand_less' : 'expand_more'}
-                            </span>
-                        </button>
-                        <Link
-                            href={`/admin/bookings/${booking.id}`}
-                            className="cursor-pointer rounded-md bg-primary p-1.5 text-white transition-colors hover:bg-sky-600"
-                            title="Lihat Detail"
-                        >
-                            <span className="material-symbols-outlined text-lg">
-                                visibility
-                            </span>
-                        </Link>
-                    </div>
-                </td>
+                {showActions && (
+                    <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                            {showExpandable && (
+                                <button
+                                    onClick={onToggleExpand}
+                                    className="cursor-pointer rounded-md bg-slate-100 p-1.5 text-slate-600 transition-colors hover:bg-slate-200"
+                                    title="Detail"
+                                >
+                                    <span className="material-symbols-outlined text-lg">
+                                        {isExpanded
+                                            ? 'expand_less'
+                                            : 'expand_more'}
+                                    </span>
+                                </button>
+                            )}
+                            <Link
+                                href={`/admin/bookings/${booking.id}`}
+                                className="cursor-pointer rounded-md bg-primary p-1.5 text-white transition-colors hover:bg-sky-600"
+                                title="Lihat Detail"
+                            >
+                                <span className="material-symbols-outlined text-lg">
+                                    visibility
+                                </span>
+                            </Link>
+                        </div>
+                    </td>
+                )}
             </tr>
-            {isExpanded && <BookingDetailRow booking={booking} />}
+            {showExpandable && isExpanded && (
+                <BookingDetailRow booking={booking} showActions={showActions} />
+            )}
         </>
     );
 }
 
-function BookingDetailRow({ booking }: { booking: BookingFullItem }) {
+function BookingDetailRow({
+    booking,
+    showActions,
+}: {
+    booking: BookingFullItem;
+    showActions: boolean;
+}) {
     return (
         <tr className="bg-slate-50">
-            <td colSpan={8} className="px-4 py-4">
+            <td colSpan={showActions ? 8 : 7} className="px-4 py-4">
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                     <div>
                         <p className="text-xs font-medium text-slate-500">
@@ -208,5 +273,15 @@ function BookingDetailRow({ booking }: { booking: BookingFullItem }) {
                 </div>
             </td>
         </tr>
+    );
+}
+
+function StatusBadge({ status }: { status: string }) {
+    return (
+        <span
+            className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${getStatusStyles(status)}`}
+        >
+            {getStatusLabel(status)}
+        </span>
     );
 }

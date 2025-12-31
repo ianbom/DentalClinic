@@ -1,18 +1,38 @@
-interface BaseModel {
+// =============================================================================
+// Base Types
+// =============================================================================
+
+export interface BaseModel {
     id: number;
     created_at: string;
     updated_at: string;
 }
 
-// User model
+// =============================================================================
+// User & Auth
+// =============================================================================
+
+export type UserRole = 'admin' | 'staff';
+
 export interface User extends BaseModel {
     name: string;
     email: string;
     email_verified_at?: string;
-    role: 'admin' | 'staff';
+    role: UserRole;
 }
 
-// Doctor model
+export type PageProps<
+    T extends Record<string, unknown> = Record<string, unknown>,
+> = T & {
+    auth: {
+        user: User;
+    };
+};
+
+// =============================================================================
+// Doctor
+// =============================================================================
+
 export interface Doctor extends BaseModel {
     name: string;
     sip?: string;
@@ -25,7 +45,6 @@ export interface Doctor extends BaseModel {
     bookings?: Booking[];
 }
 
-// DoctorWorkingPeriod model
 export interface DoctorWorkingPeriod extends BaseModel {
     doctor_id: number;
     day_of_week: string;
@@ -36,7 +55,6 @@ export interface DoctorWorkingPeriod extends BaseModel {
     doctor?: Doctor;
 }
 
-// DoctorTimeOff model
 export interface DoctorTimeOff extends BaseModel {
     doctor_id: number;
     date: string;
@@ -49,32 +67,16 @@ export interface DoctorTimeOff extends BaseModel {
     created_by?: User;
 }
 
-// Time slot for booking
-export interface TimeSlot {
-    time: string;
-    available: boolean;
-    reason?: 'time_off' | 'booked' | 'past' | null;
-}
+// =============================================================================
+// Booking - Core Types
+// =============================================================================
 
-// Available date with slots
-export interface AvailableDate {
-    date: string;
-    day_name: string;
-    formatted_date: string;
-    slots: TimeSlot[];
-}
-
-// Available slots keyed by date string
-export type AvailableSlots = Record<string, AvailableDate>;
-
-// Booking status type
 export type BookingStatus =
     | 'confirmed'
     | 'checked_in'
     | 'cancelled'
     | 'no_show';
 
-// Booking model
 export interface Booking extends BaseModel {
     doctor_id: number;
     code: string;
@@ -91,7 +93,6 @@ export interface Booking extends BaseModel {
     notifications?: Notification[];
 }
 
-// BookingPatientDetail model (primary key is booking_id)
 export interface BookingPatientDetail {
     booking_id: number;
     patient_name: string;
@@ -105,7 +106,6 @@ export interface BookingPatientDetail {
     booking?: Booking;
 }
 
-// BookingCheckin model (primary key is booking_id)
 export interface BookingCheckin {
     booking_id: number;
     checked_in_at: string;
@@ -115,7 +115,6 @@ export interface BookingCheckin {
     booking?: Booking;
 }
 
-// BookingCancellation model (primary key is booking_id)
 export interface BookingCancellation {
     booking_id: number;
     cancelled_at: string;
@@ -129,7 +128,10 @@ export interface BookingCancellation {
     cancelled_by_user?: User;
 }
 
-// BookingReschedule status type
+// =============================================================================
+// Booking - Reschedule
+// =============================================================================
+
 export type RescheduleStatus =
     | 'pending_patient'
     | 'applied'
@@ -138,7 +140,6 @@ export type RescheduleStatus =
 export type RescheduleRequestedBy = 'patient' | 'staff';
 export type PatientResponse = 'accepted' | 'rejected';
 
-// BookingReschedule model
 export interface BookingReschedule extends BaseModel {
     booking_id: number;
     requested_by: RescheduleRequestedBy;
@@ -159,7 +160,31 @@ export interface BookingReschedule extends BaseModel {
     requested_by_user?: User;
 }
 
-// Notification channel and status types
+// =============================================================================
+// Booking - Schedule & Slots
+// =============================================================================
+
+export type SlotUnavailableReason = 'time_off' | 'booked' | 'past';
+
+export interface TimeSlot {
+    time: string;
+    available: boolean;
+    reason?: SlotUnavailableReason | null;
+}
+
+export interface AvailableDate {
+    date: string;
+    day_name: string;
+    formatted_date: string;
+    slots: TimeSlot[];
+}
+
+export type AvailableSlots = Record<string, AvailableDate>;
+
+// =============================================================================
+// Notifications
+// =============================================================================
+
 export type NotificationChannel = 'whatsapp' | 'email' | 'sms';
 export type NotificationStatus = 'pending' | 'sent' | 'failed' | 'cancelled';
 export type NotificationType =
@@ -169,7 +194,6 @@ export type NotificationType =
     | 'reschedule_applied'
     | 'cancellation';
 
-// Notification model
 export interface Notification extends BaseModel {
     booking_id: number;
     channel: NotificationChannel;
@@ -185,16 +209,10 @@ export interface Notification extends BaseModel {
     booking?: Booking;
 }
 
-// Page props helper type
-export type PageProps<
-    T extends Record<string, unknown> = Record<string, unknown>,
-> = T & {
-    auth: {
-        user: User;
-    };
-};
+// =============================================================================
+// Dashboard & List Views (Flattened DTOs)
+// =============================================================================
 
-// Dashboard Stats
 export interface DashboardStats {
     bookings_today: number;
     checkins_today: number;
@@ -202,7 +220,7 @@ export interface DashboardStats {
     reschedules_today: number;
 }
 
-// Booking List Item (for tables)
+/** Flattened booking item for simple table displays */
 export interface BookingListItem {
     id: number;
     code: string;
@@ -211,24 +229,60 @@ export interface BookingListItem {
     doctor_name: string;
     booking_date: string;
     start_time: string;
-    status: string;
+    status: BookingStatus;
     created_at: string;
 }
 
-// Booking Full Item (for list booking page with more details)
-export interface BookingFullItem {
+/** Extended booking item with additional formatted fields for detailed views */
+export interface BookingFullItem extends BookingListItem {
+    patient_nik: string;
+    patient_email: string;
+    booking_date_formatted: string;
+    complaint: string;
+    created_at_formatted: string;
+}
+
+/** Complete booking detail for admin detail page */
+export interface BookingDetail {
     id: number;
     code: string;
-    patient_name: string;
-    patient_nik: string;
-    patient_phone: string;
-    patient_email: string;
-    doctor_name: string;
+    status: BookingStatus;
     booking_date: string;
     booking_date_formatted: string;
     start_time: string;
-    status: string;
-    complaint: string;
     created_at: string;
     created_at_formatted: string;
+    patient: {
+        name: string;
+        nik: string;
+        phone: string;
+        email: string;
+        complaint: string;
+    };
+    doctor: {
+        id: number;
+        name: string;
+        sip: string;
+        experience: number;
+        profile_pic?: string;
+    };
+    checkin?: {
+        checked_in_at: string;
+        checked_in_at_formatted: string;
+    };
+    cancellation?: {
+        cancelled_at: string;
+        cancelled_by: string;
+        reason: string;
+    };
+    reschedules: {
+        id: number;
+        old_date: string;
+        old_time: string;
+        new_date: string;
+        new_time: string;
+        reason: string;
+        status: string;
+        created_at: string;
+    }[];
 }

@@ -17,7 +17,6 @@ function ListBookingPage({ bookings }: ListBookingPageProps) {
     const [statusFilter, setStatusFilter] = useState('');
     const [dateFilter, setDateFilter] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [expandedRow, setExpandedRow] = useState<number | null>(null);
     const itemsPerPage = 10;
 
     const { filterBookings } = useBookingFilters(bookings);
@@ -52,10 +51,6 @@ function ListBookingPage({ bookings }: ListBookingPageProps) {
         setCurrentPage(1);
     };
 
-    const handleToggleExpand = (id: number) => {
-        setExpandedRow(expandedRow === id ? null : id);
-    };
-
     return (
         <div className="flex flex-col gap-6">
             {/* Page Header */}
@@ -87,26 +82,23 @@ function ListBookingPage({ bookings }: ListBookingPageProps) {
             />
 
             {/* Table */}
-            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                <div className="overflow-x-auto">
-                    <BookingTable
-                        bookings={paginatedBookings}
-                        currentPage={currentPage}
-                        itemsPerPage={itemsPerPage}
-                        expandedRow={expandedRow}
-                        onToggleExpand={handleToggleExpand}
-                    />
-                </div>
+            <BookingTable
+                bookings={paginatedBookings}
+                showExpandable
+                showActions
+                currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
+                emptyMessage="Tidak ada booking ditemukan"
+            />
 
-                {/* Pagination */}
-                <BookingPagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    totalItems={filteredBookings.length}
-                    itemsPerPage={itemsPerPage}
-                    onPageChange={setCurrentPage}
-                />
-            </div>
+            {/* Pagination */}
+            <BookingPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={filteredBookings.length}
+                itemsPerPage={itemsPerPage}
+                onPageChange={setCurrentPage}
+            />
         </div>
     );
 }

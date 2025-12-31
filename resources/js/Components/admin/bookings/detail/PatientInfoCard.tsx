@@ -5,7 +5,6 @@ interface PatientInfoCardProps {
     whatsapp: string;
     email: string;
     note: string;
-    image: string;
 }
 
 export function PatientInfoCard({
@@ -15,7 +14,6 @@ export function PatientInfoCard({
     whatsapp,
     email,
     note,
-    image,
 }: PatientInfoCardProps) {
     return (
         <div className="sticky top-24 rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -25,10 +23,6 @@ export function PatientInfoCard({
                 </h3>
             </div>
             <div className="flex flex-col items-center border-b border-slate-100 p-6 text-center">
-                <div
-                    className="mb-4 size-24 rounded-full bg-slate-200 bg-cover bg-center shadow-md ring-4 ring-white"
-                    style={{ backgroundImage: `url("${image}")` }}
-                ></div>
                 <h3 className="text-xl font-bold text-slate-900">{name}</h3>
                 <p className="text-sm text-slate-500">{type}</p>
             </div>

@@ -28,12 +28,5 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function listBooking()
-    {
-        $bookings = $this->dashboardService->getAllBookings();
-
-        return Inertia::render('admin/bookings/ListBooking', [
-            'bookings' => $bookings,
-        ]);
-    }
+    
 }

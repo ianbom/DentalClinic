@@ -1,12 +1,12 @@
+import { BookingTable } from '@/Components/admin/bookings/BookingTable';
 import { StatsCard } from '@/Components/admin/dashboard/StatsCard';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { getInitials, getStatusLabel, getStatusStyles } from '@/lib/utils';
-import { BookingListItem, DashboardStats } from '@/types';
+import { BookingFullItem, DashboardStats } from '@/types';
 
 interface AdminDashboardPageProps {
     stats: DashboardStats;
-    todayBookings: BookingListItem[];
-    recentBookings: BookingListItem[];
+    todayBookings: BookingFullItem[];
+    recentBookings: BookingFullItem[];
 }
 
 function AdminDashboardPage({
@@ -100,135 +100,6 @@ function AdminDashboardPage({
                 />
             </div>
         </>
-    );
-}
-
-interface BookingTableProps {
-    title: string;
-    bookings: BookingListItem[];
-    emptyMessage: string;
-}
-
-function BookingTable({ title, bookings, emptyMessage }: BookingTableProps) {
-    return (
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-            <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-                <h3 className="text-lg font-bold text-slate-900">{title}</h3>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-                    {bookings.length} booking
-                </span>
-            </div>
-
-            {bookings.length > 0 ? (
-                <div className="overflow-x-auto">
-                    <table className="w-full border-collapse text-left">
-                        <thead className="bg-slate-50">
-                            <tr>
-                                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                                    No
-                                </th>
-                                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                                    Kode
-                                </th>
-                                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                                    Pasien
-                                </th>
-                                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                                    Dokter
-                                </th>
-                                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                                    Tanggal & Jam
-                                </th>
-                                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                                    Dibuat Pada
-                                </th>
-                                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                                    Status
-                                </th>
-                                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500"></th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 text-sm">
-                            {bookings.map((booking, index) => (
-                                <tr
-                                    key={booking.id}
-                                    className="transition-colors hover:bg-slate-50"
-                                >
-                                    <td className="px-4 py-3 text-center text-sm text-slate-500">
-                                        {index + 1}
-                                    </td>
-                                    <td className="px-4 py-3 font-mono text-sm font-medium text-slate-900">
-                                        {booking.code}
-                                    </td>
-                                    <td className="px-4 py-3">
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex size-9 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-500">
-                                                {getInitials(
-                                                    booking.patient_name,
-                                                )}
-                                            </div>
-                                            <div>
-                                                <p className="font-medium text-slate-900">
-                                                    {booking.patient_name}
-                                                </p>
-                                                <p className="text-xs text-slate-500">
-                                                    {booking.patient_phone}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-4 py-3 text-slate-600">
-                                        {booking.doctor_name}
-                                    </td>
-                                    <td className="px-4 py-3">
-                                        <div className="flex flex-col">
-                                            <span className="text-slate-900">
-                                                {booking.booking_date}
-                                            </span>
-                                            <span className="text-xs text-slate-500">
-                                                {booking.start_time} WIB
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td className="px-4 py-3 text-sm text-slate-500">
-                                        {booking.created_at}
-                                    </td>
-                                    <td className="px-4 py-3">
-                                        <StatusBadge status={booking.status} />
-                                    </td>
-                                    <td className="px-4 py-3 text-right">
-                                        <button className="cursor-pointer text-slate-400 transition-colors hover:text-primary">
-                                            <span className="material-symbols-outlined text-xl">
-                                                more_vert
-                                            </span>
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            ) : (
-                <div className="p-8 text-center">
-                    <span className="material-symbols-outlined text-4xl text-slate-300">
-                        event_busy
-                    </span>
-                    <p className="mt-2 text-sm text-slate-500">
-                        {emptyMessage}
-                    </p>
-                </div>
-            )}
-        </div>
-    );
-}
-
-function StatusBadge({ status }: { status: string }) {
-    return (
-        <span
-            className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${getStatusStyles(status)}`}
-        >
-            {getStatusLabel(status)}
-        </span>
     );
 }
 

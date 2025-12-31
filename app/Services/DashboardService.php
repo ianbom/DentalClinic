@@ -62,19 +62,7 @@ class DashboardService
             ->orderBy('start_time', 'asc')
             ->get();
 
-        return $bookings->map(function ($booking) {
-            return [
-                'id' => $booking->id,
-                'code' => $booking->code,
-                'patient_name' => $booking->patientDetail?->patient_name ?? '-',
-                'patient_phone' => $booking->patientDetail?->patient_phone ?? '-',
-                'doctor_name' => $booking->doctor?->name ?? '-',
-                'booking_date' => Carbon::parse($booking->booking_date)->format('d M Y'),
-                'start_time' => substr($booking->start_time, 0, 5),
-                'status' => $booking->status,
-                'created_at' => $booking->created_at->format('d M Y H:i'),
-            ];
-        })->toArray();
+        return $this->formatBookings($bookings);
     }
 
     public function getRecentBookings(int $limit = 10): array
@@ -84,28 +72,15 @@ class DashboardService
             ->take($limit)
             ->get();
 
-        return $bookings->map(function ($booking) {
-            return [
-                'id' => $booking->id,
-                'code' => $booking->code,
-                'patient_name' => $booking->patientDetail?->patient_name ?? '-',
-                'patient_phone' => $booking->patientDetail?->patient_phone ?? '-',
-                'doctor_name' => $booking->doctor?->name ?? '-',
-                'booking_date' => Carbon::parse($booking->booking_date)->format('d M Y'),
-                'start_time' => substr($booking->start_time, 0, 5),
-                'status' => $booking->status,
-                'created_at' => $booking->created_at->format('d M Y H:i'),
-            ];
-        })->toArray();
+        return $this->formatBookings($bookings);
     }
 
-    public function getAllBookings(): array
-    {
-        $bookings = Booking::with(['doctor', 'patientDetail'])
-            ->orderBy('booking_date', 'asc')
-            ->orderBy('start_time', 'asc')
-            ->get();
 
+    /**
+     * Format booking collection to array with consistent structure
+     */
+    public function formatBookings($bookings): array
+    {
         return $bookings->map(function ($booking) {
             return [
                 'id' => $booking->id,
@@ -126,4 +101,5 @@ class DashboardService
         })->toArray();
     }
 }
+
 
