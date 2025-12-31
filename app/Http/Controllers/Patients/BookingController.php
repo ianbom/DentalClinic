@@ -62,16 +62,20 @@ class BookingController extends Controller
     public function createBooking(CreateBookingRequest $request)
     {
         try {
-            // return response()->json($request->all());
+            // Create booking
             $booking = $this->bookingService->createBooking($request->validated());
+            
+            // Send booking confirmation WhatsApp
             $this->bookingService->sendBookingConfirmation($booking->id, $booking->patientDetail->patient_phone);
+            
+            // Schedule H-1 reminder notification
+            $this->bookingService->scheduleReminderNotification($booking->id);
 
             return redirect()
                 ->route('booking.success', ['code' => $booking->code])
                 ->with('success', 'Booking berhasil dibuat!');
                 
         } catch (\Exception $e) {
-            // return response()->json(['err' => $e->getMessage()]);
             return back()
                 ->withErrors(['slot' => $e->getMessage()])
                 ->withInput();

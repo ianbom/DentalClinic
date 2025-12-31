@@ -11,14 +11,12 @@ interface CustomerDataFormProps {
 export function CustomerDataForm({ doctorId }: CustomerDataFormProps) {
     const { bookingData, setBookingData } = useBooking();
     const [isVerifying, setIsVerifying] = useState(false);
-    const [verificationSent, setVerificationSent] = useState(false);
     const [verificationError, setVerificationError] = useState('');
 
     const handleInputChange = (field: string, value: string) => {
         setBookingData({ [field]: value });
-        // Reset verification status when phone number changes
+        // Reset verification error when phone number changes
         if (field === 'whatsapp') {
-            setVerificationSent(false);
             setVerificationError('');
         }
     };
@@ -39,7 +37,7 @@ export function CustomerDataForm({ doctorId }: CustomerDataFormProps) {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: () => {
-                    setVerificationSent(true);
+                    setBookingData({ isWhatsappVerified: true });
                     setIsVerifying(false);
                 },
                 onError: () => {
@@ -51,6 +49,14 @@ export function CustomerDataForm({ doctorId }: CustomerDataFormProps) {
             },
         );
     };
+
+    // Form validation
+    const isFormValid =
+        bookingData.fullName.trim() !== '' &&
+        bookingData.nik.trim() !== '' &&
+        bookingData.whatsapp.trim() !== '' &&
+        bookingData.whatsapp.length >= 10 &&
+        bookingData.isWhatsappVerified;
 
     return (
         <div className="flex flex-col gap-6">
@@ -128,7 +134,11 @@ export function CustomerDataForm({ doctorId }: CustomerDataFormProps) {
                                 <div className="ml-2 h-4 w-px bg-gray-300"></div>
                             </div>
                             <input
-                                className="flex h-12 w-full rounded-lg border border-gray-200 bg-white py-3 pl-[70px] pr-4 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                className={`flex h-12 w-full rounded-lg border bg-white py-3 pl-[70px] pr-4 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:outline-none focus:ring-1 ${
+                                    bookingData.isWhatsappVerified
+                                        ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
+                                        : 'border-gray-200 focus:border-primary focus:ring-primary'
+                                }`}
                                 id="whatsapp"
                                 placeholder="0812-3456-7890"
                                 type="tel"
@@ -141,45 +151,52 @@ export function CustomerDataForm({ doctorId }: CustomerDataFormProps) {
                                     )
                                 }
                             />
+                            {bookingData.isWhatsappVerified && (
+                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+                                    <span className="material-symbols-outlined text-green-500">
+                                        verified
+                                    </span>
+                                </div>
+                            )}
                         </div>
 
                         {/* Verify WhatsApp Button */}
-                        <button
-                            type="button"
-                            onClick={handleVerifyWhatsApp}
-                            disabled={
-                                isVerifying ||
-                                !bookingData.whatsapp ||
-                                bookingData.whatsapp.length < 10
-                            }
-                            className={`mt-2 flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                                isVerifying ||
-                                !bookingData.whatsapp ||
-                                bookingData.whatsapp.length < 10
-                                    ? 'cursor-not-allowed bg-gray-200 text-gray-400'
-                                    : 'cursor-pointer bg-green-100 text-green-700 hover:bg-green-200'
-                            }`}
-                        >
-                            <span className="material-symbols-outlined text-[18px]">
-                                {isVerifying ? 'hourglass_empty' : 'verified'}
-                            </span>
-                            {isVerifying
-                                ? 'Mengirim...'
-                                : 'Verifikasi Nomor WhatsApp'}
-                        </button>
+                        {!bookingData.isWhatsappVerified && (
+                            <button
+                                type="button"
+                                onClick={handleVerifyWhatsApp}
+                                disabled={
+                                    isVerifying ||
+                                    !bookingData.whatsapp ||
+                                    bookingData.whatsapp.length < 10
+                                }
+                                className={`mt-2 flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+                                    isVerifying ||
+                                    !bookingData.whatsapp ||
+                                    bookingData.whatsapp.length < 10
+                                        ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                        : 'cursor-pointer bg-green-100 text-green-700 hover:bg-green-200'
+                                }`}
+                            >
+                                <span className="material-symbols-outlined text-[18px]">
+                                    {isVerifying ? 'hourglass_empty' : 'send'}
+                                </span>
+                                {isVerifying
+                                    ? 'Mengirim...'
+                                    : 'Kirim Verifikasi WhatsApp'}
+                            </button>
+                        )}
 
                         {/* Success Message */}
-                        {verificationSent && (
+                        {bookingData.isWhatsappVerified && (
                             <div className="mt-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
                                 <div className="flex items-start gap-2">
                                     <span className="material-symbols-outlined text-[18px]">
                                         check_circle
                                     </span>
                                     <p>
-                                        Pesan verifikasi telah dikirim ke
-                                        WhatsApp Anda, jika sudah menerima
-                                        lanjutkan proses booking. Jika belum cek
-                                        kembali nomor Anda.
+                                        Nomor WhatsApp telah terverifikasi. Anda
+                                        dapat melanjutkan proses booking.
                                     </p>
                                 </div>
                             </div>
@@ -197,10 +214,12 @@ export function CustomerDataForm({ doctorId }: CustomerDataFormProps) {
                             </div>
                         )}
 
-                        <p className="mt-1 text-xs text-gray-400">
-                            Klik tombol di atas untuk memverifikasi nomor
-                            WhatsApp Anda.
-                        </p>
+                        {!bookingData.isWhatsappVerified && (
+                            <p className="mt-1 text-xs text-gray-400">
+                                Klik tombol di atas untuk memverifikasi nomor
+                                WhatsApp Anda sebelum melanjutkan.
+                            </p>
+                        )}
                     </div>
 
                     {/* Email */}
@@ -250,6 +269,22 @@ export function CustomerDataForm({ doctorId }: CustomerDataFormProps) {
                     ></textarea>
                 </div>
 
+                {/* Verification Warning */}
+                {!bookingData.isWhatsappVerified && (
+                    <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
+                        <div className="flex items-start gap-2">
+                            <span className="material-symbols-outlined text-[20px]">
+                                warning
+                            </span>
+                            <p>
+                                <strong>Verifikasi diperlukan:</strong> Anda
+                                harus memverifikasi nomor WhatsApp sebelum
+                                melanjutkan ke halaman review.
+                            </p>
+                        </div>
+                    </div>
+                )}
+
                 {/* CTA Buttons */}
                 <div className="mt-4 flex flex-col justify-end gap-3 border-t border-subtle-light pt-4 sm:flex-row">
                     {/* Tombol Kembali */}
@@ -264,15 +299,28 @@ export function CustomerDataForm({ doctorId }: CustomerDataFormProps) {
                     </Link>
 
                     {/* Tombol Lanjut */}
-                    <Link
-                        href={`/doctors/${doctorId}/booking/patient-data/review`}
-                        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-8 py-3 font-bold text-white transition-all hover:bg-primary-dark focus:ring-4 focus:ring-primary/20 md:w-auto"
-                    >
-                        <span>Lanjut ke Review</span>
-                        <span className="material-symbols-outlined text-[20px]">
-                            arrow_forward
-                        </span>
-                    </Link>
+                    {isFormValid ? (
+                        <Link
+                            href={`/doctors/${doctorId}/booking/patient-data/review`}
+                            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-8 py-3 font-bold text-white transition-all hover:bg-primary-dark focus:ring-4 focus:ring-primary/20 md:w-auto"
+                        >
+                            <span>Lanjut ke Review</span>
+                            <span className="material-symbols-outlined text-[20px]">
+                                arrow_forward
+                            </span>
+                        </Link>
+                    ) : (
+                        <button
+                            type="button"
+                            disabled
+                            className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-gray-300 px-8 py-3 font-bold text-gray-500 md:w-auto"
+                        >
+                            <span>Lanjut ke Review</span>
+                            <span className="material-symbols-outlined text-[20px]">
+                                arrow_forward
+                            </span>
+                        </button>
+                    )}
                 </div>
             </form>
         </div>

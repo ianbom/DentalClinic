@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\Doctor;
 use App\Models\DoctorTimeOff;
 use App\Models\DoctorWorkingPeriod;
+use App\Models\Notification;
 use App\Services\WhatsappService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -275,6 +276,81 @@ class BookingService
         ];
 
         return $whatsappService->sendBookingConfirmation($bookingId, $phone, $bookingDetails);
+    }
+
+    /**
+     * Schedule reminder notification for H-1 hour (1 hour before booking)
+     */
+    public function scheduleReminderNotification(int $bookingId): void
+    {
+        $booking = Booking::with(['doctor', 'patientDetail'])->findOrFail($bookingId);
+        
+        // Calculate scheduled time: 1 hour before booking time
+        $bookingDate = Carbon::parse($booking->booking_date);
+        $bookingTime = substr($booking->start_time, 0, 5);
+        $bookingDateTime = Carbon::parse($bookingDate->format('Y-m-d') . ' ' . $bookingTime);
+        $scheduledAt = $bookingDateTime->copy()->subHour();
+        
+        // Don't schedule if the reminder time has already passed
+        if ($scheduledAt->lt(Carbon::now())) {
+            return;
+        }
+
+        $bookingDetails = [
+            'patient_name' => $booking->patientDetail->patient_name,
+            'doctor_name' => $booking->doctor->name,
+            'date' => $this->formatDateIndonesian($bookingDate),
+            'time' => substr($booking->start_time, 0, 5),
+            'code' => $booking->code,
+            'confirm_link' => url("/booking/confirm/{$booking->code}"),
+            'checkin_link' => url("/booking/checkin/{$booking->code}"),
+        ];
+
+        $whatsappService = new WhatsappService();
+        $message = $this->buildReminderMessage($bookingDetails);
+
+        // Create scheduled notification
+        Notification::create([
+            'booking_id' => $bookingId,
+            'channel' => 'whatsapp',
+            'type' => 'reminder',
+            'recipient' => $booking->patientDetail->patient_phone,
+            'payload' => $message,
+            'scheduled_at' => $scheduledAt,
+            'status' => 'pending',
+            'attempt_count' => 0,
+        ]);
+    }
+
+    /**
+     * Build reminder message for WhatsApp
+     */
+    private function buildReminderMessage(array $details): string
+    {
+        $patientName = $details['patient_name'] ?? '-';
+        $doctorName = $details['doctor_name'] ?? '-';
+        $date = $details['date'] ?? '-';
+        $time = $details['time'] ?? '-';
+        $code = $details['code'] ?? '-';
+        $confirmLink = $details['confirm_link'] ?? '-';
+        $checkinLink = $details['checkin_link'] ?? '-';
+
+        return "📢 *Pengingat Booking Pemeriksaan Gigi*\n\n"
+            . "Yth. Bapak/Ibu {$patientName},\n"
+            . "Kami mengingatkan kembali jadwal booking pemeriksaan gigi Anda *BESOK* dengan rincian sebagai berikut:\n\n"
+            . "🗓 Tanggal : {$date}\n"
+            . "⏰ Jam : {$time} WIB\n"
+            . "👩‍⚕️ Dokter : {$doctorName}\n"
+            . "📋 Kode Booking : *{$code}*\n\n"
+            . "🔗 Konfirmasi Kehadiran:\n"
+            . "{$confirmLink}\n\n"
+            . "🔗 Check-in Hari H:\n"
+            . "{$checkinLink}\n\n"
+            . "📌 *Catatan:*\n"
+            . "Mohon konfirmasi kehadiran Anda hari ini melalui link di atas.\n\n"
+            . "_Pesan ini dikirim otomatis oleh Cantika Dental Care by drg. Anna Fikril._\n\n"
+            . "Terima kasih atas kepercayaan Anda.\n"
+            . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊";
     }
 
     public function checkinBooking(string $code): Booking

@@ -286,3 +286,16 @@ export interface BookingDetail {
         created_at: string;
     }[];
 }
+
+/** Patient item for admin list page */
+export interface PatientItem {
+    nik: string;
+    name: string;
+    phone: string;
+    email: string;
+    total_visits: number;
+    first_visit: string;
+    first_visit_formatted: string;
+    last_visit: string;
+    last_visit_formatted: string;
+}

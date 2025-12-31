@@ -1,30 +1,62 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
+function getCurrentDate(): string {
+    const days = [
+        'Minggu',
+        'Senin',
+        'Selasa',
+        'Rabu',
+        'Kamis',
+        'Jumat',
+        'Sabtu',
+    ];
+    const months = [
+        'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember',
+    ];
+
+    const now = new Date();
+    const dayName = days[now.getDay()];
+    const day = now.getDate();
+    const month = months[now.getMonth()];
+    const year = now.getFullYear();
+
+    return `${dayName}, ${day} ${month} ${year}`;
+}
+
 export function AdminHeader() {
+    const [currentDate, setCurrentDate] = useState('');
+
+    useEffect(() => {
+        setCurrentDate(getCurrentDate());
+    }, []);
+
     return (
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-8">
-            {/* Search */}
-            <div className="flex w-full max-w-md items-center">
-                <div className="relative w-full">
-                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-xl text-slate-400">
-                        search
-                    </span>
-                    <input
-                        className="w-full rounded-lg border-none bg-slate-100 py-2 pl-10 pr-4 text-sm text-slate-700 placeholder-slate-400 outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="Search patient or doctor..."
-                        type="text"
-                    />
-                </div>
+            {/* Current Date */}
+            <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined text-xl text-primary">
+                    calendar_today
+                </span>
+                <span className="text-sm font-medium text-slate-700">
+                    {currentDate}
+                </span>
             </div>
 
             {/* Right Actions */}
             <div className="flex items-center gap-6">
-                <button className="relative cursor-pointer text-slate-500 transition-colors hover:text-primary">
-                    <span className="material-symbols-outlined text-2xl">
-                        notifications
-                    </span>
-                    <span className="absolute right-0 top-0 size-2 rounded-full border-2 border-white bg-red-500"></span>
-                </button>
                 <div className="flex items-center gap-3 border-l border-slate-200 pl-6">
                     <div className="hidden text-right sm:block">
                         <p className="text-sm font-semibold text-slate-900">

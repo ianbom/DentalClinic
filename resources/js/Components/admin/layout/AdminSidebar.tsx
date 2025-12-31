@@ -26,15 +26,12 @@ export function AdminSidebar() {
     return (
         <aside className="flex w-64 shrink-0 flex-col border-r border-slate-200 bg-white transition-all duration-300">
             {/* Logo */}
-            <div className="flex h-16 items-center gap-3 border-b border-slate-200 px-6">
-                <div className="rounded-lg bg-primary/10 p-2">
-                    <span className="material-symbols-outlined text-2xl text-primary">
-                        dentistry
-                    </span>
-                </div>
-                <h1 className="text-lg font-bold tracking-tight text-slate-900">
-                    DentalClinic
-                </h1>
+            <div className="flex h-16 items-center border-b border-slate-200 px-6">
+                <img
+                    src="/img/logo-navbar.png"
+                    alt="Logo"
+                    className="h-10 w-auto"
+                />
             </div>
 
             {/* Navigation */}

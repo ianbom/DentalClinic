@@ -16,6 +16,7 @@ export interface BookingData {
     complaint: string;
     selectedDate: string;
     selectedTime: string;
+    isWhatsappVerified: boolean;
 }
 
 interface BookingContextType {
@@ -32,6 +33,7 @@ const defaultBookingData: BookingData = {
     complaint: '',
     selectedDate: '',
     selectedTime: '',
+    isWhatsappVerified: false,
 };
 
 const STORAGE_KEY = 'bookingData';
@@ -73,7 +75,16 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     }, [bookingData]);
 
     const setBookingData = (data: Partial<BookingData>) => {
-        setBookingDataState((prev) => ({ ...prev, ...data }));
+        setBookingDataState((prev) => {
+            // Reset verification if phone number changes
+            if (
+                data.whatsapp !== undefined &&
+                data.whatsapp !== prev.whatsapp
+            ) {
+                return { ...prev, ...data, isWhatsappVerified: false };
+            }
+            return { ...prev, ...data };
+        });
     };
 
     const resetBookingData = () => {
