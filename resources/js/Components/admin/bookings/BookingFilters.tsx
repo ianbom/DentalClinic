@@ -71,7 +71,7 @@ export function BookingFilters({
                 >
                     <option value="">Semua Dokter</option>
                     {doctors.map((doctor) => (
-                        <option key={doctor.id} value={doctor.id.toString()}>
+                        <option key={doctor.id} value={doctor.name}>
                             {doctor.name}
                         </option>
                     ))}
@@ -133,8 +133,7 @@ export function useBookingFilters(bookings: BookingFullItem[]) {
                     dateFilter === '' || booking.booking_date === dateFilter;
 
                 const matchesDoctor =
-                    doctorFilter === '' ||
-                    booking.doctor_id.toString() === doctorFilter;
+                    doctorFilter === '' || booking.doctor_name === doctorFilter;
 
                 return (
                     matchesSearch &&
