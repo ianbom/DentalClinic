@@ -299,3 +299,16 @@ export interface PatientItem {
     last_visit: string;
     last_visit_formatted: string;
 }
+
+/** Doctor item for admin list page */
+export interface DoctorItem {
+    id: number;
+    name: string;
+    sip: string;
+    experience: number;
+    profile_pic?: string;
+    is_active: boolean;
+    total_bookings: number;
+    created_at: string;
+    created_at_formatted: string;
+}

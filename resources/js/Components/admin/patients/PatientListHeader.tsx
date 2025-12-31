@@ -1,6 +1,10 @@
 import { Link } from '@inertiajs/react';
 
-export function PatientListHeader() {
+interface PatientListHeaderProps {
+    totalPatients: number;
+}
+
+export function PatientListHeader({ totalPatients }: PatientListHeaderProps) {
     return (
         <>
             {/* Breadcrumbs */}
@@ -22,7 +26,10 @@ export function PatientListHeader() {
                         Daftar Pasien
                     </h2>
                     <p className="text-base text-slate-500">
-                        Kelola data pasien, riwayat, dan detail kontak.
+                        Kelola data pasien, riwayat, dan detail kontak.{' '}
+                        <span className="font-medium text-primary">
+                            Total: {totalPatients} pasien
+                        </span>
                     </p>
                 </div>
                 <button className="flex h-10 shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-6 text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-600 active:scale-95">

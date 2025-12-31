@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\DoctorController as AdminDoctorController;
 use App\Http\Controllers\Admin\PatientController as AdminPatientController;
 use App\Http\Controllers\Patients\BookingController as PatientBookingController;
 use App\Http\Controllers\Patients\DoctorController as PatientDoctorController;
@@ -88,7 +89,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
     })->name('patients.checkin');
 
     // Doctors
-    Route::get('/doctors', function () {
-        return Inertia::render('admin/doctors/ListDoctor');
-    })->name('doctors.list');
+    Route::get('/doctors', [AdminDoctorController::class, 'listDoctors'])->name('doctors.list');
 });

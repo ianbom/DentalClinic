@@ -1,104 +1,156 @@
-import { Patient, patientsData } from '@/data/patients';
+import { PatientItem } from '@/types';
 
-export function PatientTable() {
+type SortField = 'name' | 'total_visits' | 'last_visit';
+
+interface PatientTableProps {
+    patients: PatientItem[];
+    currentPage: number;
+    itemsPerPage: number;
+    sortField: SortField;
+    sortOrder: 'asc' | 'desc';
+    onSort: (field: SortField) => void;
+}
+
+export function PatientTable({
+    patients,
+    currentPage,
+    itemsPerPage,
+    sortField,
+    sortOrder,
+    onSort,
+}: PatientTableProps) {
+    const SortIcon = ({ field }: { field: SortField }) => {
+        if (sortField !== field) {
+            return (
+                <span className="material-symbols-outlined text-[16px] text-slate-300">
+                    unfold_more
+                </span>
+            );
+        }
+        return (
+            <span className="material-symbols-outlined text-[16px] text-primary">
+                {sortOrder === 'asc' ? 'arrow_upward' : 'arrow_downward'}
+            </span>
+        );
+    };
+
     return (
         <div className="w-full overflow-x-auto bg-white">
-            <table className="w-full border-collapse text-left">
-                <thead>
-                    <tr className="border-b border-slate-100 bg-slate-50">
-                        <th className="w-16 p-4 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">
-                            #
-                        </th>
-                        <th className="min-w-[200px] p-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                            Nama
-                        </th>
-                        <th className="min-w-[180px] p-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                            NIK
-                        </th>
-                        <th className="min-w-[160px] p-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                            WhatsApp
-                        </th>
-                        <th className="min-w-[140px] p-4 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">
-                            Total Kunjungan
-                        </th>
-                        <th className="w-24 p-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-                            Actions
-                        </th>
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                    {patientsData.map((patient: Patient, index: number) => (
-                        <tr
-                            key={patient.id}
-                            className="group transition-colors hover:bg-slate-50"
-                        >
-                            <td className="p-4 text-center text-sm text-slate-400">
-                                {index + 1}
-                            </td>
-                            <td className="p-4">
-                                <div className="flex items-center gap-3">
-                                    <div
-                                        className={`h-8 w-8 rounded-full ${patient.colorBg} ${patient.colorText} flex items-center justify-center text-xs font-bold`}
-                                    >
-                                        {patient.initials}
-                                    </div>
+            {patients.length > 0 ? (
+                <table className="w-full border-collapse text-left">
+                    <thead>
+                        <tr className="border-b border-slate-100 bg-slate-50">
+                            <th className="w-16 p-4 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                No
+                            </th>
+                            <th
+                                className="min-w-[200px] cursor-pointer p-4 text-xs font-semibold uppercase tracking-wide text-slate-500 hover:text-primary"
+                                onClick={() => onSort('name')}
+                            >
+                                <div className="flex items-center gap-1">
+                                    Nama
+                                    <SortIcon field="name" />
+                                </div>
+                            </th>
+                            <th className="min-w-[180px] p-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                NIK
+                            </th>
+                            <th className="min-w-[160px] p-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                WhatsApp
+                            </th>
+                            <th
+                                className="min-w-[140px] cursor-pointer p-4 text-center text-xs font-semibold uppercase tracking-wide text-slate-500 hover:text-primary"
+                                onClick={() => onSort('total_visits')}
+                            >
+                                <div className="flex items-center justify-center gap-1">
+                                    Total Kunjungan
+                                    <SortIcon field="total_visits" />
+                                </div>
+                            </th>
+                            <th
+                                className="cursor-pointer p-4 text-xs font-semibold uppercase tracking-wide text-slate-500 hover:text-primary"
+                                onClick={() => onSort('last_visit')}
+                            >
+                                <div className="flex items-center gap-1">
+                                    Dibuat Pada
+                                    <SortIcon field="last_visit" />
+                                </div>
+                            </th>
+                            <th className="w-24 p-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                Aksi
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                        {patients.map((patient, index) => (
+                            <tr
+                                key={patient.nik}
+                                className="group transition-colors hover:bg-slate-50"
+                            >
+                                <td className="p-4 text-center text-sm text-slate-400">
+                                    {(currentPage - 1) * itemsPerPage +
+                                        index +
+                                        1}
+                                </td>
+                                <td className="p-4">
                                     <div className="flex flex-col">
                                         <span className="text-sm font-semibold text-slate-900">
                                             {patient.name}
                                         </span>
                                         <span className="text-xs text-slate-500">
-                                            {patient.gender}, {patient.age} y.o
+                                            {patient.email}
                                         </span>
                                     </div>
-                                </div>
-                            </td>
-                            <td className="p-4 font-mono text-sm text-slate-600">
-                                {patient.nik}
-                            </td>
-                            <td className="p-4">
-                                <div className="flex items-center gap-2">
-                                    <span className="rounded-md bg-green-50 p-1 text-green-500">
-                                        <span className="block h-3 w-3 opacity-70">
-                                            {/* Simple SVG icon/placeholder for WA as img not available */}
-                                            <span className="material-symbols-outlined text-[12px]">
+                                </td>
+                                <td className="p-4 font-mono text-sm text-slate-600">
+                                    {patient.nik}
+                                </td>
+                                <td className="p-4">
+                                    <div className="flex items-center gap-2">
+                                        <span className="flex size-6 items-center justify-center rounded-md bg-green-50 text-green-500">
+                                            <span className="material-symbols-outlined text-[14px]">
                                                 chat
                                             </span>
                                         </span>
-                                    </span>
-                                    <span className="font-mono text-sm text-slate-600">
-                                        {patient.phone}
-                                    </span>
-                                </div>
-                            </td>
-                            <td className="p-4 text-center">
-                                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                                    {patient.totalVisits} Kunjungan
-                                </span>
-                            </td>
-                            <td className="p-4 text-right">
-                                <div className="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100">
-                                    <button
-                                        className="rounded-md p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-primary"
-                                        title="Edit Customer"
-                                    >
-                                        <span className="material-symbols-outlined text-[18px]">
-                                            edit
+                                        <span className="font-mono text-sm text-slate-600">
+                                            {patient.phone}
                                         </span>
-                                    </button>
-                                    <button
-                                        className="rounded-md p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-primary"
-                                        title="View Details"
-                                    >
-                                        <span className="material-symbols-outlined text-[18px]">
-                                            visibility
-                                        </span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                                    </div>
+                                </td>
+                                <td className="p-4 text-center">
+                                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                                        {patient.total_visits} Kunjungan
+                                    </span>
+                                </td>
+                                <td className="p-4 text-sm text-slate-500">
+                                    {patient.first_visit_formatted}
+                                </td>
+                                <td className="p-4 text-right">
+                                    <div className="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+                                        <button
+                                            className="rounded-md p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-primary"
+                                            title="Lihat Detail"
+                                        >
+                                            <span className="material-symbols-outlined text-[18px]">
+                                                visibility
+                                            </span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            ) : (
+                <div className="p-8 text-center">
+                    <span className="material-symbols-outlined text-4xl text-slate-300">
+                        person_search
+                    </span>
+                    <p className="mt-2 text-sm text-slate-500">
+                        Tidak ada pasien ditemukan
+                    </p>
+                </div>
+            )}
         </div>
     );
 }

@@ -11,7 +11,6 @@ const navLinks = [
     },
     { href: '/admin/doctors', label: 'Dokter', icon: 'stethoscope' },
     { href: '/admin/patients', label: 'Pasien', icon: 'group' },
-    { href: '/admin/settings', label: 'Pengaturan', icon: 'settings' },
 ];
 
 export function AdminSidebar() {

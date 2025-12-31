@@ -1,4 +1,12 @@
-export function PatientFilters() {
+interface PatientFiltersProps {
+    searchQuery: string;
+    setSearchQuery: (value: string) => void;
+}
+
+export function PatientFilters({
+    searchQuery,
+    setSearchQuery,
+}: PatientFiltersProps) {
     return (
         <div className="rounded-t-xl border-b border-slate-100 bg-white p-5">
             <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
@@ -12,6 +20,8 @@ export function PatientFilters() {
                         className="block w-full rounded-lg border-none bg-slate-50 py-2.5 pl-10 pr-3 text-sm text-slate-900 transition-all placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-primary"
                         placeholder="Cari Nama, NIK, atau WhatsApp..."
                         type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
                 <div className="flex w-full gap-2 md:w-auto">
