@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('doctor_id')->constrained('doctors')->onDelete('cascade');
-            $table->string('code', 12)->unique();
+            $table->string('code', 100)->unique();
             $table->date('booking_date');
             $table->time('start_time');
             $table->string('status', 24)->default('confirmed')->comment('confirmed, checked_in, cancelled, no_show');

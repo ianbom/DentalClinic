@@ -193,3 +193,42 @@ export type PageProps<
         user: User;
     };
 };
+
+// Dashboard Stats
+export interface DashboardStats {
+    bookings_today: number;
+    checkins_today: number;
+    cancellations_today: number;
+    reschedules_today: number;
+}
+
+// Booking List Item (for tables)
+export interface BookingListItem {
+    id: number;
+    code: string;
+    patient_name: string;
+    patient_phone: string;
+    doctor_name: string;
+    booking_date: string;
+    start_time: string;
+    status: string;
+    created_at: string;
+}
+
+// Booking Full Item (for list booking page with more details)
+export interface BookingFullItem {
+    id: number;
+    code: string;
+    patient_name: string;
+    patient_nik: string;
+    patient_phone: string;
+    patient_email: string;
+    doctor_name: string;
+    booking_date: string;
+    booking_date_formatted: string;
+    start_time: string;
+    status: string;
+    complaint: string;
+    created_at: string;
+    created_at_formatted: string;
+}

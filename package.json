@@ -38,6 +38,7 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "dayjs": "^1.11.19",
         "html-to-image": "^1.11.13"
     }
 }
