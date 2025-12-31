@@ -8,14 +8,21 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import { BookingFullItem } from '@/types';
 import { useMemo, useState } from 'react';
 
-interface ListBookingPageProps {
-    bookings: BookingFullItem[];
+interface DoctorOption {
+    id: number;
+    name: string;
 }
 
-function ListBookingPage({ bookings }: ListBookingPageProps) {
+interface ListBookingPageProps {
+    bookings: BookingFullItem[];
+    doctors: DoctorOption[];
+}
+
+function ListBookingPage({ bookings, doctors }: ListBookingPageProps) {
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
     const [dateFilter, setDateFilter] = useState('');
+    const [doctorFilter, setDoctorFilter] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
@@ -23,8 +30,9 @@ function ListBookingPage({ bookings }: ListBookingPageProps) {
 
     // Filter bookings
     const filteredBookings = useMemo(
-        () => filterBookings(searchQuery, statusFilter, dateFilter),
-        [filterBookings, searchQuery, statusFilter, dateFilter],
+        () =>
+            filterBookings(searchQuery, statusFilter, dateFilter, doctorFilter),
+        [filterBookings, searchQuery, statusFilter, dateFilter, doctorFilter],
     );
 
     // Pagination
@@ -35,19 +43,21 @@ function ListBookingPage({ bookings }: ListBookingPageProps) {
     );
 
     const handleFilterChange = (
-        type: 'search' | 'status' | 'date',
+        type: 'search' | 'status' | 'date' | 'doctor',
         value: string,
     ) => {
         setCurrentPage(1);
         if (type === 'search') setSearchQuery(value);
         else if (type === 'status') setStatusFilter(value);
-        else setDateFilter(value);
+        else if (type === 'date') setDateFilter(value);
+        else if (type === 'doctor') setDoctorFilter(value);
     };
 
     const handleClearFilters = () => {
         setSearchQuery('');
         setStatusFilter('');
         setDateFilter('');
+        setDoctorFilter('');
         setCurrentPage(1);
     };
 
@@ -75,9 +85,12 @@ function ListBookingPage({ bookings }: ListBookingPageProps) {
                 searchQuery={searchQuery}
                 statusFilter={statusFilter}
                 dateFilter={dateFilter}
+                doctorFilter={doctorFilter}
+                doctors={doctors}
                 onSearchChange={(v) => handleFilterChange('search', v)}
                 onStatusChange={(v) => handleFilterChange('status', v)}
                 onDateChange={(v) => handleFilterChange('date', v)}
+                onDoctorChange={(v) => handleFilterChange('doctor', v)}
                 onClearFilters={handleClearFilters}
             />
 

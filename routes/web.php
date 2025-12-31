@@ -90,4 +90,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Doctors
     Route::get('/doctors', [AdminDoctorController::class, 'listDoctors'])->name('doctors.list');
+    Route::get('/doctors/{doctorId}', [AdminDoctorController::class, 'show'])->name('doctors.show');
 });

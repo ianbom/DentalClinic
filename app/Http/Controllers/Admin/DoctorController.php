@@ -23,4 +23,16 @@ class DoctorController extends Controller
             'doctors' => $doctors,
         ]);
     }
+
+    public function show(int $doctorId)
+    {
+        $doctor = $this->doctorService->getDoctorById($doctorId);
+
+        if (!$doctor) {
+            abort(404, 'Dokter tidak ditemukan');
+        }
+        return Inertia::render('admin/doctors/DetailDoctor', [
+            'doctor' => $doctor,
+        ]);
+    }
 }
