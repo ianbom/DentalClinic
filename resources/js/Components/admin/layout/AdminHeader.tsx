@@ -36,7 +36,11 @@ function getCurrentDate(): string {
     return `${dayName}, ${day} ${month} ${year}`;
 }
 
-export function AdminHeader() {
+interface AdminHeaderProps {
+    onMenuClick: () => void;
+}
+
+export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
     const [currentDate, setCurrentDate] = useState('');
 
     useEffect(() => {
@@ -44,20 +48,33 @@ export function AdminHeader() {
     }, []);
 
     return (
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-8">
-            {/* Current Date */}
+        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 md:px-6 lg:px-8">
+            {/* Left Side */}
             <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-xl text-primary">
-                    calendar_today
-                </span>
-                <span className="text-sm font-medium text-slate-700">
-                    {currentDate}
-                </span>
+                {/* Mobile Menu Button */}
+                <button
+                    onClick={onMenuClick}
+                    className="flex size-10 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 lg:hidden"
+                >
+                    <span className="material-symbols-outlined text-2xl">
+                        menu
+                    </span>
+                </button>
+
+                {/* Current Date */}
+                <div className="hidden items-center gap-3 sm:flex">
+                    <span className="material-symbols-outlined text-xl text-primary">
+                        calendar_today
+                    </span>
+                    <span className="text-sm font-medium text-slate-700">
+                        {currentDate}
+                    </span>
+                </div>
             </div>
 
             {/* Right Actions */}
-            <div className="flex items-center gap-6">
-                <div className="flex items-center gap-3 border-l border-slate-200 pl-6">
+            <div className="flex items-center gap-4 md:gap-6">
+                <div className="flex items-center gap-3 border-l border-slate-200 pl-4 md:pl-6">
                     <div className="hidden text-right sm:block">
                         <p className="text-sm font-semibold text-slate-900">
                             Dr. Sarah Admin
