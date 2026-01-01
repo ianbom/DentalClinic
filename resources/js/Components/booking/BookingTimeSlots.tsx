@@ -36,7 +36,13 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
     };
 
     const handleTimeSelect = (time: string) => {
-        setBookingData({ selectedTime: `${time} WIB` });
+        const formattedTime = `${time} WIB`;
+        // Toggle: if same time is clicked again, deselect it
+        if (bookingData.selectedTime === formattedTime) {
+            setBookingData({ selectedTime: '' });
+        } else {
+            setBookingData({ selectedTime: formattedTime });
+        }
     };
 
     // Check if service is selected

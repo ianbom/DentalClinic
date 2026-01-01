@@ -6,9 +6,13 @@ import { useState } from 'react';
 
 interface CustomerDataFormProps {
     doctorId: string;
+    isAdmin?: boolean;
 }
 
-export function CustomerDataForm({ doctorId }: CustomerDataFormProps) {
+export function CustomerDataForm({
+    doctorId,
+    isAdmin = false,
+}: CustomerDataFormProps) {
     const { bookingData, setBookingData } = useBooking();
     const [isVerifying, setIsVerifying] = useState(false);
     const [isCheckingNik, setIsCheckingNik] = useState(false);
@@ -456,39 +460,82 @@ export function CustomerDataForm({ doctorId }: CustomerDataFormProps) {
 
                 {/* CTA Buttons */}
                 <div className="mt-4 flex flex-col justify-end gap-3 border-t border-subtle-light pt-4 sm:flex-row">
-                    {/* Tombol Kembali */}
-                    <Link
-                        href={`/doctors/${doctorId}/booking`}
-                        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-all hover:bg-gray-50 md:w-auto"
-                    >
-                        <span className="material-symbols-outlined text-[20px]">
-                            arrow_back
-                        </span>
-                        <span>Kembali</span>
-                    </Link>
-
-                    {/* Tombol Lanjut */}
-                    {isFormValid ? (
-                        <Link
-                            href={`/doctors/${doctorId}/booking/patient-data/review`}
-                            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-8 py-3 font-bold text-white transition-all hover:bg-primary-dark focus:ring-4 focus:ring-primary/20 md:w-auto"
-                        >
-                            <span>Lanjut ke Review</span>
-                            <span className="material-symbols-outlined text-[20px]">
-                                arrow_forward
-                            </span>
-                        </Link>
-                    ) : (
+                    {isAdmin ? (
+                        /* Admin: Single "Simpan Booking" button */
                         <button
                             type="button"
-                            disabled
-                            className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-gray-300 px-8 py-3 font-bold text-gray-500 md:w-auto"
+                            disabled={!isFormValid}
+                            onClick={() => {
+                                if (isFormValid) {
+                                    router.post('/admin/bookings/store', {
+                                        doctor_id: doctorId,
+                                        patient_name: bookingData.fullName,
+                                        patient_nik: bookingData.nik,
+                                        patient_phone: bookingData.whatsapp,
+                                        patient_email: bookingData.email,
+                                        patient_birthdate:
+                                            bookingData.birthdate,
+                                        patient_address: bookingData.address,
+                                        booking_date:
+                                            bookingData.rawSelectedDate,
+                                        start_time:
+                                            bookingData.selectedTime || null,
+                                        service: bookingData.service,
+                                        type:
+                                            bookingData.serviceType ||
+                                            'sisipan',
+                                    });
+                                }
+                            }}
+                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-3 font-bold transition-all md:w-auto ${
+                                isFormValid
+                                    ? 'cursor-pointer bg-primary text-white hover:bg-primary-dark focus:ring-4 focus:ring-primary/20'
+                                    : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                            }`}
                         >
-                            <span>Lanjut ke Review</span>
                             <span className="material-symbols-outlined text-[20px]">
-                                arrow_forward
+                                save
                             </span>
+                            <span>Simpan Booking</span>
                         </button>
+                    ) : (
+                        /* Patient: Back + Continue buttons */
+                        <>
+                            {/* Tombol Kembali */}
+                            <Link
+                                href={`/doctors/${doctorId}/booking`}
+                                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-all hover:bg-gray-50 md:w-auto"
+                            >
+                                <span className="material-symbols-outlined text-[20px]">
+                                    arrow_back
+                                </span>
+                                <span>Kembali</span>
+                            </Link>
+
+                            {/* Tombol Lanjut */}
+                            {isFormValid ? (
+                                <Link
+                                    href={`/doctors/${doctorId}/booking/patient-data/review`}
+                                    className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-8 py-3 font-bold text-white transition-all hover:bg-primary-dark focus:ring-4 focus:ring-primary/20 md:w-auto"
+                                >
+                                    <span>Lanjut ke Review</span>
+                                    <span className="material-symbols-outlined text-[20px]">
+                                        arrow_forward
+                                    </span>
+                                </Link>
+                            ) : (
+                                <button
+                                    type="button"
+                                    disabled
+                                    className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-gray-300 px-8 py-3 font-bold text-gray-500 md:w-auto"
+                                >
+                                    <span>Lanjut ke Review</span>
+                                    <span className="material-symbols-outlined text-[20px]">
+                                        arrow_forward
+                                    </span>
+                                </button>
+                            )}
+                        </>
                     )}
                 </div>
             </form>

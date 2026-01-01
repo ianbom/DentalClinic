@@ -80,8 +80,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Bookings
     Route::get('/bookings', [AdminBookingController::class, 'listBooking'])->name('bookings.list');
-    Route::get('/bookings/create', [AdminBookingController::class, 'listBooking'])->name('bookings.list');
+    Route::get('/bookings/create', [AdminBookingController::class, 'createBooking'])->name('bookings.create');
     Route::get('/bookings/{bookingId}', [AdminBookingController::class, 'bookingDetail'])->name('bookings.detail');
+    Route::post('/bookings/store', [AdminBookingController::class, 'storeBooking'])->name('bookings.store');
 
     // Patients
     Route::get('/patients', [AdminPatientController::class, 'listPatients'])->name('patients.list');

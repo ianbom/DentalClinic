@@ -95,12 +95,8 @@ class BookingService
             return [];
         }
         
-        // Check if doctor has time off on this date
-        // The 'date' field is now cast as 'date:Y-m-d' string, so compare directly
         $dateString = $date->format('Y-m-d');
         $timeOffs = $doctor->timeOff->filter(function ($timeOff) use ($dateString) {
-            // Since date is cast as 'date:Y-m-d', it's a Carbon object but serializes to Y-m-d
-            // Use format to get the date string for comparison
             return $timeOff->date->format('Y-m-d') === $dateString;
         });
         
@@ -117,12 +113,8 @@ class BookingService
         foreach ($workingPeriods as $period) {
             $startTime = Carbon::parse($period->start_time);
             $endTime = Carbon::parse($period->end_time);
-            
-            // Generate slots with alternating intervals: 45 min, 15 min
-            // Output: 8:00, 8:45, 9:00, 9:45, 10:00, ...
-            // Slots ending with :00 are for LONG (Pengobatan - 45 min duration)
-            // Slots ending with :45 are for SHORT (Konsultasi - 15 min duration)
-            $isLongSlot = true; // First slot (e.g., 8:00) is for long service
+
+            $isLongSlot = true; 
             
             while ($startTime->lt($endTime)) {
                 $slotTime = $startTime->format('H:i');
@@ -235,15 +227,39 @@ class BookingService
      * 
      * @throws \Exception if slot is not available
      */
-    public function createBooking(array $data): Booking
+    public function createBooking(array $data)
     {
         $doctorId = $data['doctor_id'];
         $bookingDate = $data['booking_date'];
-        $startTime = $data['start_time'];
+        $startTime = $data['start_time'] ?? null;
+        $serviceType = $data['type'];
 
-        // Validate slot is available
-        if (!$this->isSlotAvailable($doctorId, $bookingDate, $startTime)) {
+        // For sisipan or when no time is selected, skip slot validation
+        if ($serviceType == 'sisipan' || $startTime == null) {
+            return $this->saveBookingData($data);
+        }
+
+        // Normalize time format: strip " WIB" suffix if present
+        $normalizedTime = str_replace(' WIB', '', $startTime);
+
+        // Validate slot is available (only when time is provided)
+        if (!$this->isSlotAvailable($doctorId, $bookingDate, $normalizedTime)) {
             throw new \Exception('Jadwal yang dipilih sudah tidak tersedia. Silakan pilih jadwal lain.');
+        }
+
+        return $this->saveBookingData($data);
+    }
+
+    public function saveBookingData(array $data){ 
+
+        $doctorId = $data['doctor_id'];
+        $bookingDate = $data['booking_date'];
+        $startTime = $data['start_time'] ?? null;
+        $serviceType = $data['type'];
+
+        // Normalize time format: strip " WIB" suffix if present
+        if ($startTime) {
+            $startTime = str_replace(' WIB', '', $startTime);
         }
 
         // Find or create/update patient by NIK
@@ -261,7 +277,7 @@ class BookingService
         } else {
             // Create new patient
             $patient = Patient::create([
-                'medical_records' => Patient::generateMedicalRecords(),
+                // 'medical_records' => Patient::generateMedicalRecords(),
                 'patient_name' => $data['patient_name'],
                 'patient_nik' => $data['patient_nik'],
                 'patient_email' => $data['patient_email'] ?? null,
@@ -279,10 +295,10 @@ class BookingService
             'code' => $bookingCode,
             'doctor_id' => $doctorId,
             'patient_id' => $patient->id,
-            'service' => $data['service'] ?? 'Konsultasi',
-            'type' => $data['type'] ?? 'short',
+            'service' => $data['service'],
+            'type' => $data['type'],
             'booking_date' => $bookingDate,
-            'start_time' => $startTime,
+            'start_time' => $startTime ?? null,
             'status' => 'confirmed',
             'is_active' => true,
         ]);
