@@ -21,6 +21,8 @@ interface WorkingPeriod {
     start_time: string;
     end_time: string;
     is_active: boolean;
+    created_at: string;
+    updated_at: string;
 }
 
 interface DoctorWithPeriods extends Doctor {
