@@ -1,5 +1,6 @@
 import { AdminHeader } from '@/Components/admin/layout/AdminHeader';
 import { AdminSidebar } from '@/Components/admin/layout/AdminSidebar';
+import { PageProps } from '@/types'; // Import PageProps dari types
 import { Head, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
@@ -8,7 +9,8 @@ interface FlashMessages {
     error?: string;
 }
 
-interface PageProps {
+// Extend PageProps yang sudah ada dengan flash messages
+interface AdminLayoutPageProps extends PageProps {
     flash: FlashMessages;
 }
 
@@ -28,23 +30,21 @@ function Toast({
 
     return (
         <div
-            className={`fixed right-4 top-4 z-[100] flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg transition-all ${
+            className={`fixed right-4 top-4 z-50 flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg ${
                 type === 'success'
                     ? 'bg-green-500 text-white'
                     : 'bg-red-500 text-white'
             }`}
         >
-            <span className="material-symbols-outlined text-[20px]">
+            <span className="material-icons">
                 {type === 'success' ? 'check_circle' : 'error'}
             </span>
-            <span className="max-w-xs text-sm font-medium">{message}</span>
+            <span>{message}</span>
             <button
                 onClick={onClose}
-                className="ml-2 rounded-full p-1 hover:bg-white/20"
+                className="material-icons text-white hover:text-gray-200"
             >
-                <span className="material-symbols-outlined text-[16px]">
-                    close
-                </span>
+                close
             </button>
         </div>
     );
@@ -55,7 +55,7 @@ export default function AdminLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const { flash } = usePage<PageProps>().props;
+    const { flash } = usePage<AdminLayoutPageProps>().props;
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [toast, setToast] = useState<{
         message: string;
@@ -73,13 +73,7 @@ export default function AdminLayout({
 
     return (
         <>
-            <Head title="Admin | Cantika Dental Care">
-                <meta
-                    name="description"
-                    content="Dashboard admin Cantika Dental Care untuk mengelola jadwal dokter, booking pasien, dan laporan klinik."
-                />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
+            <Head title="Admin Dashboard" />
 
             {/* Toast Notification */}
             {toast && (
@@ -90,11 +84,11 @@ export default function AdminLayout({
                 />
             )}
 
-            <div className="flex h-screen overflow-hidden bg-background-light font-display text-slate-900">
+            <div className="flex h-screen overflow-hidden bg-gray-100">
                 {/* Mobile Overlay */}
                 {sidebarOpen && (
                     <div
-                        className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+                        className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
                         onClick={() => setSidebarOpen(false)}
                     />
                 )}
@@ -106,12 +100,11 @@ export default function AdminLayout({
                 />
 
                 {/* Main Content */}
-                <div className="flex min-w-0 flex-1 flex-col bg-background-light">
+                <div className="flex flex-1 flex-col overflow-hidden">
                     <AdminHeader onMenuClick={() => setSidebarOpen(true)} />
-                    <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
-                        <div className="mx-auto flex max-w-[1400px] flex-col gap-6 md:gap-8">
-                            {children}
-                        </div>
+
+                    <main className="flex-1 overflow-y-auto p-6">
+                        {children}
                     </main>
                 </div>
             </div>
