@@ -17,9 +17,9 @@ return new class extends Migration
             $table->foreignId('patient_id')->constrained('patients')->onDelete('cascade');
             $table->string('code', 100)->unique();
             $table->string('service', 100);
-            $table->enum('type', ['long', 'short']);
-            $table->date('booking_date');
-            $table->time('start_time');
+            $table->enum('type', ['long', 'short', 'sisipan']);
+            $table->date('booking_date')->nullable();
+            $table->time('start_time')->nullable();
             $table->string('status', 24)->default('confirmed')->comment('confirmed, checked_in, cancelled, no_show');
             $table->tinyInteger('is_active')->default(1)->comment('1=active slot, 0=inactive');
             $table->timestamps();

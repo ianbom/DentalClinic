@@ -11,6 +11,16 @@ const navLinks = [
     },
     { href: '/admin/doctors', label: 'Dokter', icon: 'stethoscope' },
     { href: '/admin/patients', label: 'Pasien', icon: 'group' },
+    {
+        href: '/admin/doctors/schedule/1',
+        label: 'Kalender Dokter',
+        icon: 'calendar_month',
+    },
+    {
+        href: '/admin/checkin/patiens',
+        label: 'Cek In Pasien',
+        icon: 'lock',
+    },
 ];
 
 interface AdminSidebarProps {

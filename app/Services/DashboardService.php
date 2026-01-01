@@ -98,6 +98,7 @@ class DashboardService
                 'doctor_id' => $booking->doctor?->id,
                 'created_at' => $booking->created_at->format('Y-m-d H:i:s'),
                 'created_at_formatted' => $booking->created_at->format('d M Y H:i'),
+                'service' => $booking->service
             ];
         })->toArray();
     }

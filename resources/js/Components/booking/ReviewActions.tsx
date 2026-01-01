@@ -47,15 +47,10 @@ export function ReviewActions({ doctorId }: ReviewActionsProps) {
             return formattedDate;
         };
 
-        // Parse time from "09:00 WIB" to "09:00"
-        const parseTime = (time: string): string => {
-            return time.replace(' WIB', '');
-        };
-
         const formData = {
             doctor_id: doctorId,
             booking_date: parseDate(bookingData.selectedDate),
-            start_time: parseTime(bookingData.selectedTime),
+            start_time: bookingData.selectedTime, // Already in HH:mm format
             service: bookingData.service,
             type: bookingData.serviceType,
             patient_name: bookingData.fullName,

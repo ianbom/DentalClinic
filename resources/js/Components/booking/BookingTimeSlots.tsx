@@ -13,17 +13,25 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
 
     // Get time slots for selected date
     const timeSlots = useMemo((): TimeSlot[] => {
-        if (!bookingData.selectedDate) {
+        if (!bookingData.rawSelectedDate && !bookingData.selectedDate) {
             return [];
         }
 
-        // Find the date key that matches the formatted date
+        // First, try to find by rawSelectedDate (YYYY-MM-DD format) as direct key
+        if (
+            bookingData.rawSelectedDate &&
+            availableSlots[bookingData.rawSelectedDate]
+        ) {
+            return availableSlots[bookingData.rawSelectedDate].slots ?? [];
+        }
+
+        // Fallback: find by formatted_date matching
         const dateEntry = Object.values(availableSlots).find(
             (slot) => slot.formatted_date === bookingData.selectedDate,
         );
 
         return dateEntry?.slots ?? [];
-    }, [availableSlots, bookingData.selectedDate]);
+    }, [availableSlots, bookingData.rawSelectedDate, bookingData.selectedDate]);
 
     // Check if slot is available based on service type
     const isSlotAvailable = (slot: TimeSlot): boolean => {
@@ -36,7 +44,12 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
     };
 
     const handleTimeSelect = (time: string) => {
-        setBookingData({ selectedTime: `${time} WIB` });
+        // Toggle: if same time is clicked again, deselect it
+        if (bookingData.selectedTime === time) {
+            setBookingData({ selectedTime: '' });
+        } else {
+            setBookingData({ selectedTime: time });
+        }
     };
 
     // Check if service is selected
@@ -104,8 +117,7 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
             {/* Time Slots Grid */}
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4">
                 {timeSlots.map((slot) => {
-                    const isSelected =
-                        bookingData.selectedTime === `${slot.time} WIB`;
+                    const isSelected = bookingData.selectedTime === slot.time;
                     const slotAvailable = isSlotAvailable(slot);
 
                     if (!slotAvailable) {
@@ -122,7 +134,7 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
                                           : 'Tidak tersedia'
                                 }
                             >
-                                {slot.time}
+                                {slot.time} WIB
                             </button>
                         );
                     }
@@ -133,7 +145,7 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
                                 key={slot.time}
                                 className="rounded-lg border-2 border-primary bg-primary/10 px-4 py-2.5 text-sm font-bold text-primary shadow-sm ring-1 ring-primary/20"
                             >
-                                {slot.time}
+                                {slot.time} WIB
                             </button>
                         );
                     }
@@ -144,7 +156,7 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
                             onClick={() => handleTimeSelect(slot.time)}
                             className="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-all hover:border-primary hover:text-primary"
                         >
-                            {slot.time}
+                            {slot.time} WIB
                         </button>
                     );
                 })}

@@ -80,16 +80,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Bookings
     Route::get('/bookings', [AdminBookingController::class, 'listBooking'])->name('bookings.list');
+    Route::get('/bookings/create', [AdminBookingController::class, 'createBooking'])->name('bookings.create');
     Route::get('/bookings/{bookingId}', [AdminBookingController::class, 'bookingDetail'])->name('bookings.detail');
+    Route::post('/bookings/store', [AdminBookingController::class, 'storeBooking'])->name('bookings.store');
+    Route::get('/bookings/{bookingId}/reschedule', [AdminBookingController::class, 'rescheduleBooking'])->name('bookings.reschedule');
+    Route::put('/bookings/{bookingId}/reschedule', [AdminBookingController::class, 'updateBooking'])->name('bookings.update');
 
     // Patients
     Route::get('/patients', [AdminPatientController::class, 'listPatients'])->name('patients.list');
 
-    Route::get('/patients/checkin', function () {
-        return Inertia::render('admin/patients/CheckinPatient');
-    })->name('patients.checkin');
+    Route::get('/checkin/patiens', [AdminBookingController::class, 'checkinPatientPage'])->name('checkin');
+    Route::post('/checkin/perform', [AdminBookingController::class, 'performCheckin'])->name('checkin.perform');
 
     // Doctors
     Route::get('/doctors', [AdminDoctorController::class, 'listDoctors'])->name('doctors.list');
+    Route::get('/doctors/schedule/{doctorId}', [AdminDoctorController::class, 'schedule'])->name('doctors.schedule');
     Route::get('/doctors/{doctorId}', [AdminDoctorController::class, 'show'])->name('doctors.show');
 });

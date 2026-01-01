@@ -95,12 +95,8 @@ class BookingService
             return [];
         }
         
-        // Check if doctor has time off on this date
-        // The 'date' field is now cast as 'date:Y-m-d' string, so compare directly
         $dateString = $date->format('Y-m-d');
         $timeOffs = $doctor->timeOff->filter(function ($timeOff) use ($dateString) {
-            // Since date is cast as 'date:Y-m-d', it's a Carbon object but serializes to Y-m-d
-            // Use format to get the date string for comparison
             return $timeOff->date->format('Y-m-d') === $dateString;
         });
         
@@ -117,12 +113,8 @@ class BookingService
         foreach ($workingPeriods as $period) {
             $startTime = Carbon::parse($period->start_time);
             $endTime = Carbon::parse($period->end_time);
-            
-            // Generate slots with alternating intervals: 45 min, 15 min
-            // Output: 8:00, 8:45, 9:00, 9:45, 10:00, ...
-            // Slots ending with :00 are for LONG (Pengobatan - 45 min duration)
-            // Slots ending with :45 are for SHORT (Konsultasi - 15 min duration)
-            $isLongSlot = true; // First slot (e.g., 8:00) is for long service
+
+            $isLongSlot = true; 
             
             while ($startTime->lt($endTime)) {
                 $slotTime = $startTime->format('H:i');
@@ -235,16 +227,104 @@ class BookingService
      * 
      * @throws \Exception if slot is not available
      */
-    public function createBooking(array $data): Booking
+    public function createBooking(array $data)
     {
         $doctorId = $data['doctor_id'];
         $bookingDate = $data['booking_date'];
-        $startTime = $data['start_time'];
+        $startTime = $data['start_time'] ?? null;
+        $serviceType = $data['type'];
 
-        // Validate slot is available
+        // For sisipan or when no time is selected, skip slot validation
+        if ($serviceType == 'sisipan' || $startTime == null) {
+            return $this->saveBookingData($data);
+        }
+
+        // Validate slot is available (only when time is provided)
         if (!$this->isSlotAvailable($doctorId, $bookingDate, $startTime)) {
             throw new \Exception('Jadwal yang dipilih sudah tidak tersedia. Silakan pilih jadwal lain.');
         }
+
+        return $this->saveBookingData($data);
+    }
+
+    /**
+     * Reschedule an existing booking.
+     * The old time slot automatically becomes available since slot availability
+     * is calculated dynamically based on existing bookings in the database.
+     */
+    public function rescheduleBooking(int $bookingId, array $data): Booking
+    {
+        $booking = Booking::with(['patient', 'doctor'])->findOrFail($bookingId);
+
+        // Capture old schedule before update
+        $oldSchedule = [
+            'old_date' => $booking->booking_date->translatedFormat('l, d F Y'),
+            'old_time' => $booking->start_time ? substr($booking->start_time, 0, 5) : '-',
+        ];
+
+        $newStartTime = $data['start_time'] ?? null;
+        $newServiceType = $data['type'];
+
+        // Validate new slot is available (if time is provided and not sisipan)
+        // Note: We need to exclude current booking from availability check
+        if ($newServiceType !== 'sisipan' && $newStartTime !== null) {
+            $isNewSlotAvailable = $this->isSlotAvailableExcluding(
+                $data['doctor_id'],
+                $data['booking_date'],
+                $newStartTime,
+                $bookingId
+            );
+
+            if (!$isNewSlotAvailable) {
+                throw new \Exception('Jadwal baru yang dipilih sudah tidak tersedia. Silakan pilih jadwal lain.');
+            }
+        }
+
+        // Update booking - old slot automatically becomes available
+        $booking->update([
+            'doctor_id' => $data['doctor_id'],
+            'service' => $data['service'],
+            'type' => $data['type'],
+            'booking_date' => $data['booking_date'],
+            'start_time' => $newStartTime,
+        ]);
+
+        // Refresh booking to get updated data
+        $booking->refresh();
+        $booking->load(['doctor', 'patient']);
+
+        // Send reschedule notification
+        $this->sendRescheduleNotification(
+            $booking->id,
+            $booking->patient->patient_phone,
+            $oldSchedule
+        );
+
+        return $booking;
+    }
+
+    /**
+     * Check if a slot is available, excluding a specific booking
+     */
+    private function isSlotAvailableExcluding(int $doctorId, string $date, string $time, int $excludeBookingId): bool
+    {
+        // Check if there's another booking at this time (excluding the current one)
+        $existingBooking = Booking::where('doctor_id', $doctorId)
+            ->whereDate('booking_date', $date)
+            ->where('start_time', $time)
+            ->where('id', '!=', $excludeBookingId)
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->first();
+
+        return $existingBooking === null;
+    }
+
+    public function saveBookingData(array $data)
+    {
+        $doctorId = $data['doctor_id'];
+        $bookingDate = $data['booking_date'];
+        $startTime = $data['start_time'] ?? null;
+        $serviceType = $data['type'];
 
         // Find or create/update patient by NIK
         $patient = Patient::where('patient_nik', $data['patient_nik'])->first();
@@ -261,7 +341,7 @@ class BookingService
         } else {
             // Create new patient
             $patient = Patient::create([
-                'medical_records' => Patient::generateMedicalRecords(),
+                // 'medical_records' => Patient::generateMedicalRecords(),
                 'patient_name' => $data['patient_name'],
                 'patient_nik' => $data['patient_nik'],
                 'patient_email' => $data['patient_email'] ?? null,
@@ -279,10 +359,10 @@ class BookingService
             'code' => $bookingCode,
             'doctor_id' => $doctorId,
             'patient_id' => $patient->id,
-            'service' => $data['service'] ?? 'Konsultasi',
-            'type' => $data['type'] ?? 'short',
+            'service' => $data['service'],
+            'type' => $data['type'],
             'booking_date' => $bookingDate,
-            'start_time' => $startTime,
+            'start_time' => $startTime ?? null,
             'status' => 'confirmed',
             'is_active' => true,
         ]);
@@ -322,6 +402,29 @@ class BookingService
         ];
 
         return $whatsappService->sendBookingConfirmation($bookingId, $phone, $bookingDetails);
+    }
+
+    /**
+     * Send reschedule notification WhatsApp
+     */
+    public function sendRescheduleNotification(int $bookingId, string $phone, array $oldSchedule)
+    {
+        $booking = Booking::with(['doctor', 'patient'])->findOrFail($bookingId);
+        
+        $whatsappService = new WhatsappService();
+        
+        $bookingDetails = [
+            'patient_name' => $booking->patient->patient_name,
+            'doctor_name' => $booking->doctor->name,
+            'date' => $this->formatDateIndonesian(Carbon::parse($booking->booking_date)),
+            'time' => substr($booking->start_time ?? '00:00', 0, 5),
+            'code' => $booking->code,
+            'old_date' => $oldSchedule['old_date'] ?? '-',
+            'old_time' => $oldSchedule['old_time'] ?? '-',
+            'checkin_link' => url("/booking/checkin/{$booking->code}"),
+        ];
+
+        return $whatsappService->sendReschedule($bookingId, $phone, $bookingDetails);
     }
 
     /**
@@ -399,7 +502,7 @@ class BookingService
             . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊";
     }
 
-    public function checkinBooking(string $code): Booking
+    public function checkinBooking(string $code, bool $isAdminCheckin = false): Booking
     {
         $booking = Booking::with(['patient', 'doctor'])
             ->where('code', $code)
@@ -407,7 +510,7 @@ class BookingService
 
         // Check if already checked in
         if ($booking->status === 'checked_in') {
-            throw new \Exception('Anda sudah melakukan check-in sebelumnya.');
+            throw new \Exception('Booking ini sudah di-check-in sebelumnya.');
         }
 
         // Check if booking is cancelled
@@ -423,32 +526,49 @@ class BookingService
             throw new \Exception('Check-in hanya bisa dilakukan pada hari H booking.');
         }
 
-        // Check if within 1 hour before booking time
-        $dateString = $bookingDate->format('Y-m-d');
-        $bookingDateTime = Carbon::parse($dateString . ' ' . $booking->start_time);
-        $now = Carbon::now();
-        $oneHourBefore = $bookingDateTime->copy()->subHour();
+        // Time restrictions only for patient self-checkin, not admin
+        if (!$isAdminCheckin) {
+            // Check if within 1 hour before booking time
+            $dateString = $bookingDate->format('Y-m-d');
+            $bookingDateTime = Carbon::parse($dateString . ' ' . $booking->start_time);
+            $now = Carbon::now();
+            $oneHourBefore = $bookingDateTime->copy()->subHour();
 
-        if ($now->lt($oneHourBefore)) {
-            $formattedTime = $oneHourBefore->format('H:i');
-            throw new \Exception("Check-in baru bisa dilakukan mulai pukul {$formattedTime} WIB (1 jam sebelum jadwal).");
-        }
+            if ($now->lt($oneHourBefore)) {
+                $formattedTime = $oneHourBefore->format('H:i');
+                throw new \Exception("Check-in baru bisa dilakukan mulai pukul {$formattedTime} WIB (1 jam sebelum jadwal).");
+            }
 
-        if ($now->gt($bookingDateTime)) {
-            throw new \Exception('Waktu booking sudah lewat. Silakan hubungi admin.');
+            if ($now->gt($bookingDateTime)) {
+                throw new \Exception('Waktu booking sudah lewat. Silakan hubungi admin.');
+            }
         }
 
         // Update booking status
+        $checkinTime = Carbon::now();
         $booking->update([
             'status' => 'checked_in',
         ]);
 
         // Create check-in record
         $booking->checkin()->create([
-            'checked_in_at' => Carbon::now(),
+            'checked_in_at' => $checkinTime,
         ]);
 
-        return $booking->fresh(['patient', 'doctor']);
+        // Send WhatsApp notification
+        $whatsappService = new WhatsappService();
+        $bookingDetails = [
+            'patient_name' => $booking->patient->patient_name,
+            'doctor_name' => $booking->doctor->name,
+            'date' => $this->formatDateIndonesian(Carbon::parse($booking->booking_date)),
+            'time' => substr($booking->start_time ?? '00:00', 0, 5),
+            'code' => $booking->code,
+            'checkin_time' => $checkinTime->format('H:i'),
+        ];
+
+        $whatsappService->sendCheckin($booking->id, $booking->patient->patient_phone, $bookingDetails);
+
+        return $booking->fresh(['patient', 'doctor', 'checkin']);
     }
 
     /**

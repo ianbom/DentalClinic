@@ -1,14 +1,75 @@
 import { AdminHeader } from '@/Components/admin/layout/AdminHeader';
 import { AdminSidebar } from '@/Components/admin/layout/AdminSidebar';
-import { Head } from '@inertiajs/react';
-import { useState } from 'react';
+import { Head, usePage } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
+
+interface FlashMessages {
+    success?: string;
+    error?: string;
+}
+
+interface PageProps {
+    flash: FlashMessages;
+}
+
+function Toast({
+    message,
+    type,
+    onClose,
+}: {
+    message: string;
+    type: 'success' | 'error';
+    onClose: () => void;
+}) {
+    useEffect(() => {
+        const timer = setTimeout(onClose, 5000);
+        return () => clearTimeout(timer);
+    }, [onClose]);
+
+    return (
+        <div
+            className={`fixed right-4 top-4 z-[100] flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg transition-all ${
+                type === 'success'
+                    ? 'bg-green-500 text-white'
+                    : 'bg-red-500 text-white'
+            }`}
+        >
+            <span className="material-symbols-outlined text-[20px]">
+                {type === 'success' ? 'check_circle' : 'error'}
+            </span>
+            <span className="max-w-xs text-sm font-medium">{message}</span>
+            <button
+                onClick={onClose}
+                className="ml-2 rounded-full p-1 hover:bg-white/20"
+            >
+                <span className="material-symbols-outlined text-[16px]">
+                    close
+                </span>
+            </button>
+        </div>
+    );
+}
 
 export default function AdminLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const { flash } = usePage<PageProps>().props;
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [toast, setToast] = useState<{
+        message: string;
+        type: 'success' | 'error';
+    } | null>(null);
+
+    // Show toast when flash message arrives
+    useEffect(() => {
+        if (flash?.success) {
+            setToast({ message: flash.success, type: 'success' });
+        } else if (flash?.error) {
+            setToast({ message: flash.error, type: 'error' });
+        }
+    }, [flash]);
 
     return (
         <>
@@ -19,6 +80,15 @@ export default function AdminLayout({
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
+
+            {/* Toast Notification */}
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast(null)}
+                />
+            )}
 
             <div className="flex h-screen overflow-hidden bg-background-light font-display text-slate-900">
                 {/* Mobile Overlay */}

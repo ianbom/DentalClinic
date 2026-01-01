@@ -149,7 +149,8 @@ export function Footer() {
                 {/* Bottom Bar */}
                 <div className="flex flex-col items-center justify-between gap-4 border-t border-subtle-light pt-6 sm:flex-row md:pt-8">
                     <p className="text-center text-sm text-gray-400 sm:text-left">
-                        © {currentYear} Cantika Dental Care. All rights reserved.
+                        © {currentYear} Cantika Dental Care. All rights
+                        reserved.
                     </p>
                     <div className="flex gap-4 text-sm text-gray-400">
                         <Link

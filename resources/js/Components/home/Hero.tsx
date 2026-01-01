@@ -33,7 +33,12 @@ export function Hero() {
                                 </button>
                             </Link>
 
-                            <a href='https://wa.me/6285231519966' target='_blank' className="flex h-12 w-full cursor-pointer items-center justify-center rounded-lg border border-subtle-light px-8 text-base font-medium text-text-light transition-all hover:bg-subtle-light sm:w-auto">
+                            <a
+                                href="https://wa.me/6285231519966"
+                                target="_blank"
+                                className="flex h-12 w-full cursor-pointer items-center justify-center rounded-lg border border-subtle-light px-8 text-base font-medium text-text-light transition-all hover:bg-subtle-light sm:w-auto"
+                                rel="noreferrer"
+                            >
                                 <span className="material-symbols-outlined mr-2 text-primary">
                                     phone
                                 </span>

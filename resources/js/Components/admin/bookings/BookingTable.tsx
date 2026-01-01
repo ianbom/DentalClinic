@@ -4,6 +4,13 @@ import { Link } from '@inertiajs/react';
 import { useState } from 'react';
 
 // =============================================================================
+// Types
+// =============================================================================
+
+export type SortField = 'patient_name' | 'booking_date' | 'created_at' | '';
+export type SortOrder = 'asc' | 'desc';
+
+// =============================================================================
 // Main BookingTable Component (Unified)
 // =============================================================================
 
@@ -22,6 +29,12 @@ interface BookingTableProps {
     currentPage?: number;
     /** Items per page for row numbering (default: 10) */
     itemsPerPage?: number;
+    /** Current sort field */
+    sortField?: SortField;
+    /** Current sort order */
+    sortOrder?: SortOrder;
+    /** Callback when sort changes */
+    onSort?: (field: SortField) => void;
 }
 
 export function BookingTable({
@@ -32,6 +45,9 @@ export function BookingTable({
     showActions = false,
     currentPage = 1,
     itemsPerPage = 10,
+    sortField = '',
+    sortOrder = 'asc',
+    onSort,
 }: BookingTableProps) {
     const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
@@ -57,7 +73,12 @@ export function BookingTable({
             {bookings.length > 0 ? (
                 <div className="overflow-x-auto">
                     <table className="w-full border-collapse text-left">
-                        <BookingTableHeader showActions={showActions} />
+                        <BookingTableHeader
+                            showActions={showActions}
+                            sortField={sortField}
+                            sortOrder={sortOrder}
+                            onSort={onSort}
+                        />
                         <tbody className="divide-y divide-slate-100 text-sm">
                             {bookings.map((booking, index) => (
                                 <BookingTableRow
@@ -90,7 +111,51 @@ export function BookingTable({
 // Sub-Components
 // =============================================================================
 
-function BookingTableHeader({ showActions }: { showActions: boolean }) {
+function SortableHeader({
+    label,
+    field,
+    currentField,
+    currentOrder,
+    onSort,
+}: {
+    label: string;
+    field: SortField;
+    currentField: SortField;
+    currentOrder: SortOrder;
+    onSort?: (field: SortField) => void;
+}) {
+    const isActive = currentField === field;
+
+    return (
+        <th
+            className="cursor-pointer px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 transition-colors hover:text-slate-700"
+            onClick={() => onSort?.(field)}
+        >
+            <div className="flex items-center gap-1">
+                <span>{label}</span>
+                <span className="material-symbols-outlined text-[14px]">
+                    {isActive
+                        ? currentOrder === 'asc'
+                            ? 'arrow_upward'
+                            : 'arrow_downward'
+                        : 'unfold_more'}
+                </span>
+            </div>
+        </th>
+    );
+}
+
+function BookingTableHeader({
+    showActions,
+    sortField,
+    sortOrder,
+    onSort,
+}: {
+    showActions: boolean;
+    sortField: SortField;
+    sortOrder: SortOrder;
+    onSort?: (field: SortField) => void;
+}) {
     return (
         <thead className="bg-slate-50">
             <tr>
@@ -100,18 +165,30 @@ function BookingTableHeader({ showActions }: { showActions: boolean }) {
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
                     Kode
                 </th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Pasien
-                </th>
+                <SortableHeader
+                    label="Pasien"
+                    field="patient_name"
+                    currentField={sortField}
+                    currentOrder={sortOrder}
+                    onSort={onSort}
+                />
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
                     Dokter
                 </th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Tanggal & Jam
-                </th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Dibuat Pada
-                </th>
+                <SortableHeader
+                    label="Tanggal & Jam"
+                    field="booking_date"
+                    currentField={sortField}
+                    currentOrder={sortOrder}
+                    onSort={onSort}
+                />
+                <SortableHeader
+                    label="Dibuat Pada"
+                    field="created_at"
+                    currentField={sortField}
+                    currentOrder={sortOrder}
+                    onSort={onSort}
+                />
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
                     Status
                 </th>
@@ -181,7 +258,9 @@ function BookingTableRow({
                             {booking.booking_date_formatted}
                         </span>
                         <span className="text-xs text-slate-500">
-                            {booking.start_time} WIB
+                            {booking.start_time
+                                ? `${booking.start_time} WIB`
+                                : '-'}
                         </span>
                     </div>
                 </td>
@@ -251,15 +330,15 @@ function BookingDetailRow({
                             Email
                         </p>
                         <p className="text-sm text-slate-900">
-                            {booking.patient_email}
+                            {booking.patient_email || '-'}
                         </p>
                     </div>
                     <div>
                         <p className="text-xs font-medium text-slate-500">
-                            Keluhan
+                            Service
                         </p>
                         <p className="text-sm text-slate-900">
-                            {booking.complaint}
+                            {booking.service || '-'}
                         </p>
                     </div>
                     <div>

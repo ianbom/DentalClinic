@@ -31,7 +31,7 @@ class BookingController extends Controller
     {
         $doctor = Doctor::with('workingPeriods')->findOrFail($doctorId);
         $availableSlots = $this->bookingService->getAvailableSlotsForDoctor($doctorId, 30);
-    
+
         return Inertia::render('patient/booking/BookingDoctor', [
             'doctor' => $doctor,
             'availableSlots' => $availableSlots,
@@ -92,11 +92,7 @@ class BookingController extends Controller
         try {
             // Create booking
             $booking = $this->bookingService->createBooking($request->validated());
-            
-            // Send booking confirmation WhatsApp
             $this->bookingService->sendBookingConfirmation($booking->id, $booking->patient->patient_phone);
-            
-            // Schedule H-1 reminder notification
             $this->bookingService->scheduleReminderNotification($booking->id);
 
             return redirect()

@@ -60,6 +60,7 @@ export function BookingCalendarWidget({
         if (slotData) {
             setBookingData({
                 selectedDate: slotData.formatted_date,
+                rawSelectedDate: dateString, // YYYY-MM-DD format for backend
                 selectedTime: '', // Reset time when date changes
             });
         }

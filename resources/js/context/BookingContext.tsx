@@ -16,8 +16,9 @@ export interface BookingData {
     birthdate: string;
     address: string;
     service: string;
-    serviceType: 'short' | 'long' | '';
-    selectedDate: string;
+    serviceType: 'short' | 'long' | 'sisipan' | '';
+    selectedDate: string; // Formatted date for display
+    rawSelectedDate: string; // YYYY-MM-DD format for backend
     selectedTime: string;
     isWhatsappVerified: boolean;
     isNikChecked: boolean;
@@ -39,6 +40,7 @@ const defaultBookingData: BookingData = {
     service: '',
     serviceType: '',
     selectedDate: '',
+    rawSelectedDate: '',
     selectedTime: '',
     isWhatsappVerified: false,
     isNikChecked: false,
