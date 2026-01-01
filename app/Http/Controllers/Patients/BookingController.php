@@ -31,7 +31,9 @@ class BookingController extends Controller
     {
         $doctor = Doctor::with('workingPeriods')->findOrFail($doctorId);
         $availableSlots = $this->bookingService->getAvailableSlotsForDoctor($doctorId, 30);
-    
+        
+        return response()->json($availableSlots);
+
         return Inertia::render('patient/booking/BookingDoctor', [
             'doctor' => $doctor,
             'availableSlots' => $availableSlots,
