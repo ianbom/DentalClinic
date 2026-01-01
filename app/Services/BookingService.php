@@ -502,7 +502,7 @@ class BookingService
             . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊";
     }
 
-    public function checkinBooking(string $code): Booking
+    public function checkinBooking(string $code, bool $isAdminCheckin = false): Booking
     {
         $booking = Booking::with(['patient', 'doctor'])
             ->where('code', $code)
@@ -510,7 +510,7 @@ class BookingService
 
         // Check if already checked in
         if ($booking->status === 'checked_in') {
-            throw new \Exception('Anda sudah melakukan check-in sebelumnya.');
+            throw new \Exception('Booking ini sudah di-check-in sebelumnya.');
         }
 
         // Check if booking is cancelled
@@ -526,32 +526,49 @@ class BookingService
             throw new \Exception('Check-in hanya bisa dilakukan pada hari H booking.');
         }
 
-        // Check if within 1 hour before booking time
-        $dateString = $bookingDate->format('Y-m-d');
-        $bookingDateTime = Carbon::parse($dateString . ' ' . $booking->start_time);
-        $now = Carbon::now();
-        $oneHourBefore = $bookingDateTime->copy()->subHour();
+        // Time restrictions only for patient self-checkin, not admin
+        if (!$isAdminCheckin) {
+            // Check if within 1 hour before booking time
+            $dateString = $bookingDate->format('Y-m-d');
+            $bookingDateTime = Carbon::parse($dateString . ' ' . $booking->start_time);
+            $now = Carbon::now();
+            $oneHourBefore = $bookingDateTime->copy()->subHour();
 
-        if ($now->lt($oneHourBefore)) {
-            $formattedTime = $oneHourBefore->format('H:i');
-            throw new \Exception("Check-in baru bisa dilakukan mulai pukul {$formattedTime} WIB (1 jam sebelum jadwal).");
-        }
+            if ($now->lt($oneHourBefore)) {
+                $formattedTime = $oneHourBefore->format('H:i');
+                throw new \Exception("Check-in baru bisa dilakukan mulai pukul {$formattedTime} WIB (1 jam sebelum jadwal).");
+            }
 
-        if ($now->gt($bookingDateTime)) {
-            throw new \Exception('Waktu booking sudah lewat. Silakan hubungi admin.');
+            if ($now->gt($bookingDateTime)) {
+                throw new \Exception('Waktu booking sudah lewat. Silakan hubungi admin.');
+            }
         }
 
         // Update booking status
+        $checkinTime = Carbon::now();
         $booking->update([
             'status' => 'checked_in',
         ]);
 
         // Create check-in record
         $booking->checkin()->create([
-            'checked_in_at' => Carbon::now(),
+            'checked_in_at' => $checkinTime,
         ]);
 
-        return $booking->fresh(['patient', 'doctor']);
+        // Send WhatsApp notification
+        $whatsappService = new WhatsappService();
+        $bookingDetails = [
+            'patient_name' => $booking->patient->patient_name,
+            'doctor_name' => $booking->doctor->name,
+            'date' => $this->formatDateIndonesian(Carbon::parse($booking->booking_date)),
+            'time' => substr($booking->start_time ?? '00:00', 0, 5),
+            'code' => $booking->code,
+            'checkin_time' => $checkinTime->format('H:i'),
+        ];
+
+        $whatsappService->sendCheckin($booking->id, $booking->patient->patient_phone, $bookingDetails);
+
+        return $booking->fresh(['patient', 'doctor', 'checkin']);
     }
 
     /**

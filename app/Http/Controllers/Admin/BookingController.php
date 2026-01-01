@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\CreateBookingRequest;
 use App\Http\Requests\Admin\UpdateBookingRequest;
 use App\Models\Booking;
 use App\Models\Doctor;
+use App\Models\Notification;
 use App\Services\Admin\BookingService;
 use App\Services\BookingService as PatientBookingService;
 use Illuminate\Http\Request;
@@ -40,13 +41,16 @@ class BookingController extends Controller
     public function bookingDetail(int $bookingId)
     {
         $booking = $this->bookingService->getBookingDetail($bookingId);
-
+        $notifications = Notification::where('booking_id', $bookingId)
+            ->orderBy('created_at', 'desc')
+            ->get();
         if (!$booking) {
             abort(404, 'Booking tidak ditemukan');
         }
 
         return Inertia::render('admin/bookings/DetailBooking', [
             'booking' => $booking,
+            'notifications' => $notifications
         ]);
     }
 
@@ -155,6 +159,64 @@ class BookingController extends Controller
             return redirect()
                 ->back()
                 ->with('error', 'Reschedule gagal: ' . $th->getMessage());
+        }
+    }
+
+    public function checkinPatientPage(Request $request){
+        $bookingCode = $request->query('bookingCode'); 
+        $booking = null; 
+        
+        if ($bookingCode) {
+            $booking = Booking::with(['patient', 'doctor'])
+                ->where('code', $bookingCode)
+                ->first();
+            
+            if ($booking) {
+                $booking = [
+                    'id' => $booking->id,
+                    'code' => $booking->code,
+                    'status' => $booking->status,
+                    'service' => $booking->service,
+                    'booking_date' => $booking->booking_date->format('Y-m-d'),
+                    'booking_date_formatted' => $booking->booking_date->translatedFormat('l, d F Y'),
+                    'start_time' => $booking->start_time,
+                    'patient' => [
+                        'name' => $booking->patient->patient_name,
+                        'nik' => $booking->patient->patient_nik,
+                        'phone' => $booking->patient->patient_phone,
+                        'email' => $booking->patient->patient_email,
+                    ],
+                    'doctor' => [
+                        'id' => $booking->doctor->id,
+                        'name' => $booking->doctor->name,
+                        'sip' => $booking->doctor->sip,
+                    ],
+                ];
+            }
+        }
+        
+        return Inertia::render('admin/patients/CheckinPatient', [
+            'booking' => $booking,
+            'searchCode' => $bookingCode,
+        ]);
+    }
+
+    public function performCheckin(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string',
+        ]);
+
+        try {
+            $booking = $this->patientBookingService->checkinBooking($request->code, true);
+
+            return redirect()
+                ->route('admin.checkin')
+                ->with('success', 'Check-in berhasil! Pasien ' . $booking->patient->patient_name . ' sudah terdaftar.');
+        } catch (\Throwable $th) {
+            return redirect()
+                ->back()
+                ->with('error', $th->getMessage());
         }
     }
 }

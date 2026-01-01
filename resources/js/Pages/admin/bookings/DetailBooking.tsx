@@ -2,16 +2,18 @@ import { BookingDetailHeader } from '@/Components/admin/bookings/detail/BookingD
 import { BookingScheduleCard } from '@/Components/admin/bookings/detail/BookingScheduleCard';
 import { BookingStatusCard } from '@/Components/admin/bookings/detail/BookingStatusCard';
 import { BookingTimeline } from '@/Components/admin/bookings/detail/BookingTimeline';
+import { NotificationHistory } from '@/Components/admin/bookings/detail/NotificationHistory';
 import { PatientInfoCard } from '@/Components/admin/bookings/detail/PatientInfoCard';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { getStatusLabel } from '@/lib/utils';
-import { BookingDetail } from '@/types';
+import { BookingDetail, Notification } from '@/types';
 
 interface BookingDetailPageProps {
     booking: BookingDetail;
+    notifications: Notification[];
 }
 
-function BookingDetailPage({ booking }: BookingDetailPageProps) {
+function BookingDetailPage({ booking, notifications }: BookingDetailPageProps) {
     return (
         <>
             <BookingDetailHeader />
@@ -36,6 +38,7 @@ function BookingDetailPage({ booking }: BookingDetailPageProps) {
                         time={`${booking.start_time} WIB`}
                     />
                     <BookingTimeline booking={booking} />
+                    <NotificationHistory notifications={notifications} />
                 </div>
 
                 {/* Right Column: Customer Info */}

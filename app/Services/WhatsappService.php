@@ -115,6 +115,12 @@ class WhatsappService
         return $this->sendWA($bookingId, $target, $message, 'cancellation');
     }
 
+    public function sendCheckin(int $bookingId, string $target, array $bookingDetails): Notification
+    {
+        $message = $this->buildCheckinMessage($bookingDetails);
+        return $this->sendWA($bookingId, $target, $message, 'checkin');
+    }
+
     public function sendReschedule(int $bookingId, string $target, array $bookingDetails): Notification
     {
         $message = $this->buildRescheduleMessage($bookingDetails);
@@ -201,6 +207,31 @@ class WhatsappService
             . "_Pesan ini dikirim otomatis oleh Cantika Dental Care by drg. Anna Fikril._\n\n"
             . "Terima kasih atas kepercayaan Anda.\n"
             . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊";
+    }
+
+    /**
+     * Build check-in confirmation message
+     */
+    private function buildCheckinMessage(array $details): string
+    {
+        $patientName = $details['patient_name'] ?? '-';
+        $doctorName = $details['doctor_name'] ?? '-';
+        $date = $details['date'] ?? '-';
+        $time = $details['time'] ?? '-';
+        $code = $details['code'] ?? '-';
+        $checkinTime = $details['checkin_time'] ?? '-';
+
+        return "✅ *CHECK-IN BERHASIL*\n\n"
+            . "Halo {$patientName},\n\n"
+            . "Check-in untuk booking Anda telah berhasil!\n\n"
+            . "📋 Kode Booking : *{$code}*\n"
+            . "🗓 Tanggal : {$date}\n"
+            . "⏰ Jam Booking : {$time} WIB\n"
+            . "👩‍⚕️ Dokter : {$doctorName}\n"
+            . "🕐 Check-in : {$checkinTime} WIB\n\n"
+            . "Silakan menunggu di ruang tunggu.\n"
+            . "Anda akan dipanggil sesuai nomor antrian.\n\n"
+            . "Terima kasih telah berkunjung ke Cantika Dental Care 😊";
     }
 
     /**

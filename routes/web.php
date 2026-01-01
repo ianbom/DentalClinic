@@ -89,9 +89,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Patients
     Route::get('/patients', [AdminPatientController::class, 'listPatients'])->name('patients.list');
 
-    Route::get('/patients/checkin', function () {
-        return Inertia::render('admin/patients/CheckinPatient');
-    })->name('patients.checkin');
+    Route::get('/checkin/patiens', [AdminBookingController::class, 'checkinPatientPage'])->name('checkin');
+    Route::post('/checkin/perform', [AdminBookingController::class, 'performCheckin'])->name('checkin.perform');
 
     // Doctors
     Route::get('/doctors', [AdminDoctorController::class, 'listDoctors'])->name('doctors.list');

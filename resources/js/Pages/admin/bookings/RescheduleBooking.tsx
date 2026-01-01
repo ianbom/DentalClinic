@@ -68,15 +68,11 @@ function RescheduleBookingForm({
             // to ensure reset has completed
             setTimeout(() => {
                 setBookingData({
-                    service: booking.service,
-                    serviceType: booking.type as
-                        | 'short'
-                        | 'long'
-                        | 'sisipan'
-                        | '',
-                    selectedDate: booking.booking_date_formatted,
-                    rawSelectedDate: booking.booking_date,
-                    selectedTime: booking.start_time || '',
+                    service: '',
+                    serviceType: '',
+                    selectedDate: '',
+                    rawSelectedDate: '',
+                    selectedTime: '',
                     // Reset all patient-related fields
                     fullName: '',
                     nik: '',
