@@ -20,6 +20,7 @@ function BookingDetailPage({ booking }: BookingDetailPageProps) {
                 {/* Left Column: Main Info, Actions, Schedule */}
                 <div className="flex flex-col gap-6 lg:col-span-2">
                     <BookingStatusCard
+                        bookingId={booking.id}
                         code={`#${booking.code}`}
                         createdDate={booking.created_at_formatted}
                         status={getStatusLabel(booking.status)}

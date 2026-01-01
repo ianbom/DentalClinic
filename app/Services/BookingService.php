@@ -239,28 +239,92 @@ class BookingService
             return $this->saveBookingData($data);
         }
 
-        // Normalize time format: strip " WIB" suffix if present
-        $normalizedTime = str_replace(' WIB', '', $startTime);
-
         // Validate slot is available (only when time is provided)
-        if (!$this->isSlotAvailable($doctorId, $bookingDate, $normalizedTime)) {
+        if (!$this->isSlotAvailable($doctorId, $bookingDate, $startTime)) {
             throw new \Exception('Jadwal yang dipilih sudah tidak tersedia. Silakan pilih jadwal lain.');
         }
 
         return $this->saveBookingData($data);
     }
 
-    public function saveBookingData(array $data){ 
+    /**
+     * Reschedule an existing booking.
+     * The old time slot automatically becomes available since slot availability
+     * is calculated dynamically based on existing bookings in the database.
+     */
+    public function rescheduleBooking(int $bookingId, array $data): Booking
+    {
+        $booking = Booking::with(['patient', 'doctor'])->findOrFail($bookingId);
 
+        // Capture old schedule before update
+        $oldSchedule = [
+            'old_date' => $booking->booking_date->translatedFormat('l, d F Y'),
+            'old_time' => $booking->start_time ? substr($booking->start_time, 0, 5) : '-',
+        ];
+
+        $newStartTime = $data['start_time'] ?? null;
+        $newServiceType = $data['type'];
+
+        // Validate new slot is available (if time is provided and not sisipan)
+        // Note: We need to exclude current booking from availability check
+        if ($newServiceType !== 'sisipan' && $newStartTime !== null) {
+            $isNewSlotAvailable = $this->isSlotAvailableExcluding(
+                $data['doctor_id'],
+                $data['booking_date'],
+                $newStartTime,
+                $bookingId
+            );
+
+            if (!$isNewSlotAvailable) {
+                throw new \Exception('Jadwal baru yang dipilih sudah tidak tersedia. Silakan pilih jadwal lain.');
+            }
+        }
+
+        // Update booking - old slot automatically becomes available
+        $booking->update([
+            'doctor_id' => $data['doctor_id'],
+            'service' => $data['service'],
+            'type' => $data['type'],
+            'booking_date' => $data['booking_date'],
+            'start_time' => $newStartTime,
+        ]);
+
+        // Refresh booking to get updated data
+        $booking->refresh();
+        $booking->load(['doctor', 'patient']);
+
+        // Send reschedule notification
+        $this->sendRescheduleNotification(
+            $booking->id,
+            $booking->patient->patient_phone,
+            $oldSchedule
+        );
+
+        return $booking;
+    }
+
+    /**
+     * Check if a slot is available, excluding a specific booking
+     */
+    private function isSlotAvailableExcluding(int $doctorId, string $date, string $time, int $excludeBookingId): bool
+    {
+        // Check if there's another booking at this time (excluding the current one)
+        $existingBooking = Booking::where('doctor_id', $doctorId)
+            ->whereDate('booking_date', $date)
+            ->where('start_time', $time)
+            ->where('id', '!=', $excludeBookingId)
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->first();
+
+        return $existingBooking === null;
+    }
+
+    public function saveBookingData(array $data)
+    {
         $doctorId = $data['doctor_id'];
         $bookingDate = $data['booking_date'];
         $startTime = $data['start_time'] ?? null;
         $serviceType = $data['type'];
-
-        // Normalize time format: strip " WIB" suffix if present
-        if ($startTime) {
-            $startTime = str_replace(' WIB', '', $startTime);
-        }
 
         // Find or create/update patient by NIK
         $patient = Patient::where('patient_nik', $data['patient_nik'])->first();
@@ -338,6 +402,29 @@ class BookingService
         ];
 
         return $whatsappService->sendBookingConfirmation($bookingId, $phone, $bookingDetails);
+    }
+
+    /**
+     * Send reschedule notification WhatsApp
+     */
+    public function sendRescheduleNotification(int $bookingId, string $phone, array $oldSchedule)
+    {
+        $booking = Booking::with(['doctor', 'patient'])->findOrFail($bookingId);
+        
+        $whatsappService = new WhatsappService();
+        
+        $bookingDetails = [
+            'patient_name' => $booking->patient->patient_name,
+            'doctor_name' => $booking->doctor->name,
+            'date' => $this->formatDateIndonesian(Carbon::parse($booking->booking_date)),
+            'time' => substr($booking->start_time ?? '00:00', 0, 5),
+            'code' => $booking->code,
+            'old_date' => $oldSchedule['old_date'] ?? '-',
+            'old_time' => $oldSchedule['old_time'] ?? '-',
+            'checkin_link' => url("/booking/checkin/{$booking->code}"),
+        ];
+
+        return $whatsappService->sendReschedule($bookingId, $phone, $bookingDetails);
     }
 
     /**

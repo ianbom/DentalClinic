@@ -244,7 +244,7 @@ export interface BookingFullItem extends BookingListItem {
     patient_nik: string;
     patient_email: string;
     booking_date_formatted: string;
-    complaint: string;
+    service: string;
     created_at_formatted: string;
 }
 

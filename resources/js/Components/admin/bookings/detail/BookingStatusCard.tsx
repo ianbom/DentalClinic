@@ -1,14 +1,27 @@
+import { Link } from '@inertiajs/react';
+
 interface BookingStatusCardProps {
+    bookingId: number;
     code: string;
     createdDate: string;
     status: string; // Could be an enum if strictly typed
 }
 
 export function BookingStatusCard({
+    bookingId,
     code,
     createdDate,
     status,
 }: BookingStatusCardProps) {
+    const handleRescheduleClick = () => {
+        // Clear booking context state before navigating
+        try {
+            sessionStorage.removeItem('bookingData');
+        } catch (error) {
+            console.error('Error clearing booking data:', error);
+        }
+    };
+
     return (
         <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
@@ -39,6 +52,16 @@ export function BookingStatusCard({
                     </span>
                     Batalkan
                 </button>
+                <Link
+                    href={`/admin/bookings/${bookingId}/reschedule`}
+                    onClick={handleRescheduleClick}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-600"
+                >
+                    <span className="material-symbols-outlined text-[20px]">
+                        event_repeat
+                    </span>
+                    Reschedule Booking
+                </Link>
             </div>
         </div>
     );

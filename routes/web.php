@@ -83,6 +83,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/bookings/create', [AdminBookingController::class, 'createBooking'])->name('bookings.create');
     Route::get('/bookings/{bookingId}', [AdminBookingController::class, 'bookingDetail'])->name('bookings.detail');
     Route::post('/bookings/store', [AdminBookingController::class, 'storeBooking'])->name('bookings.store');
+    Route::get('/bookings/{bookingId}/reschedule', [AdminBookingController::class, 'rescheduleBooking'])->name('bookings.reschedule');
+    Route::put('/bookings/{bookingId}/reschedule', [AdminBookingController::class, 'updateBooking'])->name('bookings.update');
 
     // Patients
     Route::get('/patients', [AdminPatientController::class, 'listPatients'])->name('patients.list');
