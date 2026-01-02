@@ -43,6 +43,7 @@ class BookingService
             'start_time' => substr($booking->start_time, 0, 5),
             'created_at' => $booking->created_at->format('Y-m-d H:i:s'),
             'created_at_formatted' => $booking->created_at->translatedFormat('d F Y, H:i'),
+            'service' => $booking->service,
             
             // Patient info
             'patient' => [

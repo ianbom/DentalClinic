@@ -26,6 +26,7 @@ function BookingDetailPage({ booking, notifications }: BookingDetailPageProps) {
                         code={`#${booking.code}`}
                         createdDate={booking.created_at_formatted}
                         status={getStatusLabel(booking.status)}
+                        rawStatus={booking.status}
                     />
                     <BookingScheduleCard
                         doctorName={booking.doctor.name}
@@ -49,7 +50,7 @@ function BookingDetailPage({ booking, notifications }: BookingDetailPageProps) {
                         nik={booking.patient.nik}
                         whatsapp={booking.patient.phone}
                         email={booking.patient.email}
-                        note={booking.patient.complaint}
+                        service={booking.service}
                     />
                 </div>
             </div>

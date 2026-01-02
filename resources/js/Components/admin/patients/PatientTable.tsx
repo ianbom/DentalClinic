@@ -1,4 +1,5 @@
 import { PatientItem } from '@/types';
+import { Link } from '@inertiajs/react';
 
 type SortField = 'name' | 'total_visits' | 'last_visit';
 
@@ -126,15 +127,16 @@ export function PatientTable({
                                     {patient.first_visit_formatted}
                                 </td>
                                 <td className="p-4 text-right">
-                                    <div className="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100">
-                                        <button
-                                            className="rounded-md p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-primary"
+                                    <div className="flex items-center justify-end gap-2">
+                                        <Link
+                                            href={`/admin/patients/${patient.id}`}
+                                            className="cursor-pointer rounded-md bg-primary p-1.5 text-white transition-colors hover:bg-sky-600"
                                             title="Lihat Detail"
                                         >
-                                            <span className="material-symbols-outlined text-[18px]">
+                                            <span className="material-symbols-outlined text-lg">
                                                 visibility
                                             </span>
-                                        </button>
+                                        </Link>
                                     </div>
                                 </td>
                             </tr>

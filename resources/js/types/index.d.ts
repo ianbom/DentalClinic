@@ -258,6 +258,7 @@ export interface BookingDetail {
     start_time: string;
     created_at: string;
     created_at_formatted: string;
+    service: string;
     patient: {
         name: string;
         nik: string;
@@ -295,6 +296,7 @@ export interface BookingDetail {
 
 /** Patient item for admin list page */
 export interface PatientItem {
+    id: number;
     nik: string;
     name: string;
     phone: string;
