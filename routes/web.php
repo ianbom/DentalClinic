@@ -88,6 +88,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Patients
     Route::get('/patients', [AdminPatientController::class, 'listPatients'])->name('patients.list');
+    Route::get('/patients/{patientId}', [AdminPatientController::class, 'showPatient'])->name('patients.show');
 
     Route::get('/checkin/patiens', [AdminBookingController::class, 'checkinPatientPage'])->name('checkin');
     Route::post('/checkin/perform', [AdminBookingController::class, 'performCheckin'])->name('checkin.perform');

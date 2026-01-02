@@ -87,6 +87,7 @@ function AdminDashboardPage({
                 <BookingTable
                     title="Booking Hari Ini"
                     bookings={todayBookings}
+                    showActions={true}
                     emptyMessage="Tidak ada booking hari ini"
                 />
             </div>
@@ -96,6 +97,7 @@ function AdminDashboardPage({
                 <BookingTable
                     title="Booking Terbaru"
                     bookings={recentBookings}
+                    showActions={true}
                     emptyMessage="Tidak ada booking terbaru"
                 />
             </div>
