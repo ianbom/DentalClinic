@@ -126,10 +126,11 @@ export function ReviewActions({ doctorId }: ReviewActionsProps) {
                             type="button"
                             onClick={handleConfirmBooking}
                             disabled={isSubmitting}
-                            className={`flex-2 flex items-center justify-center gap-2 rounded-xl px-6 py-3 font-bold text-white shadow-lg transition-all ${isSubmitting
+                            className={`flex-2 flex items-center justify-center gap-2 rounded-xl px-6 py-3 font-bold text-white shadow-lg transition-all ${
+                                isSubmitting
                                     ? 'cursor-not-allowed bg-gray-400'
                                     : 'cursor-pointer bg-primary shadow-primary/25 hover:bg-primary-dark hover:shadow-primary/40'
-                                }`}
+                            }`}
                         >
                             {isSubmitting ? (
                                 <>

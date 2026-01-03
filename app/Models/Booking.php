@@ -67,6 +67,11 @@ class Booking extends Model
         return $this->hasMany(Notification::class);
     }
 
+    public function payment(): HasOne
+    {
+        return $this->hasOne(BookingPayment::class);
+    }
+
     public function isConfirmed(): bool
     {
         return $this->status === 'confirmed';

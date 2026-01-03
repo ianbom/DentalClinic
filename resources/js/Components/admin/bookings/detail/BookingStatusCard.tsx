@@ -99,6 +99,16 @@ export function BookingStatusCard({
                 </div>
             </div>
             <div className="flex flex-wrap gap-3 border-t border-slate-100 pt-4">
+                <Link
+                    href={`/admin/bookings/${bookingId}/edit`}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-600"
+                >
+                    <span className="material-symbols-outlined text-[20px]">
+                        edit
+                    </span>
+                    Edit
+                </Link>
+
                 {canCheckinOrCancel && (
                     <>
                         <button

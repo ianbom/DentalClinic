@@ -46,11 +46,14 @@ function BookingDetailPage({ booking, notifications }: BookingDetailPageProps) {
                 <div className="flex flex-col gap-6 lg:col-span-1">
                     <PatientInfoCard
                         name={booking.patient.name}
-                        type="Pasien"
                         nik={booking.patient.nik}
                         whatsapp={booking.patient.phone}
-                        email={booking.patient.email}
+                        gender={booking.patient.gender}
+                        birthdate={booking.patient.birthdate_formatted}
+                        address={booking.patient.address}
+                        medicalRecords={booking.patient.medical_records}
                         service={booking.service}
+                        payment={booking.payment}
                     />
                 </div>
             </div>

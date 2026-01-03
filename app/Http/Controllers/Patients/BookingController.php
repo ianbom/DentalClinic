@@ -43,8 +43,8 @@ class BookingController extends Controller
     {
         $doctor = Doctor::with('workingPeriods')->findOrFail($doctorId);
         
-        // Get provinces with cities and districts for cascading dropdowns
-        $provinces = Province::with(['cities.districts'])->orderBy('name')->get();
+        // Get provinces with cities, districts, and villages for cascading dropdowns
+        $provinces = Province::with(['cities.districts.villages'])->orderBy('name')->get();
         
         return Inertia::render('patient/booking/BookingCustomerData', [
             'doctor' => $doctor,

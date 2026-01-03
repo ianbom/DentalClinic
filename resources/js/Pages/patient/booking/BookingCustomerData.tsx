@@ -20,6 +20,12 @@ interface City {
 interface District {
     id: number;
     name: string;
+    villages: Village[];
+}
+
+interface Village {
+    id: number;
+    name: string;
 }
 
 interface CustomerDataPageProps {
@@ -38,7 +44,10 @@ function CustomerDataPage({ doctor, provinces }: CustomerDataPageProps) {
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
                     {/* Left Column: Customer Form */}
                     <div className="lg:col-span-8">
-                        <CustomerDataForm doctorId={String(doctor.id)} provinces={provinces} />
+                        <CustomerDataForm
+                            doctorId={String(doctor.id)}
+                            provinces={provinces}
+                        />
                     </div>
 
                     {/* Right Column: Booking Summary Sticky Sidebar */}

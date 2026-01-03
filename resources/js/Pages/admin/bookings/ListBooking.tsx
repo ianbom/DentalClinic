@@ -8,6 +8,7 @@ import {
     SortField,
     SortOrder,
 } from '@/Components/admin/bookings/BookingTable';
+import { PaymentModal } from '@/Components/admin/bookings/PaymentModal';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { BookingFullItem } from '@/types';
 import { Link } from '@inertiajs/react';
@@ -32,6 +33,11 @@ function ListBookingPage({ bookings, doctors }: ListBookingPageProps) {
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [sortField, setSortField] = useState<SortField>('');
     const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
+
+    // Payment modal state
+    const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+    const [selectedBooking, setSelectedBooking] =
+        useState<BookingFullItem | null>(null);
 
     const { filterBookings } = useBookingFilters(bookings);
 
@@ -97,7 +103,7 @@ function ListBookingPage({ bookings, doctors }: ListBookingPageProps) {
         else if (type === 'doctor') setDoctorFilter(value);
     };
 
-    console.log(displayedBookings);
+    console.log('book', displayedBookings);
 
     const handleClearFilters = () => {
         setSearchQuery('');
@@ -120,6 +126,16 @@ function ListBookingPage({ bookings, doctors }: ListBookingPageProps) {
             setSortOrder('asc');
         }
         setCurrentPage(1);
+    };
+
+    const handlePayment = (booking: BookingFullItem) => {
+        setSelectedBooking(booking);
+        setPaymentModalOpen(true);
+    };
+
+    const handleClosePaymentModal = () => {
+        setPaymentModalOpen(false);
+        setSelectedBooking(null);
     };
 
     return (
@@ -177,6 +193,7 @@ function ListBookingPage({ bookings, doctors }: ListBookingPageProps) {
                 sortField={sortField}
                 sortOrder={sortOrder}
                 onSort={handleSort}
+                onPayment={handlePayment}
             />
 
             {/* Pagination with Per-Page Selector */}
@@ -210,6 +227,17 @@ function ListBookingPage({ bookings, doctors }: ListBookingPageProps) {
                     />
                 )}
             </div>
+
+            {/* Payment Modal */}
+            {selectedBooking && (
+                <PaymentModal
+                    isOpen={paymentModalOpen}
+                    onClose={handleClosePaymentModal}
+                    bookingId={selectedBooking.id}
+                    bookingCode={selectedBooking.code}
+                    existingPayment={selectedBooking.payment}
+                />
+            )}
         </div>
     );
 }

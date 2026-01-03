@@ -303,10 +303,11 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
                         <button
                             onClick={handleCheckin}
                             disabled={!checkinStatus.allowed || isCheckingIn}
-                            className={`flex items-center justify-center gap-2 rounded-lg px-6 py-2.5 text-sm font-bold transition-all ${checkinStatus.allowed && !isCheckingIn
-                                ? 'cursor-pointer bg-blue-600 text-white hover:bg-blue-700'
-                                : 'cursor-not-allowed bg-gray-200 text-gray-400'
-                                }`}
+                            className={`flex items-center justify-center gap-2 rounded-lg px-6 py-2.5 text-sm font-bold transition-all ${
+                                checkinStatus.allowed && !isCheckingIn
+                                    ? 'cursor-pointer bg-blue-600 text-white hover:bg-blue-700'
+                                    : 'cursor-not-allowed bg-gray-200 text-gray-400'
+                            }`}
                         >
                             <span className="material-symbols-outlined text-[18px]">
                                 {isCheckingIn
@@ -384,7 +385,9 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
                             </p>
                             <p className="text-base font-semibold text-gray-900">
                                 {patientDetail?.patient_birthdate
-                                    ? formatBirthdate(patientDetail.patient_birthdate)
+                                    ? formatBirthdate(
+                                          patientDetail.patient_birthdate,
+                                      )
                                     : '-'}
                             </p>
                         </div>

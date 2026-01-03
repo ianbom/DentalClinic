@@ -127,7 +127,11 @@ export function ReviewBookingCard({ doctor }: ReviewBookingCardProps) {
                             <span>Jenis Kelamin</span>
                         </div>
                         <p className="pl-7 font-medium text-text-light">
-                            {bookingData.gender === 'male' ? 'Laki-laki' : bookingData.gender === 'female' ? 'Perempuan' : '-'}
+                            {bookingData.gender === 'male'
+                                ? 'Laki-laki'
+                                : bookingData.gender === 'female'
+                                  ? 'Perempuan'
+                                  : '-'}
                         </p>
                     </div>
                     {/* Service */}

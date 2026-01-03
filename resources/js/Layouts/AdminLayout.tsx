@@ -1,6 +1,7 @@
 import { AdminHeader } from '@/Components/admin/layout/AdminHeader';
 import { AdminSidebar } from '@/Components/admin/layout/AdminSidebar';
-import { PageProps } from '@/types'; // Import PageProps dari types
+import { Toast } from '@/Components/ui/Toast';
+import { PageProps } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
@@ -9,45 +10,8 @@ interface FlashMessages {
     error?: string;
 }
 
-// Extend PageProps yang sudah ada dengan flash messages
 interface AdminLayoutPageProps extends PageProps {
     flash: FlashMessages;
-}
-
-function Toast({
-    message,
-    type,
-    onClose,
-}: {
-    message: string;
-    type: 'success' | 'error';
-    onClose: () => void;
-}) {
-    useEffect(() => {
-        const timer = setTimeout(onClose, 5000);
-        return () => clearTimeout(timer);
-    }, [onClose]);
-
-    return (
-        <div
-            className={`fixed right-4 top-4 z-50 flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg ${
-                type === 'success'
-                    ? 'bg-green-500 text-white'
-                    : 'bg-red-500 text-white'
-            }`}
-        >
-            <span className="material-icons">
-                {type === 'success' ? 'check_circle' : 'error'}
-            </span>
-            <span>{message}</span>
-            <button
-                onClick={onClose}
-                className="material-icons text-white hover:text-gray-200"
-            >
-                close
-            </button>
-        </div>
-    );
 }
 
 export default function AdminLayout({
@@ -59,7 +23,7 @@ export default function AdminLayout({
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [toast, setToast] = useState<{
         message: string;
-        type: 'success' | 'error';
+        type: 'success' | 'error' | 'warning' | 'info';
     } | null>(null);
 
     // Show toast when flash message arrives

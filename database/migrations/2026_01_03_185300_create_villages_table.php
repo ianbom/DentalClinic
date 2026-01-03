@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('booking_payments', function (Blueprint $table) {
-            $table->foreignId('booking_id')->primary()->constrained('bookings')->onDelete('cascade');
-            $table->integer('amount');
-            $table->string('payment_method',100); 
-            $table->text('note')->nullable();
+        Schema::create('villages', function (Blueprint $table) {
+            $table->id();
+            $table->string('code', 20)->unique();
+            $table->string('name', 100);
+            $table->foreignId('district_id')->constrained('districts')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('booking_payments');
+        Schema::dropIfExists('villages');
     }
 };

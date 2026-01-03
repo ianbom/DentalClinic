@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CreateBookingRequest;
+use App\Http\Requests\Admin\UpdateBookingFullRequest;
 use App\Http\Requests\Admin\UpdateBookingRequest;
 use App\Models\Booking;
 use App\Models\Doctor;
@@ -217,6 +218,116 @@ class BookingController extends Controller
             return redirect()
                 ->back()
                 ->with('error', $th->getMessage());
+        }
+    }
+
+    public function storePayment(Request $request, int $bookingId)
+    {
+        $request->validate([
+            'amount' => 'required|integer|min:0',
+            'payment_method' => 'required|string|max:100',
+            'note' => 'nullable|string',
+        ]);
+
+        try {
+            $booking = Booking::findOrFail($bookingId);
+            
+            \App\Models\BookingPayment::updateOrCreate(
+                ['booking_id' => $bookingId],
+                [
+                    'amount' => $request->amount,
+                    'payment_method' => $request->payment_method,
+                    'note' => $request->note ?? '',
+                ]
+            );
+
+            return redirect()
+                ->back()
+                ->with('success', 'Pembayaran berhasil disimpan untuk booking ' . $booking->code);
+        } catch (\Throwable $th) {
+            return redirect()
+                ->back()
+                ->with('error', 'Gagal menyimpan pembayaran: ' . $th->getMessage());
+        }
+    }
+
+    public function editBooking(Request $request, int $bookingId)
+    {
+        $booking = Booking::with(['patient', 'doctor', 'payment', 'checkin', 'cancellation'])->find($bookingId);
+
+        if (!$booking) {
+            abort(404, 'Booking tidak ditemukan');
+        }
+
+        $doctorId = $request->query('doctor_id', $booking->doctor_id);
+        $allDoctors = Doctor::where('is_active', true)->orderBy('name')->get();
+        
+        $doctor = Doctor::find($doctorId);
+        $availableSlots = [];
+        
+        if ($doctor) {
+            $availableSlots = $this->patientBookingService->getAvailableSlotsForDoctor($doctorId, 30);
+        }
+
+        return Inertia::render('admin/bookings/EditBooking', [
+            'booking' => [
+                'id' => $booking->id,
+                'code' => $booking->code,
+                'service' => $booking->service,
+                'type' => $booking->type,
+                'booking_date' => $booking->booking_date->format('Y-m-d'),
+                'booking_date_formatted' => $booking->booking_date->translatedFormat('l, d F Y'),
+                'start_time' => $booking->start_time,
+                'status' => $booking->status,
+                'created_at_formatted' => $booking->created_at->format('d M Y H:i'),
+                'patient' => [
+                    'id' => $booking->patient->id,
+                    'name' => $booking->patient->patient_name,
+                    'nik' => $booking->patient->patient_nik,
+                    'phone' => $booking->patient->patient_phone,
+                    'email' => $booking->patient->patient_email,
+                    'birthdate' => $booking->patient->patient_birthdate?->format('Y-m-d'),
+                    'address' => $booking->patient->patient_address,
+                    'gender' => $booking->patient->gender,
+                    'medical_records' => $booking->patient->medical_records,
+                ],
+                'doctor' => [
+                    'id' => $booking->doctor->id,
+                    'name' => $booking->doctor->name,
+                ],
+                'payment' => $booking->payment ? [
+                    'amount' => $booking->payment->amount,
+                    'payment_method' => $booking->payment->payment_method,
+                    'note' => $booking->payment->note,
+                ] : null,
+                'checkin' => $booking->checkin ? [
+                    'checked_in_at' => $booking->checkin->checked_in_at->format('Y-m-d\TH:i'),
+                ] : null,
+                'cancellation' => $booking->cancellation ? [
+                    'cancelled_at' => $booking->cancellation->cancelled_at->format('Y-m-d\TH:i'),
+                    'cancelled_by' => $booking->cancellation->cancelled_by,
+                    'reason' => $booking->cancellation->reason,
+                ] : null,
+            ],
+            'availableSlots' => $availableSlots,
+            'allDoctors' => $allDoctors,
+            'doctor' => $doctor,
+            'selectedDoctorId' => (int) $doctorId,
+        ]);
+    }
+
+    public function updateBookingFull(UpdateBookingFullRequest $request, int $bookingId)
+    {
+        try {
+            $this->bookingService->updateBookingFull($bookingId, $request->validated());
+
+            return redirect()
+                ->route('admin.bookings.detail', $bookingId)
+                ->with('success', 'Booking berhasil diperbarui');
+        } catch (\Throwable $th) {
+            return redirect()
+                ->back()
+                ->with('error', 'Gagal memperbarui booking: ' . $th->getMessage());
         }
     }
 }

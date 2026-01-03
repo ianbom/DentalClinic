@@ -237,15 +237,22 @@ export interface BookingListItem {
     start_time: string;
     status: BookingStatus;
     created_at: string;
+    patient_gender: string;
 }
 
 /** Extended booking item with additional formatted fields for detailed views */
 export interface BookingFullItem extends BookingListItem {
     patient_nik: string;
     patient_email: string;
+    patient_gender: string;
     booking_date_formatted: string;
     service: string;
     created_at_formatted: string;
+    payment?: {
+        amount: number;
+        payment_method: string;
+        note: string;
+    } | null;
 }
 
 /** Complete booking detail for admin detail page */
@@ -263,8 +270,11 @@ export interface BookingDetail {
         name: string;
         nik: string;
         phone: string;
-        email: string;
-        complaint: string;
+        gender?: string;
+        birthdate?: string;
+        birthdate_formatted?: string;
+        address?: string;
+        medical_records?: string;
     };
     doctor: {
         id: number;
@@ -273,6 +283,11 @@ export interface BookingDetail {
         experience: number;
         profile_pic?: string;
     };
+    payment?: {
+        amount: number;
+        payment_method: string;
+        note?: string | null;
+    } | null;
     checkin?: {
         checked_in_at: string;
         checked_in_at_formatted: string;

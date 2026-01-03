@@ -35,6 +35,8 @@ interface BookingTableProps {
     sortOrder?: SortOrder;
     /** Callback when sort changes */
     onSort?: (field: SortField) => void;
+    /** Callback when payment button clicked */
+    onPayment?: (booking: BookingFullItem) => void;
 }
 
 export function BookingTable({
@@ -48,6 +50,7 @@ export function BookingTable({
     sortField = '',
     sortOrder = 'asc',
     onSort,
+    onPayment,
 }: BookingTableProps) {
     const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
@@ -95,6 +98,7 @@ export function BookingTable({
                                     onToggleExpand={() =>
                                         handleToggleExpand(booking.id)
                                     }
+                                    onPayment={onPayment}
                                 />
                             ))}
                         </tbody>
@@ -192,6 +196,9 @@ function BookingTableHeader({
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
                     Status
                 </th>
+                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Pembayaran
+                </th>
                 {showActions && (
                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
                         Aksi
@@ -220,6 +227,7 @@ interface BookingTableRowProps {
     showExpandable: boolean;
     isExpanded: boolean;
     onToggleExpand: () => void;
+    onPayment?: (booking: BookingFullItem) => void;
 }
 
 function BookingTableRow({
@@ -229,6 +237,7 @@ function BookingTableRow({
     showExpandable,
     isExpanded,
     onToggleExpand,
+    onPayment,
 }: BookingTableRowProps) {
     return (
         <>
@@ -270,6 +279,23 @@ function BookingTableRow({
                 <td className="px-4 py-3">
                     <StatusBadge status={booking.status} />
                 </td>
+                <td className="px-4 py-3">
+                    {booking.payment ? (
+                        <div className="flex flex-col">
+                            <span className="font-medium text-green-700">
+                                Rp{' '}
+                                {booking.payment.amount.toLocaleString('id-ID')}
+                            </span>
+                            <span className="text-xs capitalize text-slate-500">
+                                {booking.payment.payment_method}
+                            </span>
+                        </div>
+                    ) : (
+                        <span className="text-xs text-slate-400">
+                            Belum bayar
+                        </span>
+                    )}
+                </td>
                 {showActions && (
                     <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
@@ -283,6 +309,17 @@ function BookingTableRow({
                                         {isExpanded
                                             ? 'expand_less'
                                             : 'expand_more'}
+                                    </span>
+                                </button>
+                            )}
+                            {onPayment && (
+                                <button
+                                    onClick={() => onPayment(booking)}
+                                    className="cursor-pointer rounded-md bg-green-100 p-1.5 text-green-600 transition-colors hover:bg-green-200"
+                                    title="Input Pembayaran"
+                                >
+                                    <span className="material-symbols-outlined text-lg">
+                                        payments
                                     </span>
                                 </button>
                             )}
@@ -327,14 +364,6 @@ function BookingDetailRow({
                     </div>
                     <div>
                         <p className="text-xs font-medium text-slate-500">
-                            Email
-                        </p>
-                        <p className="text-sm text-slate-900">
-                            {booking.patient_email || '-'}
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-xs font-medium text-slate-500">
                             Service
                         </p>
                         <p className="text-sm text-slate-900">
@@ -343,10 +372,10 @@ function BookingDetailRow({
                     </div>
                     <div>
                         <p className="text-xs font-medium text-slate-500">
-                            Waktu Dibuat
+                            Gender
                         </p>
                         <p className="text-sm text-slate-900">
-                            {booking.created_at}
+                            {booking.patient_gender || '-'}
                         </p>
                     </div>
                 </div>

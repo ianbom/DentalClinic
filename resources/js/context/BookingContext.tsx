@@ -21,6 +21,8 @@ export interface BookingData {
     cityName: string;
     districtId: string;
     districtName: string;
+    villageId: string;
+    villageName: string;
     service: string;
     serviceType: 'short' | 'long' | 'sisipan' | '';
     selectedDate: string; // Formatted date for display
@@ -49,6 +51,8 @@ const defaultBookingData: BookingData = {
     cityName: '',
     districtId: '',
     districtName: '',
+    villageId: '',
+    villageName: '',
     service: '',
     serviceType: '',
     selectedDate: '',

@@ -89,6 +89,7 @@ class DashboardService
                 'patient_nik' => $booking->patient?->patient_nik ?? '-',
                 'patient_phone' => $booking->patient?->patient_phone ?? '-',
                 'patient_email' => $booking->patient?->patient_email ?? '-',
+                'patient_gender' => $booking->patient?->gender ?? '-',
                 'patient_medical_records' => $booking->patient?->medical_records ?? '-',
                 'doctor_name' => $booking->doctor?->name ?? '-',
                 'booking_date' => Carbon::parse($booking->booking_date)->format('Y-m-d'),
@@ -98,7 +99,12 @@ class DashboardService
                 'doctor_id' => $booking->doctor?->id,
                 'created_at' => $booking->created_at->format('Y-m-d H:i:s'),
                 'created_at_formatted' => $booking->created_at->format('d M Y H:i'),
-                'service' => $booking->service
+                'service' => $booking->service,
+                'payment' => $booking->payment ? [
+                    'amount' => $booking->payment->amount,
+                    'payment_method' => $booking->payment->payment_method,
+                    'note' => $booking->payment->note,
+                ] : null,
             ];
         })->toArray();
     }
