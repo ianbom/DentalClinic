@@ -73,7 +73,7 @@ export function PatientTable({
                                 onClick={() => onSort('last_visit')}
                             >
                                 <div className="flex items-center gap-1">
-                                    Dibuat Pada
+                                    Dipesan pada
                                     <SortIcon field="last_visit" />
                                 </div>
                             </th>

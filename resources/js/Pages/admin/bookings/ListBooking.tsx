@@ -1,7 +1,4 @@
-import {
-    BookingFilters,
-    useBookingFilters,
-} from '@/Components/admin/bookings/BookingFilters';
+import { BookingFilters } from '@/Components/admin/bookings/BookingFilters';
 import { BookingPagination } from '@/Components/admin/bookings/BookingPagination';
 import {
     BookingTable,
@@ -11,121 +8,135 @@ import {
 import { PaymentModal } from '@/Components/admin/bookings/PaymentModal';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { BookingFullItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
+import { Link, router } from '@inertiajs/react'; // Import router
+import { debounce } from 'lodash';
+import { useCallback, useState } from 'react';
 
 interface DoctorOption {
     id: number;
     name: string;
 }
 
-interface ListBookingPageProps {
-    bookings: BookingFullItem[];
-    doctors: DoctorOption[];
+interface PaginatedBookings {
+    data: BookingFullItem[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number;
+    to: number;
 }
 
-function ListBookingPage({ bookings, doctors }: ListBookingPageProps) {
-    const [searchQuery, setSearchQuery] = useState('');
-    const [statusFilter, setStatusFilter] = useState('');
-    const [dateFilter, setDateFilter] = useState('');
-    const [doctorFilter, setDoctorFilter] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [sortField, setSortField] = useState<SortField>('');
-    const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
+interface ListBookingPageProps {
+    bookings: PaginatedBookings; // Updated type
+    doctors: DoctorOption[];
+    filters: {
+        search?: string;
+        status?: string;
+        date?: string;
+        doctor?: string;
+        per_page?: number;
+        sort_field?: string;
+        sort_order?: string;
+    };
+}
+
+function ListBookingPage({ bookings, doctors, filters }: ListBookingPageProps) {
+    const [searchQuery, setSearchQuery] = useState(filters.search || '');
+    const [statusFilter, setStatusFilter] = useState(filters.status || '');
+    const [dateFilter, setDateFilter] = useState(filters.date || '');
+    const [doctorFilter, setDoctorFilter] = useState(filters.doctor || '');
+    const [itemsPerPage, setItemsPerPage] = useState(Number(filters.per_page) || 10);
+    const [sortField, setSortField] = useState<SortField>((filters.sort_field as SortField) || '');
+    const [sortOrder, setSortOrder] = useState<SortOrder>((filters.sort_order as SortOrder) || 'asc');
 
     // Payment modal state
     const [paymentModalOpen, setPaymentModalOpen] = useState(false);
     const [selectedBooking, setSelectedBooking] =
         useState<BookingFullItem | null>(null);
 
-    const { filterBookings } = useBookingFilters(bookings);
-
-    // Filter bookings
-    const filteredBookings = useMemo(
-        () =>
-            filterBookings(searchQuery, statusFilter, dateFilter, doctorFilter),
-        [filterBookings, searchQuery, statusFilter, dateFilter, doctorFilter],
+    // Debounced search handler
+    const debouncedSearch = useCallback(
+        debounce((query: string) => {
+            updateParams({ search: query, page: 1 });
+        }, 500),
+        []
     );
 
-    // Sort bookings
-    const sortedBookings = useMemo(() => {
-        if (!sortField) return filteredBookings;
-
-        return [...filteredBookings].sort((a, b) => {
-            let aValue: string | number;
-            let bValue: string | number;
-
-            switch (sortField) {
-                case 'patient_name':
-                    aValue = a.patient_name.toLowerCase();
-                    bValue = b.patient_name.toLowerCase();
-                    break;
-                case 'booking_date':
-                    aValue = new Date(a.booking_date).getTime();
-                    bValue = new Date(b.booking_date).getTime();
-                    break;
-                case 'created_at':
-                    aValue = new Date(a.created_at).getTime();
-                    bValue = new Date(b.created_at).getTime();
-                    break;
-                default:
-                    return 0;
+    const updateParams = (newParams: any) => {
+        router.get(
+            '/admin/bookings',
+            {
+                search: searchQuery,
+                status: statusFilter,
+                date: dateFilter,
+                doctor: doctorFilter,
+                per_page: itemsPerPage,
+                sort_field: sortField,
+                sort_order: sortOrder,
+                page: bookings.current_page,
+                ...newParams,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
             }
-
-            if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-            if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
-            return 0;
-        });
-    }, [filteredBookings, sortField, sortOrder]);
-
-    // Pagination
-    const displayedBookings =
-        itemsPerPage === 0
-            ? sortedBookings
-            : sortedBookings.slice(
-                  (currentPage - 1) * itemsPerPage,
-                  currentPage * itemsPerPage,
-              );
-    const totalPages =
-        itemsPerPage === 0
-            ? 1
-            : Math.ceil(sortedBookings.length / itemsPerPage);
-
-    const handleFilterChange = (
-        type: 'search' | 'status' | 'date' | 'doctor',
-        value: string,
-    ) => {
-        setCurrentPage(1);
-        if (type === 'search') setSearchQuery(value);
-        else if (type === 'status') setStatusFilter(value);
-        else if (type === 'date') setDateFilter(value);
-        else if (type === 'doctor') setDoctorFilter(value);
+        );
     };
 
-    console.log('book', displayedBookings);
+    const handleSearchChange = (value: string) => {
+        setSearchQuery(value);
+        debouncedSearch(value);
+    };
+
+    const handleFilterChange = (
+        type: 'status' | 'date' | 'doctor',
+        value: string,
+    ) => {
+        let newParams = {};
+        if (type === 'status') {
+            setStatusFilter(value);
+            newParams = { status: value, page: 1 };
+        }
+        else if (type === 'date') {
+            setDateFilter(value);
+            newParams = { date: value, page: 1 };
+        }
+        else if (type === 'doctor') {
+            setDoctorFilter(value);
+            newParams = { doctor: value, page: 1 };
+        }
+        updateParams(newParams);
+    };
 
     const handleClearFilters = () => {
         setSearchQuery('');
         setStatusFilter('');
         setDateFilter('');
         setDoctorFilter('');
-        setCurrentPage(1);
+        setSortField('');
+        setSortOrder('asc');
+        router.get('/admin/bookings');
     };
 
     const handleItemsPerPageChange = (value: number) => {
         setItemsPerPage(value);
-        setCurrentPage(1);
+        updateParams({ per_page: value, page: 1 });
+    };
+
+    const handlePageChange = (page: number) => {
+        updateParams({ page: page });
     };
 
     const handleSort = (field: SortField) => {
+        let newOrder: SortOrder = 'asc';
         if (sortField === field) {
-            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-        } else {
-            setSortField(field);
-            setSortOrder('asc');
+            newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
         }
-        setCurrentPage(1);
+        setSortField(field);
+        setSortOrder(newOrder);
+        updateParams({ sort_field: field, sort_order: newOrder });
     };
 
     const handlePayment = (booking: BookingFullItem) => {
@@ -147,12 +158,12 @@ function ListBookingPage({ bookings, doctors }: ListBookingPageProps) {
                         Daftar Booking
                     </h2>
                     <p className="mt-1 text-sm text-slate-500">
-                        Kelola semua data booking pasien
+                        Kelola todos data booking pasien
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
                     <span className="rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
-                        Total: {filteredBookings.length} booking
+                        Total: {bookings.total} booking
                     </span>
                     <Link
                         href="/admin/bookings/create"
@@ -173,7 +184,7 @@ function ListBookingPage({ bookings, doctors }: ListBookingPageProps) {
                 dateFilter={dateFilter}
                 doctorFilter={doctorFilter}
                 doctors={doctors}
-                onSearchChange={(v) => handleFilterChange('search', v)}
+                onSearchChange={handleSearchChange}
                 onStatusChange={(v) => handleFilterChange('status', v)}
                 onDateChange={(v) => handleFilterChange('date', v)}
                 onDoctorChange={(v) => handleFilterChange('doctor', v)}
@@ -182,13 +193,11 @@ function ListBookingPage({ bookings, doctors }: ListBookingPageProps) {
 
             {/* Table */}
             <BookingTable
-                bookings={displayedBookings}
+                bookings={bookings.data}
                 showExpandable
                 showActions
-                currentPage={currentPage}
-                itemsPerPage={
-                    itemsPerPage === 0 ? sortedBookings.length : itemsPerPage
-                }
+                currentPage={bookings.current_page}
+                itemsPerPage={bookings.per_page}
                 emptyMessage="Tidak ada booking ditemukan"
                 sortField={sortField}
                 sortOrder={sortOrder}
@@ -211,21 +220,21 @@ function ListBookingPage({ bookings, doctors }: ListBookingPageProps) {
                         <option value={10}>10</option>
                         <option value={50}>50</option>
                         <option value={100}>100</option>
-                        <option value={0}>Semua</option>
+                        <option value={1000}>1000</option>
+                        <option value={10000}>10000</option>
+                        {/* option value={0} removed as server-side usually requires limit, or handle special 'all' case */}
                     </select>
                     <span className="text-sm text-slate-500">data</span>
                 </div>
 
                 {/* Pagination */}
-                {itemsPerPage !== 0 && (
-                    <BookingPagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        totalItems={sortedBookings.length}
-                        itemsPerPage={itemsPerPage}
-                        onPageChange={setCurrentPage}
-                    />
-                )}
+                <BookingPagination
+                    currentPage={bookings.current_page}
+                    totalPages={bookings.last_page}
+                    totalItems={bookings.total}
+                    itemsPerPage={bookings.per_page}
+                    onPageChange={handlePageChange}
+                />
             </div>
 
             {/* Payment Modal */}

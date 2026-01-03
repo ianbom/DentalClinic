@@ -273,7 +273,7 @@ export default function ScheduleDoctor({
     const handleDoctorChange = (doctorId: number | null) => {
         if (doctorId) {
             router.get(
-                `/admin/doctors/schedule/${doctorId}`,
+                `/admin/schedule/${doctorId}`,
                 {},
                 { preserveState: false },
             );

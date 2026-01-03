@@ -24,6 +24,7 @@ export interface BookingData {
     villageId: string;
     villageName: string;
     service: string;
+    serviceId: string;
     serviceType: 'short' | 'long' | 'sisipan' | '';
     selectedDate: string; // Formatted date for display
     rawSelectedDate: string; // YYYY-MM-DD format for backend
@@ -54,6 +55,7 @@ const defaultBookingData: BookingData = {
     villageId: '',
     villageName: '',
     service: '',
+    serviceId: '',
     serviceType: '',
     selectedDate: '',
     rawSelectedDate: '',

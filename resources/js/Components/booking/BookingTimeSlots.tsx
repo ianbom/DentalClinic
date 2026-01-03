@@ -43,6 +43,11 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
         return slot.available;
     };
 
+    const allShortSlotsFull =
+        bookingData.serviceType === 'short' &&
+        timeSlots.length > 0 &&
+        !timeSlots.some((slot) => isSlotAvailable(slot));
+
     const handleTimeSelect = (time: string) => {
         // Toggle: if same time is clicked again, deselect it
         if (bookingData.selectedTime === time) {
@@ -160,6 +165,22 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
                         </button>
                     );
                 })}
+
+                {allShortSlotsFull && (
+                    <button
+                        onClick={() => handleTimeSelect('Dijadwalkan Admin')}
+                        className={`flex flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2.5 text-center text-xs font-medium transition-all sm:text-sm ${
+                            bookingData.selectedTime === 'Dijadwalkan Admin'
+                                ? 'border-primary bg-primary/10 text-primary shadow-sm ring-1 ring-primary/20'
+                                : 'border-amber-200 bg-amber-50 text-amber-900 hover:border-amber-300 hover:bg-amber-100'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">
+                            support_agent
+                        </span>
+                        <span>Dijadwalkan Admin</span>
+                    </button>
+                )}
             </div>
         </>
     );

@@ -7,19 +7,16 @@ import { useEffect, useState } from 'react';
 interface Province {
     id: number;
     name: string;
-    cities: City[];
 }
 
 interface City {
     id: number;
     name: string;
-    districts: District[];
 }
 
 interface District {
     id: number;
     name: string;
-    villages: Village[];
 }
 
 interface Village {
@@ -53,63 +50,79 @@ export function CustomerDataForm({
     const [districts, setDistricts] = useState<District[]>([]);
     const [villages, setVillages] = useState<Village[]>([]);
 
-    // Update cities when province changes
+    // Loading states for API calls
+    const [isLoadingCities, setIsLoadingCities] = useState(false);
+    const [isLoadingDistricts, setIsLoadingDistricts] = useState(false);
+    const [isLoadingVillages, setIsLoadingVillages] = useState(false);
+
+    // Fetch cities when province changes
     useEffect(() => {
         if (bookingData.provinceId) {
-            const selectedProvince = provinces.find(
-                (p) => String(p.id) === bookingData.provinceId,
-            );
-            setCities(selectedProvince?.cities || []);
+            setIsLoadingCities(true);
+            setCities([]);
+            setDistricts([]);
+            setVillages([]);
+
+            fetch(`/api/provinces/${bookingData.provinceId}/cities`)
+                .then((res) => res.json())
+                .then((data) => {
+                    setCities(data);
+                    setIsLoadingCities(false);
+                })
+                .catch((err) => {
+                    console.error('Error fetching cities:', err);
+                    setIsLoadingCities(false);
+                });
         } else {
             setCities([]);
+            setDistricts([]);
+            setVillages([]);
         }
-        // Reset city and district when province changes
-        if (!bookingData.provinceId) {
-            setBookingData({
-                cityId: '',
-                cityName: '',
-                districtId: '',
-                districtName: '',
-            });
-        }
-    }, [bookingData.provinceId, provinces]);
+    }, [bookingData.provinceId]);
 
-    // Update districts when city changes
+    // Fetch districts when city changes
     useEffect(() => {
-        if (bookingData.cityId && cities.length > 0) {
-            const selectedCity = cities.find(
-                (c) => String(c.id) === bookingData.cityId,
-            );
-            setDistricts(selectedCity?.districts || []);
+        if (bookingData.cityId) {
+            setIsLoadingDistricts(true);
+            setDistricts([]);
+            setVillages([]);
+
+            fetch(`/api/cities/${bookingData.cityId}/districts`)
+                .then((res) => res.json())
+                .then((data) => {
+                    setDistricts(data);
+                    setIsLoadingDistricts(false);
+                })
+                .catch((err) => {
+                    console.error('Error fetching districts:', err);
+                    setIsLoadingDistricts(false);
+                });
         } else {
             setDistricts([]);
+            setVillages([]);
         }
-        // Reset district and village when city changes
-        if (!bookingData.cityId) {
-            setBookingData({
-                districtId: '',
-                districtName: '',
-                villageId: '',
-                villageName: '',
-            });
-        }
-    }, [bookingData.cityId, cities]);
+    }, [bookingData.cityId]);
 
-    // Update villages when district changes
+    // Fetch villages when district changes
     useEffect(() => {
-        if (bookingData.districtId && districts.length > 0) {
-            const selectedDistrict = districts.find(
-                (d) => String(d.id) === bookingData.districtId,
-            );
-            setVillages(selectedDistrict?.villages || []);
+        if (bookingData.districtId) {
+            setIsLoadingVillages(true);
+            setVillages([]);
+
+            fetch(`/api/districts/${bookingData.districtId}/villages`)
+                .then((res) => res.json())
+                .then((data) => {
+                    setVillages(data);
+                    setIsLoadingVillages(false);
+                })
+                .catch((err) => {
+                    console.error('Error fetching villages:', err);
+                    setIsLoadingVillages(false);
+                });
         } else {
             setVillages([]);
         }
-        // Reset village when district changes
-        if (!bookingData.districtId) {
-            setBookingData({ villageId: '', villageName: '' });
-        }
-    }, [bookingData.districtId, districts]);
+    }, [bookingData.districtId]);
 
     // Update address when location selection changes
     useEffect(() => {

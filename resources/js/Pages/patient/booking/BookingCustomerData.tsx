@@ -8,24 +8,6 @@ import { Doctor } from '@/types';
 interface Province {
     id: number;
     name: string;
-    cities: City[];
-}
-
-interface City {
-    id: number;
-    name: string;
-    districts: District[];
-}
-
-interface District {
-    id: number;
-    name: string;
-    villages: Village[];
-}
-
-interface Village {
-    id: number;
-    name: string;
 }
 
 interface CustomerDataPageProps {

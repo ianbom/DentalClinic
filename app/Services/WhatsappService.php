@@ -168,7 +168,7 @@ class WhatsappService
             . "Yth. Bapak/Ibu {$patientName},\n"
             . "Booking pemeriksaan gigi Anda telah berhasil dikonfirmasi dengan rincian sebagai berikut:\n\n"
             . "🗓 Tanggal : {$date}\n"
-            . "⏰ Jam : {$time} WIB\n"
+            . "⏰ Jam : {$time}\n"
             . "👩‍⚕️ Dokter : {$doctorName}\n"
             . "📋 Kode Booking : *{$code}*\n\n"
             . "🔗 Konfirmasi Kehadiran (H-1):\n"

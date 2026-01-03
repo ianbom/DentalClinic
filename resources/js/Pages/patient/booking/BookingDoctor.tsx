@@ -2,6 +2,7 @@ import { BookingCalendarWidget } from '@/Components/booking/BookingCalendarWidge
 import { BookingHeader } from '@/Components/booking/BookingHeader';
 import { BookingSummarySidebar } from '@/Components/booking/BookingSummarySidebar';
 import { BookingTimeSlots } from '@/Components/booking/BookingTimeSlots';
+import { ServiceSelection } from '@/Components/booking/ServiceSelection';
 import { BookingProvider, useBooking } from '@/context/BookingContext';
 import PatientLayout from '@/Layouts/PatientLayout';
 import { AvailableSlots, Doctor } from '@/types';
@@ -13,23 +14,6 @@ interface BookingPageProps {
 
 function BookingPage({ doctor, availableSlots }: BookingPageProps) {
     const { bookingData, setBookingData } = useBooking();
-
-    const handleServiceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = e.target.value;
-        if (value === 'konsultasi') {
-            setBookingData({ service: 'Konsultasi', serviceType: 'short' });
-        } else if (value === 'pengobatan') {
-            setBookingData({ service: 'Pengobatan', serviceType: 'long' });
-        } else {
-            setBookingData({ service: '', serviceType: '' });
-        }
-    };
-
-    const getSelectValue = () => {
-        if (bookingData.service === 'Konsultasi') return 'konsultasi';
-        if (bookingData.service === 'Pengobatan') return 'pengobatan';
-        return '';
-    };
 
     return (
         <div className="flex min-h-screen flex-1 flex-col items-center bg-background-light px-4 py-8 font-display md:px-10 lg:px-20">
@@ -49,19 +33,11 @@ function BookingPage({ doctor, availableSlots }: BookingPageProps) {
                             <p className="mb-4 text-sm text-gray-500">
                                 Pilih jenis layanan yang Anda butuhkan.
                             </p>
-                            <select
-                                value={getSelectValue()}
-                                onChange={handleServiceChange}
-                                className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-text-light transition-shadow focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                            >
-                                <option value="">-- Pilih Layanan --</option>
-                                <option value="konsultasi">
-                                    🩺 Konsultasi (±15 menit)
-                                </option>
-                                <option value="pengobatan">
-                                    🦷 Pengobatan (±30 menit)
-                                </option>
-                            </select>
+                            <ServiceSelection
+                                value={bookingData.serviceId}
+                                onChange={() => {}}
+                                showSisipan={false}
+                            />
                         </div>
 
                         {/* Date Selection Header */}

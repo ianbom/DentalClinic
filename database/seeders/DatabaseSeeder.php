@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             ProvinceSeeder::class,
             CitySeeder::class,
             DistrictSeeder::class,
+            VillageSeeder::class,
             DoctorSeeder::class,
             DoctorWorkingPeriodSeeder::class,
         ]);

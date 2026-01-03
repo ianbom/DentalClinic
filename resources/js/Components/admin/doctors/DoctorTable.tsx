@@ -33,7 +33,7 @@ export function DoctorTable({
                                 <th className="px-6 py-4 text-center">
                                     Status
                                 </th>
-                                <th className="px-6 py-4">Dibuat Pada</th>
+                                <th className="px-6 py-4">Dipesan pada</th>
                                 <th className="px-6 py-4 text-right">Aksi</th>
                             </tr>
                         </thead>

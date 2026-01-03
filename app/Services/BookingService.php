@@ -213,12 +213,16 @@ class BookingService
     /**
      * Check if a specific slot is available
      */
-    public function isSlotAvailable(int $doctorId, string $date, string $time): bool
+    public function isSlotAvailable(int $doctorId, string $date, ?string $time): bool
     {
         $doctor = Doctor::with(['workingPeriods', 'timeOff'])->findOrFail($doctorId);
         $dateCarbon = Carbon::parse($date);
         
         $slots = $this->getSlotsForDate($doctor, $dateCarbon);
+
+        if ($time == "Dijadwalkan Admin") {
+            return true;
+        }
         
         foreach ($slots as $slot) {
             if ($slot['time'] === $time) {
@@ -229,16 +233,15 @@ class BookingService
         return false;
     }
 
-    /**
-     * Create a new booking with patient details
-     * 
-     * @throws \Exception if slot is not available
-     */
     public function createBooking(array $data)
     {
         $doctorId = $data['doctor_id'];
         $bookingDate = $data['booking_date'];
-        $startTime = $data['start_time'] ?? null;
+        if (isset($data['start_time']) && $data['start_time'] == "Dijadwalkan Admin") {
+            $startTime = null;
+        } else {
+            $startTime = $data['start_time'] ?? null;
+        }
         $serviceType = $data['type'];
 
         // For sisipan or when no time is selected, skip slot validation
@@ -254,11 +257,6 @@ class BookingService
         return $this->saveBookingData($data);
     }
 
-    /**
-     * Reschedule an existing booking.
-     * The old time slot automatically becomes available since slot availability
-     * is calculated dynamically based on existing bookings in the database.
-     */
     public function rescheduleBooking(int $bookingId, array $data): Booking
     {
         $booking = Booking::with(['patient', 'doctor'])->findOrFail($bookingId);
@@ -274,6 +272,8 @@ class BookingService
 
         // Validate new slot is available (if time is provided and not sisipan)
         // Note: We need to exclude current booking from availability check
+        $newStartTime = ($newStartTime === "Dijadwalkan Admin") ? null : $newStartTime;
+        
         if ($newServiceType !== 'sisipan' && $newStartTime !== null) {
             $isNewSlotAvailable = $this->isSlotAvailableExcluding(
                 $data['doctor_id'],
@@ -313,7 +313,7 @@ class BookingService
     /**
      * Check if a slot is available, excluding a specific booking
      */
-    private function isSlotAvailableExcluding(int $doctorId, string $date, string $time, int $excludeBookingId): bool
+    private function isSlotAvailableExcluding(int $doctorId, string $date, ?string $time, int $excludeBookingId): bool
     {
         // Check if there's another booking at this time (excluding the current one)
         $existingBooking = Booking::where('doctor_id', $doctorId)
@@ -330,7 +330,9 @@ class BookingService
     {
         $doctorId = $data['doctor_id'];
         $bookingDate = $data['booking_date'];
-        $startTime = $data['start_time'] ?? null;
+        $bookingDate = $data['booking_date'];
+        $rawStartTime = $data['start_time'] ?? null;
+        $startTime = ($rawStartTime === "Dijadwalkan Admin") ? null : $rawStartTime;
         $serviceType = $data['type'];
 
         // Find or create/update patient by NIK
@@ -402,7 +404,7 @@ class BookingService
             'patient_name' => $booking->patient->patient_name,
             'doctor_name' => $booking->doctor->name,
             'date' => $this->formatDateIndonesian(Carbon::parse($booking->booking_date)),
-            'time' => substr($booking->start_time, 0, 5),
+            'time' => $booking->start_time ? substr($booking->start_time, 0, 5) : 'Menunggu Konfirmasi Admin',
             'code' => $booking->code,
             'confirm_link' => url("/booking/confirm/{$booking->code}"),
             'checkin_link' => url("/booking/checkin/{$booking->code}"),
@@ -442,6 +444,11 @@ class BookingService
         $booking = Booking::with(['doctor', 'patient'])->findOrFail($bookingId);
         
         // Calculate scheduled time: 1 hour before booking time
+        // If start_time is null (Dijadwalkan Admin), don't schedule reminder or schedule differently
+        if (!$booking->start_time) {
+            return;
+        }
+        
         $bookingDate = Carbon::parse($booking->booking_date);
         $bookingTime = substr($booking->start_time, 0, 5);
         $bookingDateTime = Carbon::parse($bookingDate->format('Y-m-d') . ' ' . $bookingTime);

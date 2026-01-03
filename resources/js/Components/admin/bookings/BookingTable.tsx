@@ -187,7 +187,7 @@ function BookingTableHeader({
                     onSort={onSort}
                 />
                 <SortableHeader
-                    label="Dibuat Pada"
+                    label="Dipesan pada"
                     field="created_at"
                     currentField={sortField}
                     currentOrder={sortOrder}

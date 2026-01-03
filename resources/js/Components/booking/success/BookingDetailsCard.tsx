@@ -23,6 +23,7 @@ export function BookingDetailsCard({ booking }: BookingDetailsCardProps) {
 
     // Format time from HH:mm:ss to HH:mm WIB
     const formatTime = (timeString: string): string => {
+        if (!timeString) return 'Menunggu Konfirmasi Admin';
         return timeString.slice(0, 5) + ' WIB';
     };
 

@@ -25,9 +25,19 @@ class BookingController extends Controller
         $this->patientBookingService = $patientBookingService;
     }
 
-    public function listBooking()
+    public function listBooking(Request $request)
     {
-        $bookings = $this->bookingService->getAllBookings();
+        $filters = $request->only([
+            'search', 
+            'status', 
+            'date', 
+            'doctor', 
+            'per_page',
+            'sort_field',
+            'sort_order'
+        ]);
+
+        $bookings = $this->bookingService->getBookings($filters);
         
         $doctors = Doctor::where('is_active', true)
             ->orderBy('name')
@@ -36,6 +46,7 @@ class BookingController extends Controller
         return Inertia::render('admin/bookings/ListBooking', [
             'bookings' => $bookings,
             'doctors' => $doctors,
+            'filters' => $filters,
         ]);
     }
 

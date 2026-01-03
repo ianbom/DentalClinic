@@ -15,14 +15,103 @@ class BookingService
         $this->dashboardService = $dashboardService;
     }
 
-    public function getAllBookings(): array
+    public function getBookings(array $filters = [])
     {
-        $bookings = Booking::with(['doctor', 'patient', 'payment'])
-            ->orderBy('booking_date', 'asc')
-            ->orderBy('start_time', 'asc')
-            ->get();
+        $query = Booking::with(['doctor', 'patient', 'payment']);
 
-        return $this->dashboardService->formatBookings($bookings);
+        // Search (Patient Name, NIK, Phone, Address)
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->whereHas('patient', function ($q) use ($search) {
+                $q->where('patient_name', 'like', "%{$search}%")
+                  ->orWhere('patient_nik', 'like', "%{$search}%")
+                  ->orWhere('patient_phone', 'like', "%{$search}%")
+                  ->orWhere('patient_address', 'like', "%{$search}%");
+            })->orWhere('code', 'like', "%{$search}%");
+        }
+
+        // Filter by Doctor
+        if (!empty($filters['doctor'])) {
+            $query->whereHas('doctor', function ($q) use ($filters) {
+                $q->where('name', $filters['doctor']);
+            });
+        }
+
+        // Filter by Service
+        if (!empty($filters['service'])) {
+            $query->where('service', 'like', "%{$filters['service']}%");
+        }
+
+        // Filter by Status
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        // Filter by Date
+        if (!empty($filters['date'])) {
+            $query->whereDate('booking_date', $filters['date']);
+        }
+
+        // Sorting
+        $sortField = $filters['sort_field'] ?? 'booking_date';
+        $sortOrder = $filters['sort_order'] ?? 'desc';
+        
+        // Handle sorting by related columns if necessary
+        if ($sortField === 'patient_name') {
+            $query->join('patients', 'bookings.patient_id', '=', 'patients.id')
+                  ->orderBy('patients.patient_name', $sortOrder)
+                  ->select('bookings.*'); // Ensure we select booking fields
+        } elseif ($sortField === 'doctor_name') {
+             $query->join('doctors', 'bookings.doctor_id', '=', 'doctors.id')
+                  ->orderBy('doctors.name', $sortOrder)
+                  ->select('bookings.*');
+        } else {
+            $query->orderBy($sortField, $sortOrder);
+            // Secondary sort for consistent date ordering
+            if ($sortField === 'booking_date') {
+                $query->orderBy('start_time', 'asc');
+            }
+        }
+
+        $perPage = $filters['per_page'] ?? 10;
+        
+        $bookings = $query->paginate($perPage);
+
+        // Transform the data using the dashboard service formatter
+        return $bookings->through(function ($booking) {
+             // We can reuse the logic from formatBookings but executed for a single item
+             // Since formatBookings takes a collection, let's just manually format here to be efficient
+             // or check if dashboardService has a single item formatter.
+             // Looking at previous getAllBookings, it called formatBookings which takes a collection.
+             // We will implement a helper or assume formatBookings can handle single item if wrapped?
+             // No, formatBookings likely expects iteration.
+             // Let's rely on the structure we see in getBookingDetail but lighter.
+             
+             return [
+                'id' => $booking->id,
+                'code' => $booking->code,
+                'status' => $booking->status,
+                'booking_date' => Carbon::parse($booking->booking_date)->format('Y-m-d'),
+                'booking_date_formatted' => Carbon::parse($booking->booking_date)->translatedFormat('l, d F Y'),
+                'start_time' => $booking->start_time ? substr($booking->start_time, 0, 5) : null,
+                'created_at' => $booking->created_at->format('Y-m-d H:i:s'),
+                'created_at_formatted' => $booking->created_at->translatedFormat('d F Y, H:i'),
+                'service' => $booking->service,
+                'type' => $booking->type,
+                
+                'patient_name' => $booking->patient->patient_name ?? '-',
+                'patient_phone' => $booking->patient->patient_phone ?? '-',
+                'patient_nik' => $booking->patient->patient_nik ?? '-',
+                'patient_gender' => $booking->patient->gender ?? '-',
+                
+                'doctor_name' => $booking->doctor->name ?? '-',
+                
+                'payment' => $booking->payment ? [
+                    'amount' => $booking->payment->amount,
+                    'payment_method' => $booking->payment->payment_method,
+                ] : null,
+             ];
+        });
     }
 
     public function getBookingDetail(int $bookingId): ?array

@@ -7,20 +7,20 @@ const navLinks = [
     {
         href: '/admin/bookings',
         label: 'Manajemen Booking',
-        icon: 'calendar_month',
+        icon: 'book',
     },
-    { href: '/admin/doctors', label: 'Dokter', icon: 'stethoscope' },
-    { href: '/admin/patients', label: 'Pasien', icon: 'group' },
     {
-        href: '/admin/doctors/schedule/1',
+        href: '/admin/schedule/1',
         label: 'Kalender Dokter',
         icon: 'calendar_month',
     },
     {
         href: '/admin/checkin/patiens',
         label: 'Cek In Pasien',
-        icon: 'lock',
+        icon: 'circle',
     },
+    { href: '/admin/patients', label: 'Pasien', icon: 'group' },
+    { href: '/admin/doctors', label: 'Dokter', icon: 'stethoscope' },
 ];
 
 interface AdminSidebarProps {

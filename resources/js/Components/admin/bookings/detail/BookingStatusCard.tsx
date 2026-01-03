@@ -94,7 +94,7 @@ export function BookingStatusCard({
                         </span>
                     </div>
                     <p className="text-sm text-slate-500">
-                        Dibuat pada {createdDate}
+                        Dipesan pada {createdDate}
                     </p>
                 </div>
             </div>

@@ -61,6 +61,11 @@ Route::post('/verify-wa', [PatientBookingController::class, 'verifyWhatsapp'])->
 Route::post('/check-nik', [PatientBookingController::class, 'checkNik'])->name('check-nik');
 Route::get('/doctors/{id}/booking/patient-data/review', [PatientBookingController::class, 'bookingPatientReviewPage'])->name('booking.review');
 
+// Area API endpoints for lazy loading
+Route::get('/api/provinces/{provinceId}/cities', [PatientBookingController::class, 'getCitiesByProvince'])->name('api.cities');
+Route::get('/api/cities/{cityId}/districts', [PatientBookingController::class, 'getDistrictsByCity'])->name('api.districts');
+Route::get('/api/districts/{districtId}/villages', [PatientBookingController::class, 'getVillagesByDistrict'])->name('api.villages');
+
 Route::post('/booking/create', [PatientBookingController::class, 'createBooking'])->name('booking.create');
 
 Route::get('/booking/success/{code}', [PatientBookingController::class, 'bookingSuccessPage'])->name('booking.success');
@@ -98,7 +103,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Doctors
     Route::get('/doctors', [AdminDoctorController::class, 'listDoctors'])->name('doctors.list');
-    Route::get('/doctors/schedule/{doctorId}', [AdminDoctorController::class, 'schedule'])->name('doctors.schedule');
+    Route::get('/schedule/{doctorId}', [AdminDoctorController::class, 'schedule'])->name('doctors.schedule');
     Route::post('/doctors/schedule/lock', [AdminDoctorController::class, 'lockDoctorSchedule'])->name('doctors.lock');
     Route::get('/doctors/{doctorId}', [AdminDoctorController::class, 'show'])->name('doctors.show');
 });

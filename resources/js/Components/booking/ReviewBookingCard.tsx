@@ -105,7 +105,7 @@ export function ReviewBookingCard({ doctor }: ReviewBookingCardProps) {
                         <div className="flex items-center gap-2 pl-7">
                             <p className="font-medium text-text-light">
                                 {bookingData.whatsapp
-                                    ? `+62 ${bookingData.whatsapp}`
+                                    ? `${bookingData.whatsapp}`
                                     : '-'}
                             </p>
                             {bookingData.whatsapp && (

@@ -15,31 +15,32 @@ class ProvinceSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->command->info('Fetching provinces from wilayah.id API...');
+        $this->command->info('Seeding wilayah data from SQL file...');
 
-        try {
-            $response = Http::timeout(30)->get('https://wilayah.id/api/provinces.json');
+        // Disable foreign key checks
+        \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-            if ($response->successful()) {
-                $data = $response->json();
-                $provinces = $data['data'] ?? [];
+        // Truncate tables to ensure clean state
+        \App\Models\Village::truncate();
+        \App\Models\District::truncate();
+        \App\Models\City::truncate();
+        Province::truncate();
 
-                $this->command->info('Found ' . count($provinces) . ' provinces');
-
-                foreach ($provinces as $province) {
-                    Province::updateOrCreate(
-                        ['code' => $province['code']],
-                        ['name' => $province['name']]
-                    );
-                }
-
-                $this->command->info('Provinces seeded successfully!');
-            } else {
-                $this->command->error('Failed to fetch provinces: ' . $response->status());
-            }
-        } catch (\Exception $e) {
-            Log::error('ProvinceSeeder Error: ' . $e->getMessage());
-            $this->command->error('Error: ' . $e->getMessage());
+        // Load SQL file
+        $path = public_path('wilayah.sql');
+        if (file_exists($path)) {
+            \Illuminate\Support\Facades\DB::unprepared(file_get_contents($path));
+            $this->command->info('Wilayah SQL file executed successfully.');
+        } else {
+            $this->command->error('Wilayah SQL file not found at: ' . $path);
+            return;
         }
+
+        // Enable foreign key checks
+        \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        // Uppercase Provinces
+        $this->command->info('Uppercasing Province names...');
+        \Illuminate\Support\Facades\DB::statement('UPDATE provinces SET name = UPPER(name)');
     }
 }

@@ -40,17 +40,47 @@ class BookingController extends Controller
     }
 
     public function bookingPatientDataPage($doctorId)
-    {
-        $doctor = Doctor::with('workingPeriods')->findOrFail($doctorId);
-        
-        // Get provinces with cities, districts, and villages for cascading dropdowns
-        $provinces = Province::with(['cities.districts.villages'])->orderBy('name')->get();
-        
-        return Inertia::render('patient/booking/BookingCustomerData', [
-            'doctor' => $doctor,
-            'provinces' => $provinces,
-        ]);
+    {   
+        try {
+            $doctor = Doctor::with('workingPeriods')->findOrFail($doctorId);
+            // Only load provinces without nested data
+            $provinces = Province::orderBy('name')->get(['id', 'name']);
+            return Inertia::render('patient/booking/BookingCustomerData', [
+                'doctor' => $doctor,
+                'provinces' => $provinces,
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json(['err' => $th->getMessage()]);
+        }
     }
+
+    public function getCitiesByProvince($provinceId)
+    {
+        $cities = \App\Models\City::where('province_id', $provinceId)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+        
+        return response()->json($cities);
+    }
+
+    public function getDistrictsByCity($cityId)
+    {
+        $districts = \App\Models\District::where('city_id', $cityId)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+        
+        return response()->json($districts);
+    }
+
+    public function getVillagesByDistrict($districtId)
+    {
+        $villages = \App\Models\Village::where('district_id', $districtId)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+        
+        return response()->json($villages);
+    }
+
 
     public function bookingPatientReviewPage($doctorId)
     {
@@ -108,10 +138,10 @@ class BookingController extends Controller
                 ->with('success', 'Booking berhasil dibuat!');
                 
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ]);
+            // return response()->json([
+            //     'success' => false,
+            //     'message' => $e->getMessage(),
+            // ]);
             return back()
                 ->withErrors(['slot' => $e->getMessage()])
                 ->withInput();
