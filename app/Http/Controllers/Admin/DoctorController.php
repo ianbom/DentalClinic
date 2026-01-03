@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Doctor;
 use App\Services\Admin\DoctorService;
 use App\Services\BookingService;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class DoctorController extends Controller
@@ -51,5 +52,26 @@ class DoctorController extends Controller
             'availableSlots' => $availableSlots,
             'allDoctors' => $allDoctors
         ]);
+    }
+
+    public function lockDoctorSchedule(Request $request)
+    { 
+        $validated = $request->validate([
+            'doctor_id' => 'required|exists:doctors,id',
+            'date' => 'required|date',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'note' => 'nullable|string|max:255',
+        ]);
+
+        $timeOff = $this->doctorService->createTimeOff(
+            $validated['doctor_id'],
+            $validated['date'],
+            $validated['start_time'],
+            $validated['end_time'],
+            $validated['note'] ?? 'Locked from schedule'
+        );
+
+        return back()->with('success', 'Jadwal berhasil dikunci');
     }
 }

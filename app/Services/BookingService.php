@@ -100,13 +100,15 @@ class BookingService
             return $timeOff->date->format('Y-m-d') === $dateString;
         });
         
-        // Get existing bookings for this date
-        $bookedSlots = Booking::where('doctor_id', $doctor->id)
+        // Get existing bookings for this date with patient info
+        $bookedSlotData = Booking::with('patient')
+            ->where('doctor_id', $doctor->id)
             ->where('booking_date', $date->format('Y-m-d'))
             ->where('is_active', 1)
-            ->pluck('start_time')
-            ->map(fn($time) => substr($time, 0, 5))
-            ->toArray();
+            ->get()
+            ->keyBy(fn($booking) => substr($booking->start_time, 0, 5));
+        
+        $bookedSlots = $bookedSlotData->keys()->toArray();
         
         $slots = [];
         
@@ -132,6 +134,7 @@ class BookingService
                 
                 // Check if slot is already booked
                 $isBooked = in_array($slotTime, $bookedSlots);
+                $booking = $bookedSlotData->get($slotTime);
                 
                 // Check if slot is in the past (for today)
                 $isPast = $date->isToday() && Carbon::parse($slotTime)->lt(Carbon::now());
@@ -148,6 +151,10 @@ class BookingService
                     'slot_type' => $slotType, // 'long' for :00, 'short' for :45
                     'available_for_short' => $slotType === 'short' && $isAvailable,
                     'available_for_long' => $slotType === 'long' && $isAvailable,
+                    // Include booking details for booked slots
+                    'patient_name' => $booking?->patient?->patient_name,
+                    'service' => $booking?->service,
+                    'booking_id' => $booking?->id,
                 ];
                 
                 // Alternate between 45 min and 15 min intervals

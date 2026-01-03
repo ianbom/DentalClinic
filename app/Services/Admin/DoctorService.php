@@ -246,5 +246,32 @@ class DoctorService
             'afternoon' => $afternoonSlots,
         ];
     }
+
+    /**
+     * Create a time off entry for a doctor
+     */
+    public function createTimeOff(int $doctorId, string $date, string $startTime, string $endTime, ?string $note = null): \App\Models\DoctorTimeOff
+    {
+        return \App\Models\DoctorTimeOff::create([
+            'doctor_id' => $doctorId,
+            'date' => $date,
+            'start_time' => $startTime,
+            'end_time' => $endTime,
+            'note' => $note,
+            'created_by_user_id' => auth()->id(),
+        ]);
+    }
+
+    /**
+     * Delete a time off entry
+     */
+    public function deleteTimeOff(int $timeOffId): bool
+    {
+        $timeOff = \App\Models\DoctorTimeOff::find($timeOffId);
+        if ($timeOff) {
+            return $timeOff->delete();
+        }
+        return false;
+    }
 }
 

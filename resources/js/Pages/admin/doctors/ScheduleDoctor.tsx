@@ -36,6 +36,9 @@ interface SlotInfo {
     slot_type: 'long' | 'short';
     available_for_short: boolean;
     available_for_long: boolean;
+    patient_name?: string;
+    service?: string;
+    booking_id?: number;
 }
 
 interface DayAvailability {
@@ -236,7 +239,9 @@ export default function ScheduleDoctor({
                 time: slot.time,
                 endTime: endTimeStr,
                 status: status,
-                patientName: slot.reason === 'booked' ? 'Terisi' : undefined,
+                patientName: slot.patient_name,
+                service: slot.service,
+                bookingId: slot.booking_id,
             };
 
             if (hour < 12) {
@@ -327,8 +332,8 @@ export default function ScheduleDoctor({
                     bookedSlots={bookedCount}
                     morningSlots={selectedSlots.morning}
                     afternoonSlots={selectedSlots.afternoon}
+                    doctorId={doctor.id}
                     onClose={() => setSelectedDateNum(null)}
-                    onAddSlot={() => alert('Tambah slot manual')}
                 />
             )}
         </div>

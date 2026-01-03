@@ -1,8 +1,12 @@
+import { Link, router } from '@inertiajs/react';
+
 export interface TimeSlotInfo {
     time: string;
     endTime: string;
     status: 'available' | 'booked' | 'off' | 'unavailable';
     patientName?: string;
+    service?: string;
+    bookingId?: number;
 }
 
 interface ScheduleSidebarProps {
@@ -12,8 +16,8 @@ interface ScheduleSidebarProps {
     bookedSlots: number;
     morningSlots: TimeSlotInfo[];
     afternoonSlots: TimeSlotInfo[];
+    doctorId: number;
     onClose: () => void;
-    onAddSlot: () => void;
 }
 
 function formatDate(date: Date): string {
@@ -43,6 +47,13 @@ function formatDate(date: Date): string {
     return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
 }
 
+function formatDateForApi(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 export function ScheduleSidebar({
     selectedDate,
     totalSlots,
@@ -50,10 +61,12 @@ export function ScheduleSidebar({
     bookedSlots,
     morningSlots,
     afternoonSlots,
+    doctorId,
     onClose,
-    onAddSlot,
 }: ScheduleSidebarProps) {
     if (!selectedDate) return null;
+
+    const dateStr = formatDateForApi(selectedDate);
 
     return (
         <aside className="z-10 flex w-full shrink-0 flex-col border-l border-[#e7f0f4] bg-white shadow-lg md:w-[360px]">
@@ -122,7 +135,12 @@ export function ScheduleSidebar({
                             Slot Pagi
                         </h4>
                         {morningSlots.map((slot, index) => (
-                            <SlotItem key={index} slot={slot} />
+                            <SlotItem
+                                key={index}
+                                slot={slot}
+                                doctorId={doctorId}
+                                date={dateStr}
+                            />
                         ))}
                     </div>
                 )}
@@ -137,51 +155,92 @@ export function ScheduleSidebar({
                             Slot Siang
                         </h4>
                         {afternoonSlots.map((slot, index) => (
-                            <SlotItem key={index} slot={slot} />
+                            <SlotItem
+                                key={index}
+                                slot={slot}
+                                doctorId={doctorId}
+                                date={dateStr}
+                            />
                         ))}
                     </div>
                 )}
-            </div>
-
-            {/* Footer */}
-            <div className="border-t border-[#e7f0f4] p-6">
-                <button
-                    onClick={onAddSlot}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 font-bold text-white transition-colors hover:bg-[#098dc9]"
-                >
-                    <span className="material-symbols-outlined">add</span>
-                    Tambah Slot Manual
-                </button>
             </div>
         </aside>
     );
 }
 
-function SlotItem({ slot }: { slot: TimeSlotInfo }) {
+interface SlotItemProps {
+    slot: TimeSlotInfo;
+    doctorId: number;
+    date: string;
+}
+
+function SlotItem({ slot, doctorId, date }: SlotItemProps) {
+    const handleBookClick = () => {
+        // Clear booking data from sessionStorage directly
+        try {
+            sessionStorage.removeItem('bookingData');
+        } catch (error) {
+            console.error('Error clearing booking data:', error);
+        }
+        router.visit('/admin/bookings/create');
+    };
+
+    const handleLockClick = () => {
+        if (!confirm('Apakah Anda yakin ingin mengunci slot ini?')) {
+            return;
+        }
+
+        router.post(
+            '/admin/doctors/schedule/lock',
+            {
+                doctor_id: doctorId,
+                date: date,
+                start_time: slot.time,
+                end_time: slot.endTime,
+                note: 'Dikunci dari jadwal',
+            },
+            {
+                preserveScroll: true,
+            },
+        );
+    };
+
     if (slot.status === 'booked') {
         return (
-            <div className="flex items-center justify-between rounded-lg border border-[#e7f0f4] bg-gray-50 p-3 opacity-75">
+            <div className="flex items-center justify-between rounded-lg border border-[#e7f0f4] bg-gray-50 p-3 opacity-90">
                 <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-gray-400">
-                        schedule
+                    <span className="material-symbols-outlined text-red-500">
+                        event_busy
                     </span>
                     <div>
-                        <p className="text-sm font-bold text-[#0d171c] line-through decoration-red-500">
+                        <p className="text-sm font-bold text-[#0d171c]">
                             {slot.time} - {slot.endTime}
                         </p>
-                        <p className="text-xs font-medium text-red-500">
-                            Booked ({slot.patientName})
+                        <p className="text-xs font-medium text-slate-700">
+                            {slot.patientName || 'Terisi'}
                         </p>
+                        {slot.service && (
+                            <p className="text-xs italic text-slate-500">
+                                {slot.service}
+                            </p>
+                        )}
                     </div>
                 </div>
-                <button className="flex size-8 items-center justify-center rounded-full text-gray-500 hover:bg-gray-200">
-                    <span
-                        className="material-symbols-outlined"
-                        style={{ fontSize: '18px' }}
+                {slot.bookingId && (
+                    <Link
+                        href={`/admin/bookings/${slot.bookingId}`}
+                        className="flex size-8 items-center justify-center rounded-full text-primary hover:bg-primary/10"
+                        title="Lihat Booking"
                     >
-                        more_vert
-                    </span>
-                </button>
+                        <span
+                            className="material-symbols-outlined"
+                            style={{ fontSize: '18px' }}
+                        >
+                            visibility
+                        </span>
+                    </Link>
+                )}
             </div>
         );
     }
@@ -191,14 +250,14 @@ function SlotItem({ slot }: { slot: TimeSlotInfo }) {
             <div className="flex items-center justify-between rounded-lg border border-yellow-200 bg-yellow-50 p-3 opacity-75">
                 <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined text-yellow-600">
-                        event_busy
+                        lock
                     </span>
                     <div>
                         <p className="text-sm font-bold text-[#0d171c]">
                             {slot.time} - {slot.endTime}
                         </p>
                         <p className="text-xs font-medium text-yellow-600">
-                            Cuti / Tidak Aktif
+                            Dikunci
                         </p>
                     </div>
                 </div>
@@ -226,7 +285,7 @@ function SlotItem({ slot }: { slot: TimeSlotInfo }) {
         );
     }
 
-    // Available
+    // Available - book or lock
     return (
         <div className="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-3">
             <div className="flex items-center gap-3">
@@ -242,9 +301,26 @@ function SlotItem({ slot }: { slot: TimeSlotInfo }) {
                     </p>
                 </div>
             </div>
-            <button className="rounded-md bg-green-600 px-3 py-1 text-xs font-bold text-white transition-colors hover:bg-green-700">
-                Book
-            </button>
+            <div className="flex items-center gap-2">
+                <button
+                    onClick={handleLockClick}
+                    className="flex size-8 items-center justify-center rounded-md bg-yellow-500 text-white transition-colors hover:bg-yellow-600"
+                    title="Kunci Slot"
+                >
+                    <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: '16px' }}
+                    >
+                        lock
+                    </span>
+                </button>
+                <button
+                    onClick={handleBookClick}
+                    className="rounded-md bg-green-600 px-3 py-1 text-xs font-bold text-white transition-colors hover:bg-green-700"
+                >
+                    Book
+                </button>
+            </div>
         </div>
     );
 }
