@@ -21,6 +21,7 @@ interface Patient {
     patient_phone: string;
     patient_birthdate: string | null;
     patient_address: string | null;
+    gender: 'male' | 'female';
 }
 
 interface DoctorOption {
@@ -280,7 +281,9 @@ export default function DetailPatient({
                                         Jenis Kelamin
                                     </p>
                                     <p className="text-base font-medium text-[#0d171c]">
-                                        Laki-laki
+                                        {patient.gender === 'male'
+                                            ? 'Laki-laki'
+                                            : 'Perempuan'}
                                     </p>
                                 </div>
                                 <div className="flex flex-col gap-1">

@@ -301,6 +301,7 @@ export interface PatientItem {
     name: string;
     phone: string;
     email: string;
+    gender: 'male' | 'female';
     total_visits: number;
     first_visit: string;
     first_visit_formatted: string;

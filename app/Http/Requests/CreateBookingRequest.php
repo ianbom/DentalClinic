@@ -32,9 +32,10 @@ class CreateBookingRequest extends FormRequest
             'patient_name' => 'required|string|max:150',
             'patient_birthdate' => 'required',
             'patient_address' => 'required',
-            'patient_nik' => 'required|string|max:32',
+            'patient_nik' => 'nullable|string|max:32',
             'patient_email' => 'nullable|email|max:191',
             'patient_phone' => 'required|string|max:32',
+            'gender' => 'required|in:male,female',
         ];
     }
 

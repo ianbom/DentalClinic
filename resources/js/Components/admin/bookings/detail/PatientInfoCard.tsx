@@ -1,5 +1,3 @@
-import { Link } from "@inertiajs/react";
-
 interface PatientInfoCardProps {
     name: string;
     type: string;
@@ -69,7 +67,12 @@ export function PatientInfoCard({
                     </span>
                 </div>
                 <div className="mt-2 pt-4">
-                    <a href={'https://wa.me/' + whatsapp} target="_blank" className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#20bd5a]">
+                    <a
+                        href={'https://wa.me/' + whatsapp}
+                        target="_blank"
+                        className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#20bd5a]"
+                        rel="noreferrer"
+                    >
                         <svg
                             className="h-5 w-5 fill-current"
                             viewBox="0 0 448 512"

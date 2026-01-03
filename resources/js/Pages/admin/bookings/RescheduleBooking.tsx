@@ -77,7 +77,7 @@ function RescheduleBookingForm({
                     fullName: '',
                     nik: '',
                     whatsapp: '',
-                    email: '',
+                    gender: '' as 'male' | 'female' | '',
                     birthdate: '',
                     address: '',
                     isWhatsappVerified: false,

@@ -28,6 +28,7 @@ class PatientService
                 'name' => $patient->patient_name,
                 'phone' => $patient->patient_phone,
                 'email' => $patient->patient_email ?? '-',
+                'gender' => $patient->gender,
                 'total_visits' => $patient->bookings_count,
                 'first_visit' => $firstBooking ? $firstBooking->created_at->format('Y-m-d H:i:s') : null,
                 'first_visit_formatted' => $firstBooking ? $firstBooking->created_at->translatedFormat('d M Y') : '-',

@@ -118,16 +118,16 @@ export function ReviewBookingCard({ doctor }: ReviewBookingCardProps) {
                             )}
                         </div>
                     </div>
-                    {/* Email */}
+                    {/* Gender */}
                     <div className="group">
                         <div className="mb-1 flex items-center gap-2 text-sm text-gray-500">
                             <span className="material-symbols-outlined text-[18px]">
-                                mail
+                                wc
                             </span>
-                            <span>Email</span>
+                            <span>Jenis Kelamin</span>
                         </div>
                         <p className="pl-7 font-medium text-text-light">
-                            {bookingData.email || '-'}
+                            {bookingData.gender === 'male' ? 'Laki-laki' : bookingData.gender === 'female' ? 'Perempuan' : '-'}
                         </p>
                     </div>
                     {/* Service */}

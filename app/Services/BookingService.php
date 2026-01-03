@@ -333,10 +333,10 @@ class BookingService
             // Update existing patient data if there are changes
             $patient->update([
                 'patient_name' => $data['patient_name'],
-                'patient_email' => $data['patient_email'] ?? $patient->patient_email,
                 'patient_phone' => $data['patient_phone'],
                 'patient_birthdate' => $data['patient_birthdate'] ?? $patient->patient_birthdate,
                 'patient_address' => $data['patient_address'] ?? $patient->patient_address,
+                'gender' => $data['gender']
             ]);
         } else {
             // Create new patient
@@ -344,10 +344,10 @@ class BookingService
                 // 'medical_records' => Patient::generateMedicalRecords(),
                 'patient_name' => $data['patient_name'],
                 'patient_nik' => $data['patient_nik'],
-                'patient_email' => $data['patient_email'] ?? null,
                 'patient_phone' => $data['patient_phone'],
                 'patient_birthdate' => $data['patient_birthdate'] ?? null,
                 'patient_address' => $data['patient_address'] ?? null,
+                'gender' => $data['gender']
             ]);
         }
 
@@ -375,11 +375,11 @@ class BookingService
      */
     private function generateBookingCode(): string
     {
-        $prefix = 'BK';
-        $date = Carbon::now()->format('Ymd');
+        $prefix = 'CDC';
+        // $date = Carbon::now()->format('Ymd');
         $random = strtoupper(substr(md5(uniqid()), 0, 6));
         
-        return "{$prefix}{$date}{$random}";
+        return "{$prefix}{$random}";
     }
 
     /**

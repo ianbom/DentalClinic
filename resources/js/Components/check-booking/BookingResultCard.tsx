@@ -48,6 +48,17 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
         return nik.slice(0, 6) + '********' + nik.slice(14);
     };
 
+    // Format birthdate from ISO to readable date
+    const formatBirthdate = (dateString: string): string => {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        });
+    };
+
     // Check if can check-in (booking is today and within 1 hour before)
     const canCheckin = (): { allowed: boolean; reason: string } => {
         if (booking.status === 'checked_in') {
@@ -292,11 +303,10 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
                         <button
                             onClick={handleCheckin}
                             disabled={!checkinStatus.allowed || isCheckingIn}
-                            className={`flex items-center justify-center gap-2 rounded-lg px-6 py-2.5 text-sm font-bold transition-all ${
-                                checkinStatus.allowed && !isCheckingIn
-                                    ? 'cursor-pointer bg-blue-600 text-white hover:bg-blue-700'
-                                    : 'cursor-not-allowed bg-gray-200 text-gray-400'
-                            }`}
+                            className={`flex items-center justify-center gap-2 rounded-lg px-6 py-2.5 text-sm font-bold transition-all ${checkinStatus.allowed && !isCheckingIn
+                                ? 'cursor-pointer bg-blue-600 text-white hover:bg-blue-700'
+                                : 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                }`}
                         >
                             <span className="material-symbols-outlined text-[18px]">
                                 {isCheckingIn
@@ -366,14 +376,30 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
 
                     <div className="flex items-start gap-3">
                         <span className="material-symbols-outlined mt-0.5 text-[#0da2e7]">
-                            email
+                            cake
                         </span>
                         <div>
                             <p className="text-xs font-medium text-gray-500">
-                                Email
+                                Tanggal Lahir
                             </p>
                             <p className="text-base font-semibold text-gray-900">
-                                {patientDetail?.patient_email || '-'}
+                                {patientDetail?.patient_birthdate
+                                    ? formatBirthdate(patientDetail.patient_birthdate)
+                                    : '-'}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                        <span className="material-symbols-outlined mt-0.5 text-[#0da2e7]">
+                            home
+                        </span>
+                        <div>
+                            <p className="text-xs font-medium text-gray-500">
+                                Alamat
+                            </p>
+                            <p className="text-base font-semibold text-gray-900">
+                                {patientDetail?.patient_address || '-'}
                             </p>
                         </div>
                     </div>

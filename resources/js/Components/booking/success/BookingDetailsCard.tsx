@@ -26,6 +26,17 @@ export function BookingDetailsCard({ booking }: BookingDetailsCardProps) {
         return timeString.slice(0, 5) + ' WIB';
     };
 
+    // Format birthdate from ISO to readable date
+    const formatBirthdate = (dateString: string): string => {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        });
+    };
+
     return (
         <div className="mb-8 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
             <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50/50 px-6 py-4">
@@ -75,17 +86,7 @@ export function BookingDetailsCard({ booking }: BookingDetailsCardProps) {
                             Nomor WhatsApp
                         </span>
                         <span className="font-medium text-text-light">
-                            {patient?.patient_phone
-                                ? `+62 ${patient.patient_phone}`
-                                : '-'}
-                        </span>
-                    </div>
-
-                    {/* Email */}
-                    <div className="flex flex-col gap-1">
-                        <span className="text-sm text-gray-500">Email</span>
-                        <span className="font-medium text-text-light">
-                            {patient?.patient_email || '-'}
+                            {patient?.patient_phone || '-'}
                         </span>
                     </div>
 
@@ -95,7 +96,9 @@ export function BookingDetailsCard({ booking }: BookingDetailsCardProps) {
                             Tanggal Lahir
                         </span>
                         <span className="font-medium text-text-light">
-                            {patient?.patient_birthdate || '-'}
+                            {patient?.patient_birthdate
+                                ? formatBirthdate(patient.patient_birthdate)
+                                : '-'}
                         </span>
                     </div>
 

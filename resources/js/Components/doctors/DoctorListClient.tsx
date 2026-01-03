@@ -58,7 +58,7 @@ export function DoctorListClient({ doctors }: DoctorListClientProps) {
                             sehat Anda.
                         </p>
                     </div>
-                    <div className="w-full md:w-auto md:min-w-[400px]">
+                    {/* <div className="w-full md:w-auto md:min-w-[400px]">
                         <div className="group relative">
                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                 <span className="material-symbols-outlined text-gray-400">
@@ -73,12 +73,12 @@ export function DoctorListClient({ doctors }: DoctorListClientProps) {
                                 placeholder="Cari nama dokter..."
                             />
                         </div>
-                    </div>
+                    </div> */}
                 </div>
 
                 <div className="flex flex-col items-start gap-8 lg:flex-row">
                     {/* WhatsApp Consultation Card */}
-                    <div className="w-full shrink-0 lg:sticky lg:top-24 lg:w-72">
+                    {/* <div className="w-full shrink-0 lg:sticky lg:top-24 lg:w-72">
                         <div className="rounded-xl border border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 p-6 shadow-sm">
                             <div className="mb-4 flex items-center gap-3">
                                 <div className="flex size-12 items-center justify-center rounded-full bg-green-500 text-white">
@@ -117,7 +117,7 @@ export function DoctorListClient({ doctors }: DoctorListClientProps) {
                                 Hubungi Sekarang
                             </a>
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Doctor Grid */}
                     <div className="w-full flex-1">

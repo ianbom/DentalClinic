@@ -135,9 +135,7 @@ export function BookingStatusCard({
                         Reschedule Booking
                     </Link>
                 )}
-                {!canCheckinOrCancel && !canReschedule && (
-                    <></>
-                )}
+                {!canCheckinOrCancel && !canReschedule && <></>}
             </div>
         </div>
     );

@@ -5,11 +5,29 @@ import { BookingProvider } from '@/context/BookingContext';
 import PatientLayout from '@/Layouts/PatientLayout';
 import { Doctor } from '@/types';
 
-interface CustomerDataPageProps {
-    doctor: Doctor;
+interface Province {
+    id: number;
+    name: string;
+    cities: City[];
 }
 
-function CustomerDataPage({ doctor }: CustomerDataPageProps) {
+interface City {
+    id: number;
+    name: string;
+    districts: District[];
+}
+
+interface District {
+    id: number;
+    name: string;
+}
+
+interface CustomerDataPageProps {
+    doctor: Doctor;
+    provinces: Province[];
+}
+
+function CustomerDataPage({ doctor, provinces }: CustomerDataPageProps) {
     return (
         <div className="flex min-h-screen flex-1 flex-col items-center bg-background-light px-4 py-8 font-display md:px-10 lg:px-20">
             <div className="flex w-full max-w-6xl flex-col gap-8">
@@ -20,7 +38,7 @@ function CustomerDataPage({ doctor }: CustomerDataPageProps) {
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
                     {/* Left Column: Customer Form */}
                     <div className="lg:col-span-8">
-                        <CustomerDataForm doctorId={String(doctor.id)} />
+                        <CustomerDataForm doctorId={String(doctor.id)} provinces={provinces} />
                     </div>
 
                     {/* Right Column: Booking Summary Sticky Sidebar */}

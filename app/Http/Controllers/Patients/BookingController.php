@@ -7,6 +7,7 @@ use App\Http\Requests\CreateBookingRequest;
 use App\Models\Booking;
 use App\Models\Patient;
 use App\Models\Doctor;
+use App\Models\Province;
 use App\Services\BookingService;
 use App\Services\WhatsappService;
 use Carbon\Carbon;
@@ -41,7 +42,14 @@ class BookingController extends Controller
     public function bookingPatientDataPage($doctorId)
     {
         $doctor = Doctor::with('workingPeriods')->findOrFail($doctorId);
-        return Inertia::render('patient/booking/BookingCustomerData', ['doctor' => $doctor]);
+        
+        // Get provinces with cities and districts for cascading dropdowns
+        $provinces = Province::with(['cities.districts'])->orderBy('name')->get();
+        
+        return Inertia::render('patient/booking/BookingCustomerData', [
+            'doctor' => $doctor,
+            'provinces' => $provinces,
+        ]);
     }
 
     public function bookingPatientReviewPage($doctorId)
@@ -73,10 +81,10 @@ class BookingController extends Controller
                 'found' => true,
                 'patient' => [
                     'patient_name' => $patient->patient_name,
-                    'patient_email' => $patient->patient_email,
                     'patient_phone' => $patient->patient_phone,
                     'patient_birthdate' => $patient->patient_birthdate?->format('Y-m-d'),
                     'patient_address' => $patient->patient_address,
+                    'gender' => $patient->gender,
                 ],
             ]);
         }
@@ -87,11 +95,11 @@ class BookingController extends Controller
         ]);
     }
 
-    public function createBooking(CreateBookingRequest $request)
+    public function createBooking(Request $request)
     {
         try {
             // Create booking
-            $booking = $this->bookingService->createBooking($request->validated());
+            $booking = $this->bookingService->createBooking($request->all());
             $this->bookingService->sendBookingConfirmation($booking->id, $booking->patient->patient_phone);
             $this->bookingService->scheduleReminderNotification($booking->id);
 
@@ -100,6 +108,10 @@ class BookingController extends Controller
                 ->with('success', 'Booking berhasil dibuat!');
                 
         } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
             return back()
                 ->withErrors(['slot' => $e->getMessage()])
                 ->withInput();

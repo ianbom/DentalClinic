@@ -12,9 +12,15 @@ export interface BookingData {
     fullName: string;
     nik: string;
     whatsapp: string;
-    email: string;
+    gender: 'male' | 'female' | '';
     birthdate: string;
     address: string;
+    provinceId: string;
+    provinceName: string;
+    cityId: string;
+    cityName: string;
+    districtId: string;
+    districtName: string;
     service: string;
     serviceType: 'short' | 'long' | 'sisipan' | '';
     selectedDate: string; // Formatted date for display
@@ -34,9 +40,15 @@ const defaultBookingData: BookingData = {
     fullName: '',
     nik: '',
     whatsapp: '',
-    email: '',
+    gender: '',
     birthdate: '',
     address: '',
+    provinceId: '',
+    provinceName: '',
+    cityId: '',
+    cityName: '',
+    districtId: '',
+    districtName: '',
     service: '',
     serviceType: '',
     selectedDate: '',
