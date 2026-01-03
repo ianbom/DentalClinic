@@ -46,9 +46,15 @@ function ListBookingPage({ bookings, doctors, filters }: ListBookingPageProps) {
     const [statusFilter, setStatusFilter] = useState(filters.status || '');
     const [dateFilter, setDateFilter] = useState(filters.date || '');
     const [doctorFilter, setDoctorFilter] = useState(filters.doctor || '');
-    const [itemsPerPage, setItemsPerPage] = useState(Number(filters.per_page) || 10);
-    const [sortField, setSortField] = useState<SortField>((filters.sort_field as SortField) || '');
-    const [sortOrder, setSortOrder] = useState<SortOrder>((filters.sort_order as SortOrder) || 'asc');
+    const [itemsPerPage, setItemsPerPage] = useState(
+        Number(filters.per_page) || 10,
+    );
+    const [sortField, setSortField] = useState<SortField>(
+        (filters.sort_field as SortField) || '',
+    );
+    const [sortOrder, setSortOrder] = useState<SortOrder>(
+        (filters.sort_order as SortOrder) || 'asc',
+    );
 
     // Payment modal state
     const [paymentModalOpen, setPaymentModalOpen] = useState(false);
@@ -60,7 +66,7 @@ function ListBookingPage({ bookings, doctors, filters }: ListBookingPageProps) {
         debounce((query: string) => {
             updateParams({ search: query, page: 1 });
         }, 500),
-        []
+        [],
     );
 
     const updateParams = (newParams: any) => {
@@ -81,7 +87,7 @@ function ListBookingPage({ bookings, doctors, filters }: ListBookingPageProps) {
                 preserveState: true,
                 preserveScroll: true,
                 replace: true,
-            }
+            },
         );
     };
 
@@ -98,12 +104,10 @@ function ListBookingPage({ bookings, doctors, filters }: ListBookingPageProps) {
         if (type === 'status') {
             setStatusFilter(value);
             newParams = { status: value, page: 1 };
-        }
-        else if (type === 'date') {
+        } else if (type === 'date') {
             setDateFilter(value);
             newParams = { date: value, page: 1 };
-        }
-        else if (type === 'doctor') {
+        } else if (type === 'doctor') {
             setDoctorFilter(value);
             newParams = { doctor: value, page: 1 };
         }
