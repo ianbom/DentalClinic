@@ -1,0 +1,23 @@
+import { Navbar } from '@/Components/layout/Navbar';
+import { Head } from '@inertiajs/react';
+
+export default function PatientBookingLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
+    return (
+        <>
+            <Head title="Cantika Dental Care">
+                <meta
+                    name="description"
+                    content="Webiste booking Dental Care "
+                />
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
+            <Navbar />
+            {children}
+            {/* <Footer /> */}
+        </>
+    );
+}

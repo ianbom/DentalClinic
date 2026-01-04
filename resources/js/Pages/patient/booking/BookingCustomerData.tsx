@@ -2,7 +2,7 @@ import { BookingHeader } from '@/Components/booking/BookingHeader';
 import { CustomerBookingSidebar } from '@/Components/booking/PatientBookingSidebar';
 import { CustomerDataForm } from '@/Components/booking/PatientDataForm';
 import { BookingProvider } from '@/context/BookingContext';
-import PatientLayout from '@/Layouts/PatientLayout';
+import PatientBookingLayout from '@/Layouts/PatientBookingLayout';
 import { Doctor } from '@/types';
 
 interface Province {
@@ -17,35 +17,34 @@ interface CustomerDataPageProps {
 
 function CustomerDataPage({ doctor, provinces }: CustomerDataPageProps) {
     return (
-        <div className="flex min-h-screen flex-1 flex-col items-center bg-background-light px-4 py-8 font-display md:px-10 lg:px-20">
-            <div className="flex w-full max-w-6xl flex-col gap-8">
+        <div className="mx-auto w-full max-w-4xl flex-grow px-4 py-8 font-display sm:px-6 sm:py-12">
+            <div className="flex flex-col gap-8">
                 {/* Progress Bar */}
-                <BookingHeader currentStep={2} />
+                <BookingHeader currentStep={2} doctorId={String(doctor.id)} />
 
-                {/* Content Area: Grid View */}
-                <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-                    {/* Left Column: Customer Form */}
-                    <div className="lg:col-span-8">
-                        <CustomerDataForm
-                            doctorId={String(doctor.id)}
-                            provinces={provinces}
-                        />
-                    </div>
+                {/* Spacer for step labels */}
+                <div className="h-1"></div>
 
-                    {/* Right Column: Booking Summary Sticky Sidebar */}
-                    <div className="lg:col-span-4">
-                        <CustomerBookingSidebar doctor={doctor} />
-                    </div>
-                </div>
+                {/* Summary Card */}
+                <CustomerBookingSidebar
+                    doctor={doctor}
+                    doctorId={String(doctor.id)}
+                />
+
+                {/* Form Card */}
+                <CustomerDataForm
+                    doctorId={String(doctor.id)}
+                    provinces={provinces}
+                />
             </div>
         </div>
     );
 }
 
 CustomerDataPage.layout = (page: React.ReactNode) => (
-    <PatientLayout>
+    <PatientBookingLayout>
         <BookingProvider>{page}</BookingProvider>
-    </PatientLayout>
+    </PatientBookingLayout>
 );
 
 export default CustomerDataPage;

@@ -61,6 +61,10 @@ export function ServiceSelection({
                 serviceName = 'Pasang Diamond';
                 serviceType = 'long';
                 break;
+            case 'pasang_behel':
+                serviceName = 'Pasang Behel / Kawat Gigi';
+                serviceType = 'long';
+                break;
             case 'sisipan':
                 serviceName = 'Sisipan';
                 serviceType = 'sisipan';
@@ -86,21 +90,14 @@ export function ServiceSelection({
             <option value="">-- Pilih Layanan --</option>
             <option value="konsultasi">Konsultasi/Periksa </option>
             <option value="cabut_gigi_anak">Cabut Gigi Anak </option>
-            <option value="pengobatan">
-                Sakit Gigi / Pengobatan 
-            </option>
-            <option value="cabut_gigi_dewasa">
-                Cabut Gigi Dewasa 
-            </option>
-            <option value="scalling">
-                Pembersihan Karang Gigi / Scalling 
-            </option>
+            <option value="pengobatan">Sakit Gigi / Pengobatan</option>
+            <option value="cabut_gigi_dewasa">Cabut Gigi Dewasa</option>
+            <option value="scalling">Pembersihan Karang Gigi / Scalling</option>
             <option value="kontrol_gigi">Kontrol Gigi </option>
             <option value="tambal_gigi">Tambal Gigi </option>
-            <option value="bleaching">
-                Pemutihan Gigi / Bleaching 
-            </option>
+            <option value="bleaching">Pemutihan Gigi / Bleaching</option>
             <option value="gigi_palsu">Pasang Gigi Palsu </option>
+            <option value="pasang_behel">Pasang Behel / Kawat Gigi</option>
             <option value="pasang_diamond">Pasang Diamond </option>
             {showSisipan && <option value="sisipan">📋 Sisipan</option>}
         </select>

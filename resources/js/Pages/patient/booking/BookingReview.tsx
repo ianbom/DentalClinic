@@ -3,7 +3,7 @@ import { ReviewActions } from '@/Components/booking/ReviewActions';
 import { ReviewBookingCard } from '@/Components/booking/ReviewBookingCard';
 import { ReviewSidebar } from '@/Components/booking/ReviewSidebar';
 import { BookingProvider } from '@/context/BookingContext';
-import PatientLayout from '@/Layouts/PatientLayout';
+import PatientBookingLayout from '@/Layouts/PatientBookingLayout';
 import { Doctor } from '@/types';
 
 interface ReviewBookingPageProps {
@@ -15,7 +15,7 @@ function ReviewBookingPage({ doctor }: ReviewBookingPageProps) {
         <div className="mx-auto w-full max-w-4xl flex-grow px-4 py-8 font-display sm:px-6 sm:py-12">
             {/* Progress Bar */}
             <div className="mb-8">
-                <BookingHeader currentStep={3} />
+                <BookingHeader currentStep={3} doctorId={String(doctor.id)} />
             </div>
 
             <div className="mt-8 grid gap-8 lg:grid-cols-3">
@@ -33,9 +33,9 @@ function ReviewBookingPage({ doctor }: ReviewBookingPageProps) {
 }
 
 ReviewBookingPage.layout = (page: React.ReactNode) => (
-    <PatientLayout>
+    <PatientBookingLayout>
         <BookingProvider>{page}</BookingProvider>
-    </PatientLayout>
+    </PatientBookingLayout>
 );
 
 export default ReviewBookingPage;
