@@ -406,8 +406,8 @@ class BookingService
             'date' => $this->formatDateIndonesian(Carbon::parse($booking->booking_date)),
             'time' => $booking->start_time ? substr($booking->start_time, 0, 5) : 'Menunggu Konfirmasi Admin',
             'code' => $booking->code,
-            'confirm_link' => url("/booking/confirm/{$booking->code}"),
-            'checkin_link' => url("/booking/checkin/{$booking->code}"),
+            'confirm_link' => url('/check-booking') . '?code=' . $booking->code . '&phone=' . $booking->patient->patient_phone,
+            'checkin_link' => url('/check-booking') . '?code=' . $booking->code . '&phone=' . $booking->patient->patient_phone,
         ];
 
         return $whatsappService->sendBookingConfirmation($bookingId, $phone, $bookingDetails);
@@ -430,7 +430,7 @@ class BookingService
             'code' => $booking->code,
             'old_date' => $oldSchedule['old_date'] ?? '-',
             'old_time' => $oldSchedule['old_time'] ?? '-',
-            'checkin_link' => url("/booking/checkin/{$booking->code}"),
+            'checkin_link' => url('/check-booking') . '?code=' . $booking->code . '&phone=' . $booking->patient->patient_phone,
         ];
 
         return $whatsappService->sendReschedule($bookingId, $phone, $bookingDetails);
@@ -465,8 +465,8 @@ class BookingService
             'date' => $this->formatDateIndonesian($bookingDate),
             'time' => substr($booking->start_time, 0, 5),
             'code' => $booking->code,
-            'confirm_link' => url("/booking/confirm/{$booking->code}"),
-            'checkin_link' => url("/booking/checkin/{$booking->code}"),
+            'confirm_link' => url('/check-booking') . '?code=' . $booking->code . '&phone=' . $booking->patient->patient_phone,
+            'checkin_link' => url('/check-booking') . '?code=' . $booking->code . '&phone=' . $booking->patient->patient_phone,
         ];
 
         $whatsappService = new WhatsappService();

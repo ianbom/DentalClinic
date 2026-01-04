@@ -50,9 +50,8 @@ export function Toast({ message, type, duration = 5000, onClose }: ToastProps) {
 
     return (
         <div
-            className={`fixed right-4 top-4 z-50 flex items-center gap-3 rounded-lg px-4 py-3 text-white shadow-lg transition-all duration-300 ${
-                style.bg
-            } ${isLeaving ? 'translate-x-full opacity-0' : 'translate-x-0 opacity-100'}`}
+            className={`fixed right-4 top-4 z-50 flex items-center gap-3 rounded-lg px-4 py-3 text-white shadow-lg transition-all duration-300 ${style.bg
+                } ${isLeaving ? 'translate-x-full opacity-0' : 'translate-x-0 opacity-100'}`}
         >
             <span className="material-symbols-outlined text-[20px]">
                 {style.icon}

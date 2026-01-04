@@ -84,24 +84,24 @@ export function ServiceSelection({
             className="w-full rounded-lg border border-[#cee0e8] bg-white px-4 py-3 text-[#0d171c] focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
         >
             <option value="">-- Pilih Layanan --</option>
-            <option value="konsultasi">Konsultasi/Periksa (±15 menit)</option>
-            <option value="cabut_gigi_anak">Cabut Gigi Anak (±15 menit)</option>
+            <option value="konsultasi">Konsultasi/Periksa </option>
+            <option value="cabut_gigi_anak">Cabut Gigi Anak </option>
             <option value="pengobatan">
-                Sakit Gigi / Pengobatan (±15 menit)
+                Sakit Gigi / Pengobatan 
             </option>
             <option value="cabut_gigi_dewasa">
-                Cabut Gigi Dewasa (±45 menit)
+                Cabut Gigi Dewasa 
             </option>
             <option value="scalling">
-                Pembersihan Karang Gigi / Scalling (±45 menit)
+                Pembersihan Karang Gigi / Scalling 
             </option>
-            <option value="kontrol_gigi">Kontrol Gigi (±45 menit)</option>
-            <option value="tambal_gigi">Tambal Gigi (±45 menit)</option>
+            <option value="kontrol_gigi">Kontrol Gigi </option>
+            <option value="tambal_gigi">Tambal Gigi </option>
             <option value="bleaching">
-                Pemutihan Gigi / Bleaching (±45 menit)
+                Pemutihan Gigi / Bleaching 
             </option>
-            <option value="gigi_palsu">Pasang Gigi Palsu (±45 menit)</option>
-            <option value="pasang_diamond">Pasang Diamond (±45 menit)</option>
+            <option value="gigi_palsu">Pasang Gigi Palsu </option>
+            <option value="pasang_diamond">Pasang Diamond </option>
             {showSisipan && <option value="sisipan">📋 Sisipan</option>}
         </select>
     );

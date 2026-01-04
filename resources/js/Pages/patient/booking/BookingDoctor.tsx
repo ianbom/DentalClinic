@@ -35,7 +35,7 @@ function BookingPage({ doctor, availableSlots }: BookingPageProps) {
                             </p>
                             <ServiceSelection
                                 value={bookingData.serviceId}
-                                onChange={() => {}}
+                                onChange={() => { }}
                                 showSisipan={false}
                             />
                         </div>

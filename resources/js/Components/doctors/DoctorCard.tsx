@@ -21,7 +21,7 @@ export function DoctorCard({ doctor, days }: DoctorCardProps) {
     return (
         <div className="group flex flex-col overflow-hidden rounded-2xl border border-subtle-light bg-white transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5">
             {/* Image Header */}
-            <div className="relative h-48 bg-gray-100">
+            <div className="relative h-64 bg-gray-100">
                 <img
                     alt={doctor.name}
                     className="h-full w-full object-cover"
@@ -62,7 +62,7 @@ export function DoctorCard({ doctor, days }: DoctorCardProps) {
                 {/* CTA Button */}
                 <div className="mt-auto">
                     <Link
-                        href={`/doctors/${doctor.id}`}
+                        href={`/doctors/${doctor.id}/booking`}
                         onClick={clearBookingData}
                         className="group/btn flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-dark"
                     >

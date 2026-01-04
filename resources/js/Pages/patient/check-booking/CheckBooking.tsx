@@ -27,9 +27,6 @@ function CheckBookingPage({ booking }: CheckBookingPageProps) {
                     </p>
                 </div>
 
-                {/* Search Form Card */}
-                <BookingSearchForm />
-
                 {/* Error Message */}
                 {errors?.booking && (
                     <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-red-700">
@@ -39,6 +36,9 @@ function CheckBookingPage({ booking }: CheckBookingPageProps) {
 
                 {/* Result Card */}
                 {booking && <BookingResultCard booking={booking} />}
+
+                {/* Search Form Card */}
+                <BookingSearchForm />
 
                 {/* New Booking Prompt */}
                 <div className="mt-4 text-center">

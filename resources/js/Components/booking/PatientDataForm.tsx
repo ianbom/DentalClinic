@@ -386,10 +386,10 @@ export function CustomerDataForm({
                     <div className="flex gap-2">
                         <input
                             className={`flex h-12 flex-1 rounded-lg border bg-white px-4 py-3 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:outline-none focus:ring-1 ${nikMessage?.type === 'success'
-                                ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
-                                : nikMessage?.type === 'error'
-                                    ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
-                                    : 'border-gray-200 focus:border-primary focus:ring-primary'
+                                    ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
+                                    : nikMessage?.type === 'error'
+                                        ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
+                                        : 'border-gray-200 focus:border-primary focus:ring-primary'
                                 }`}
                             id="nik"
                             placeholder="Masukkan 16 digit NIK Anda"
@@ -411,10 +411,10 @@ export function CustomerDataForm({
                                 isCheckingNik || bookingData.nik.length < 16
                             }
                             className={`flex h-12 items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition-all ${isCheckingNik || bookingData.nik.length < 16
-                                ? 'cursor-not-allowed bg-gray-200 text-gray-400'
-                                : bookingData.isNikChecked
-                                    ? 'cursor-pointer bg-green-100 text-green-700'
-                                    : 'cursor-pointer bg-primary text-white hover:bg-primary-dark'
+                                    ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                    : bookingData.isNikChecked
+                                        ? 'cursor-pointer bg-green-100 text-green-700'
+                                        : 'cursor-pointer bg-primary text-white hover:bg-primary-dark'
                                 }`}
                         >
                             <span className="material-symbols-outlined text-[18px]">
@@ -436,10 +436,10 @@ export function CustomerDataForm({
                     {nikMessage && (
                         <div
                             className={`mt-2 rounded-lg border p-3 text-sm ${nikMessage.type === 'success'
-                                ? 'border-green-200 bg-green-50 text-green-700'
-                                : nikMessage.type === 'info'
-                                    ? 'border-blue-200 bg-blue-50 text-blue-700'
-                                    : 'border-red-200 bg-red-50 text-red-700'
+                                    ? 'border-green-200 bg-green-50 text-green-700'
+                                    : nikMessage.type === 'info'
+                                        ? 'border-blue-200 bg-blue-50 text-blue-700'
+                                        : 'border-red-200 bg-red-50 text-red-700'
                                 }`}
                         >
                             <div className="flex items-start gap-2">
@@ -670,8 +670,8 @@ export function CustomerDataForm({
                         </div>
                         <input
                             className={`flex h-12 w-full rounded-lg border bg-white py-3 pl-[70px] pr-4 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:outline-none focus:ring-1 ${bookingData.isWhatsappVerified
-                                ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
-                                : 'border-gray-200 focus:border-primary focus:ring-primary'
+                                    ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
+                                    : 'border-gray-200 focus:border-primary focus:ring-primary'
                                 }`}
                             id="whatsapp"
                             placeholder="0812-3456-7890"
@@ -702,10 +702,10 @@ export function CustomerDataForm({
                                 bookingData.whatsapp.length < 10
                             }
                             className={`mt-2 flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${isVerifying ||
-                                !bookingData.whatsapp ||
-                                bookingData.whatsapp.length < 10
-                                ? 'cursor-not-allowed bg-gray-200 text-gray-400'
-                                : 'cursor-pointer bg-green-100 text-green-700 hover:bg-green-200'
+                                    !bookingData.whatsapp ||
+                                    bookingData.whatsapp.length < 10
+                                    ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                    : 'cursor-pointer bg-green-100 text-green-700 hover:bg-green-200'
                                 }`}
                         >
                             <span className="material-symbols-outlined text-[18px]">
@@ -787,13 +787,14 @@ export function CustomerDataForm({
                                             bookingData.birthdate,
                                         patient_address: bookingData.address,
                                         gender: bookingData.gender,
-                                        medical_records: bookingData.medicalRecords,
+                                        medical_records:
+                                            bookingData.medicalRecords,
                                     });
                                 }
                             }}
                             className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-3 font-bold transition-all md:w-auto ${isFormValid
-                                ? 'cursor-pointer bg-primary text-white hover:bg-primary-dark focus:ring-4 focus:ring-primary/20'
-                                : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                                    ? 'cursor-pointer bg-primary text-white hover:bg-primary-dark focus:ring-4 focus:ring-primary/20'
+                                    : 'cursor-not-allowed bg-gray-300 text-gray-500'
                                 }`}
                         >
                             <span className="material-symbols-outlined text-[20px]">
@@ -829,8 +830,8 @@ export function CustomerDataForm({
                                 }
                             }}
                             className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-3 font-bold transition-all md:w-auto ${isFormValid
-                                ? 'cursor-pointer bg-primary text-white hover:bg-primary-dark focus:ring-4 focus:ring-primary/20'
-                                : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                                    ? 'cursor-pointer bg-primary text-white hover:bg-primary-dark focus:ring-4 focus:ring-primary/20'
+                                    : 'cursor-not-allowed bg-gray-300 text-gray-500'
                                 }`}
                         >
                             <span className="material-symbols-outlined text-[20px]">

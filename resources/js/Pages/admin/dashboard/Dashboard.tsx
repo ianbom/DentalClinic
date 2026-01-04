@@ -52,7 +52,7 @@ function AdminDashboardPage({
     return (
         <>
             {/* Page Heading & Filter */}
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+            <div className="flex flex-col mb-2 justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                     <h2 className="text-2xl font-bold tracking-tight text-slate-900">
                         Dashboard Overview
@@ -60,18 +60,6 @@ function AdminDashboardPage({
                     <p className="mt-1 text-sm text-slate-500">
                         Selamat datang, berikut ringkasan aktivitas hari ini.
                     </p>
-                </div>
-                <div className="flex items-center gap-2">
-                    <span className="text-sm text-slate-500">Filter:</span>
-                    <button className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:border-primary">
-                        <span className="material-symbols-outlined text-xl text-primary">
-                            calendar_today
-                        </span>
-                        Hari Ini
-                        <span className="material-symbols-outlined ml-1 text-xl text-slate-400">
-                            keyboard_arrow_down
-                        </span>
-                    </button>
                 </div>
             </div>
 
