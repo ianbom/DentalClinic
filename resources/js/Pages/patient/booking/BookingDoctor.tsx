@@ -4,7 +4,7 @@ import { BookingSummarySidebar } from '@/Components/booking/BookingSummarySideba
 import { BookingTimeSlots } from '@/Components/booking/BookingTimeSlots';
 import { ServiceSelection } from '@/Components/booking/ServiceSelection';
 import { BookingProvider, useBooking } from '@/context/BookingContext';
-import PatientLayout from '@/Layouts/PatientLayout';
+import PatientBookingLayout from '@/Layouts/PatientBookingLayout';
 import { AvailableSlots, Doctor } from '@/types';
 
 interface BookingPageProps {
@@ -16,8 +16,8 @@ function BookingPage({ doctor, availableSlots }: BookingPageProps) {
     const { bookingData, setBookingData } = useBooking();
 
     return (
-        <div className="flex min-h-screen flex-1 flex-col items-center bg-background-light px-4 py-8 font-display md:px-10 lg:px-20">
-            <div className="flex w-full max-w-6xl flex-col gap-8">
+        <div className="mx-auto w-full max-w-4xl flex-grow px-4 py-8 font-display sm:px-6 sm:py-12">
+            <div className="flex flex-col gap-8">
                 {/* Progress Bar */}
                 <BookingHeader />
 
@@ -35,7 +35,7 @@ function BookingPage({ doctor, availableSlots }: BookingPageProps) {
                             </p>
                             <ServiceSelection
                                 value={bookingData.serviceId}
-                                onChange={() => { }}
+                                onChange={() => {}}
                                 showSisipan={false}
                             />
                         </div>
@@ -75,9 +75,9 @@ function BookingPage({ doctor, availableSlots }: BookingPageProps) {
     );
 }
 BookingPage.layout = (page: React.ReactNode) => (
-    <PatientLayout>
+    <PatientBookingLayout>
         <BookingProvider>{page}</BookingProvider>
-    </PatientLayout>
+    </PatientBookingLayout>
 );
 
 export default BookingPage;

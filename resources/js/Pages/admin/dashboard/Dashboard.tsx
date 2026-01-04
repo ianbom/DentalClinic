@@ -52,7 +52,7 @@ function AdminDashboardPage({
     return (
         <>
             {/* Page Heading & Filter */}
-            <div className="flex flex-col mb-2 justify-between gap-4 sm:flex-row sm:items-center">
+            <div className="mb-2 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                     <h2 className="text-2xl font-bold tracking-tight text-slate-900">
                         Dashboard Overview

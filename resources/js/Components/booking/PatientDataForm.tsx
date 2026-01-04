@@ -334,224 +334,380 @@ export function CustomerDataForm({
         (isCreateMode ? true : bookingData.isWhatsappVerified) &&
         (isCreateMode ? true : bookingData.isNikChecked);
 
+    // Common input class
+    const inputClass =
+        'w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 text-sm transition-shadow focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary';
+    const selectClass =
+        'w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 text-sm transition-shadow focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:bg-gray-100 disabled:text-gray-400';
+    const labelClass = 'block text-sm font-medium text-text-light mb-1.5';
+
     return (
-        <div className="flex flex-col gap-6">
+        <div className="border-border-light overflow-hidden rounded-xl border bg-white p-5 shadow-sm lg:p-8">
             {/* Page Heading */}
-            <div className="flex flex-col gap-2 border-b border-subtle-light pb-6">
-                <h1 className="text-3xl font-bold leading-tight text-text-light">
-                    Isi Data Diri
+            <div className="border-border-light mb-6 border-b pb-4 lg:mb-8">
+                <h1 className="mb-2 text-xl font-bold text-text-light lg:text-2xl">
+                    Lengkapi Data Pasien
                 </h1>
-                <p className="text-sm text-gray-500">
-                    Pastikan nomor WhatsApp aktif untuk verifikasi pesanan dan
-                    notifikasi jadwal.
+                <p className="text-text-secondary text-sm">
+                    Mohon isi data diri pasien dengan benar untuk keperluan
+                    rekam medis.
                 </p>
             </div>
 
             {/* Form Fields */}
-            <form className="flex flex-col gap-6">
-                {/* Medical Records - only in create mode */}
-                {isCreateMode && (
-                    <div className="flex flex-col gap-2">
-                        <label
-                            className="text-sm font-medium text-text-light"
-                            htmlFor="medicalRecords"
-                        >
-                            No. Rekam Medis*
-                        </label>
-                        <input
-                            className="flex h-12 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                            id="medicalRecords"
-                            placeholder="Masukkan No. Rekam Medis"
-                            type="text"
-                            required
-                            value={bookingData.medicalRecords}
-                            onChange={(e) =>
-                                handleInputChange(
-                                    'medicalRecords',
-                                    e.target.value.toUpperCase(),
-                                )
-                            }
-                        />
-                    </div>
-                )}
+            <form
+                className="flex flex-col gap-6 lg:gap-8"
+                onSubmit={(e) => e.preventDefault()}
+            >
+                {/* Section 1: Identitas Diri */}
+                <div className="flex flex-col gap-4">
+                    <h3 className="flex items-center gap-2 text-base font-bold text-text-light">
+                        <span className="flex size-6 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-primary">
+                            1
+                        </span>
+                        Identitas Diri
+                    </h3>
 
-                {/* NIK with Check Button */}
-                <div className="flex flex-col gap-2">
-                    <label
-                        className="text-sm font-medium text-text-light"
-                        htmlFor="nik"
-                    >
-                        NIK (Nomor Induk Kependudukan)*
-                    </label>
-                    <div className="flex gap-2">
-                        <input
-                            className={`flex h-12 flex-1 rounded-lg border bg-white px-4 py-3 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:outline-none focus:ring-1 ${nikMessage?.type === 'success'
+                    {/* Medical Records - only in create mode */}
+                    {isCreateMode && (
+                        <div className="w-full">
+                            <label
+                                className={labelClass}
+                                htmlFor="medicalRecords"
+                            >
+                                No. Rekam Medis*
+                            </label>
+                            <input
+                                className={inputClass}
+                                id="medicalRecords"
+                                placeholder="Masukkan No. Rekam Medis"
+                                type="text"
+                                required
+                                value={bookingData.medicalRecords}
+                                onChange={(e) =>
+                                    handleInputChange(
+                                        'medicalRecords',
+                                        e.target.value.toUpperCase(),
+                                    )
+                                }
+                            />
+                        </div>
+                    )}
+
+                    {/* NIK with Check Button */}
+                    <div className="w-full">
+                        <label className={labelClass} htmlFor="nik">
+                            NIK (Nomor Induk Kependudukan)*
+                        </label>
+                        <div className="flex gap-2">
+                            <input
+                                className={`flex-1 ${inputClass} ${nikMessage?.type === 'success'
                                     ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
                                     : nikMessage?.type === 'error'
                                         ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
-                                        : 'border-gray-200 focus:border-primary focus:ring-primary'
-                                }`}
-                            id="nik"
-                            placeholder="Masukkan 16 digit NIK Anda"
-                            type="text"
-                            maxLength={16}
-                            required
-                            value={bookingData.nik}
-                            onChange={(e) =>
-                                handleInputChange(
-                                    'nik',
-                                    e.target.value.replace(/\D/g, ''),
-                                )
-                            }
-                        />
-                        <button
-                            type="button"
-                            onClick={handleCheckNik}
-                            disabled={
-                                isCheckingNik || bookingData.nik.length < 16
-                            }
-                            className={`flex h-12 items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition-all ${isCheckingNik || bookingData.nik.length < 16
+                                        : ''
+                                    }`}
+                                id="nik"
+                                placeholder="16 digit nomor NIK"
+                                type="text"
+                                maxLength={16}
+                                required
+                                value={bookingData.nik}
+                                onChange={(e) =>
+                                    handleInputChange(
+                                        'nik',
+                                        e.target.value.replace(/\D/g, ''),
+                                    )
+                                }
+                            />
+                            <button
+                                type="button"
+                                onClick={handleCheckNik}
+                                disabled={
+                                    isCheckingNik || bookingData.nik.length < 16
+                                }
+                                className={`flex h-[46px] items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition-all ${isCheckingNik || bookingData.nik.length < 16
                                     ? 'cursor-not-allowed bg-gray-200 text-gray-400'
                                     : bookingData.isNikChecked
                                         ? 'cursor-pointer bg-green-100 text-green-700'
                                         : 'cursor-pointer bg-primary text-white hover:bg-primary-dark'
-                                }`}
-                        >
-                            <span className="material-symbols-outlined text-[18px]">
-                                {isCheckingNik
-                                    ? 'hourglass_empty'
-                                    : bookingData.isNikChecked
-                                        ? 'check_circle'
-                                        : 'search'}
-                            </span>
-                            {isCheckingNik
-                                ? 'Memeriksa...'
-                                : bookingData.isNikChecked
-                                    ? 'Terverifikasi'
-                                    : 'Cek NIK'}
-                        </button>
-                    </div>
+                                    }`}
+                            >
+                                <span className="material-symbols-outlined text-[18px]">
+                                    {isCheckingNik
+                                        ? 'hourglass_empty'
+                                        : bookingData.isNikChecked
+                                            ? 'check_circle'
+                                            : 'search'}
+                                </span>
+                                <span className="hidden sm:inline">
+                                    {isCheckingNik
+                                        ? 'Memeriksa...'
+                                        : bookingData.isNikChecked
+                                            ? 'Terverifikasi'
+                                            : 'Cek NIK'}
+                                </span>
+                            </button>
+                        </div>
 
-                    {/* NIK Message */}
-                    {nikMessage && (
-                        <div
-                            className={`mt-2 rounded-lg border p-3 text-sm ${nikMessage.type === 'success'
+                        {/* NIK Message */}
+                        {nikMessage && (
+                            <div
+                                className={`mt-2 rounded-lg border p-3 text-sm ${nikMessage.type === 'success'
                                     ? 'border-green-200 bg-green-50 text-green-700'
                                     : nikMessage.type === 'info'
                                         ? 'border-blue-200 bg-blue-50 text-blue-700'
                                         : 'border-red-200 bg-red-50 text-red-700'
-                                }`}
-                        >
-                            <div className="flex items-start gap-2">
-                                <span className="material-symbols-outlined text-[18px]">
-                                    {nikMessage.type === 'success'
-                                        ? 'check_circle'
-                                        : nikMessage.type === 'info'
-                                            ? 'info'
-                                            : 'error'}
-                                </span>
-                                <p>{nikMessage.text}</p>
+                                    }`}
+                            >
+                                <div className="flex items-start gap-2">
+                                    <span className="material-symbols-outlined text-[18px]">
+                                        {nikMessage.type === 'success'
+                                            ? 'check_circle'
+                                            : nikMessage.type === 'info'
+                                                ? 'info'
+                                                : 'error'}
+                                    </span>
+                                    <p>{nikMessage.text}</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Nama Lengkap */}
+                    <div className="w-full">
+                        <label className={labelClass} htmlFor="fullname">
+                            Nama Lengkap*
+                        </label>
+                        <input
+                            className={`${inputClass} uppercase placeholder:normal-case`}
+                            id="fullname"
+                            placeholder="Sesuai KTP"
+                            type="text"
+                            required
+                            value={bookingData.fullName}
+                            onChange={(e) =>
+                                handleInputChange('fullName', e.target.value)
+                            }
+                        />
+                    </div>
+
+                    {/* Tanggal Lahir & Gender - 2 columns on md+ */}
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        {/* Tanggal Lahir */}
+                        <div className="w-full">
+                            <label className={labelClass} htmlFor="dob">
+                                Tanggal Lahir*
+                            </label>
+                            <input
+                                className={inputClass}
+                                id="dob"
+                                type="date"
+                                required
+                                value={bookingData.birthdate}
+                                onChange={(e) =>
+                                    handleInputChange(
+                                        'birthdate',
+                                        e.target.value,
+                                    )
+                                }
+                            />
+                        </div>
+
+                        {/* Jenis Kelamin */}
+                        <div className="w-full">
+                            <label className={labelClass}>Jenis Kelamin*</label>
+                            <div className="grid grid-cols-2 gap-3">
+                                <label className="relative cursor-pointer">
+                                    <input
+                                        className="peer sr-only"
+                                        name="gender"
+                                        type="radio"
+                                        value="male"
+                                        checked={bookingData.gender === 'male'}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                'gender',
+                                                e.target.value,
+                                            )
+                                        }
+                                    />
+                                    <div
+                                        className={`flex h-[46px] items-center gap-2 rounded-lg border px-3 py-3 transition-colors ${bookingData.gender === 'male'
+                                            ? 'border-primary bg-blue-50 text-primary'
+                                            : 'border-gray-300 hover:bg-gray-50'
+                                            }`}
+                                    >
+                                        <div
+                                            className={`size-4 shrink-0 rounded-full border transition-all ${bookingData.gender === 'male'
+                                                ? 'border-primary bg-primary shadow-[inset_0_0_0_2px_white]'
+                                                : 'border-gray-400'
+                                                }`}
+                                        ></div>
+                                        <span className="text-sm">
+                                            Laki-laki
+                                        </span>
+                                    </div>
+                                </label>
+                                <label className="relative cursor-pointer">
+                                    <input
+                                        className="peer sr-only"
+                                        name="gender"
+                                        type="radio"
+                                        value="female"
+                                        checked={
+                                            bookingData.gender === 'female'
+                                        }
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                'gender',
+                                                e.target.value,
+                                            )
+                                        }
+                                    />
+                                    <div
+                                        className={`flex h-[46px] items-center gap-2 rounded-lg border px-3 py-3 transition-colors ${bookingData.gender === 'female'
+                                            ? 'border-primary bg-blue-50 text-primary'
+                                            : 'border-gray-300 hover:bg-gray-50'
+                                            }`}
+                                    >
+                                        <div
+                                            className={`size-4 shrink-0 rounded-full border transition-all ${bookingData.gender === 'female'
+                                                ? 'border-primary bg-primary shadow-[inset_0_0_0_2px_white]'
+                                                : 'border-gray-400'
+                                                }`}
+                                        ></div>
+                                        <span className="text-sm">
+                                            Perempuan
+                                        </span>
+                                    </div>
+                                </label>
                             </div>
                         </div>
-                    )}
-
-                    {!bookingData.isNikChecked && !nikMessage && (
-                        <p className="mt-1 text-xs text-gray-400">
-                            Klik tombol "Cek NIK" untuk memverifikasi dan
-                            melihat apakah data Anda sudah terdaftar.
-                        </p>
-                    )}
-                </div>
-
-                {/* Nama Lengkap */}
-                <div className="flex flex-col gap-2">
-                    <label
-                        className="text-sm font-medium text-text-light"
-                        htmlFor="fullname"
-                    >
-                        Nama Lengkap*
-                    </label>
-                    <input
-                        className="flex h-12 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base uppercase text-text-light transition-shadow placeholder:normal-case placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                        id="fullname"
-                        placeholder="Masukkan nama lengkap Anda sesuai KTP"
-                        type="text"
-                        required
-                        value={bookingData.fullName}
-                        onChange={(e) =>
-                            handleInputChange('fullName', e.target.value)
-                        }
-                    />
-                </div>
-
-                {/* Gender Selection */}
-                <div className="flex flex-col gap-2">
-                    <label className="text-sm font-medium text-text-light">
-                        Jenis Kelamin*
-                    </label>
-                    <div className="flex gap-4">
-                        <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-3 transition-all hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/5">
-                            <input
-                                type="radio"
-                                name="gender"
-                                value="male"
-                                checked={bookingData.gender === 'male'}
-                                onChange={(e) =>
-                                    handleInputChange('gender', e.target.value)
-                                }
-                                className="h-4 w-4 text-primary focus:ring-primary"
-                            />
-                            <span className="text-sm text-text-light">
-                                Laki-laki
-                            </span>
-                        </label>
-                        <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-3 transition-all hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/5">
-                            <input
-                                type="radio"
-                                name="gender"
-                                value="female"
-                                checked={bookingData.gender === 'female'}
-                                onChange={(e) =>
-                                    handleInputChange('gender', e.target.value)
-                                }
-                                className="h-4 w-4 text-primary focus:ring-primary"
-                            />
-                            <span className="text-sm text-text-light">
-                                Perempuan
-                            </span>
-                        </label>
                     </div>
                 </div>
 
-                {/* Tanggal Lahir */}
-                <div className="flex flex-col gap-2">
-                    <label
-                        className="text-sm font-medium text-text-light"
-                        htmlFor="birthdate"
-                    >
-                        Tanggal Lahir*
-                    </label>
-                    <input
-                        className="flex h-12 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                        id="birthdate"
-                        type="date"
-                        required
-                        value={bookingData.birthdate}
-                        onChange={(e) =>
-                            handleInputChange('birthdate', e.target.value)
-                        }
-                    />
+                <hr className="border-border-light" />
+
+                {/* Section 2: Kontak */}
+                <div className="flex flex-col gap-4">
+                    <h3 className="flex items-center gap-2 text-base font-bold text-text-light">
+                        <span className="flex size-6 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-primary">
+                            2
+                        </span>
+                        Kontak
+                    </h3>
+
+                    {/* Nomor WhatsApp */}
+                    <div className="w-full">
+                        <label className={labelClass} htmlFor="whatsapp">
+                            Nomor WhatsApp*
+                        </label>
+                        <div className="relative">
+                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <span className="text-sm font-medium text-gray-500">
+                                    📞
+                                </span>
+                                <div className="ml-2 h-4 w-px bg-gray-300"></div>
+                            </div>
+                            <input
+                                className={`${inputClass} pl-[70px] pr-4 ${bookingData.isWhatsappVerified
+                                    ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
+                                    : ''
+                                    }`}
+                                id="whatsapp"
+                                placeholder="812-3456-7890"
+                                type="tel"
+                                required
+                                value={bookingData.whatsapp}
+                                onChange={(e) =>
+                                    handleInputChange(
+                                        'whatsapp',
+                                        e.target.value,
+                                    )
+                                }
+                            />
+                            {bookingData.isWhatsappVerified && (
+                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+                                    <span className="material-symbols-outlined text-green-500">
+                                        verified
+                                    </span>
+                                </div>
+                            )}
+                        </div>
+                        <p className="text-text-secondary mt-1 text-xs">
+                            Kode verifikasi akan dikirim ke nomor ini.
+                        </p>
+
+                        {/* Verify WhatsApp Button */}
+                        {!bookingData.isWhatsappVerified && (
+                            <button
+                                type="button"
+                                onClick={handleVerifyWhatsApp}
+                                disabled={
+                                    isVerifying ||
+                                    !bookingData.whatsapp ||
+                                    bookingData.whatsapp.length < 10
+                                }
+                                className={`mt-2 flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${isVerifying ||
+                                    !bookingData.whatsapp ||
+                                    bookingData.whatsapp.length < 10
+                                    ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                    : 'cursor-pointer bg-green-100 text-green-700 hover:bg-green-200'
+                                    }`}
+                            >
+                                <span className="material-symbols-outlined text-[18px]">
+                                    {isVerifying ? 'hourglass_empty' : 'send'}
+                                </span>
+                                {isVerifying
+                                    ? 'Mengirim...'
+                                    : 'Kirim Verifikasi WhatsApp'}
+                            </button>
+                        )}
+
+                        {/* Success Message */}
+                        {bookingData.isWhatsappVerified && (
+                            <div className="mt-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+                                <div className="flex items-start gap-2">
+                                    <span className="material-symbols-outlined text-[18px]">
+                                        check_circle
+                                    </span>
+                                    <p>
+                                        Nomor WhatsApp telah terverifikasi. Anda
+                                        dapat melanjutkan proses booking.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Error Message */}
+                        {verificationError && (
+                            <div className="mt-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                                <div className="flex items-start gap-2">
+                                    <span className="material-symbols-outlined text-[18px]">
+                                        error
+                                    </span>
+                                    <p>{verificationError}</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
-                {/* Location Dropdowns */}
+                <hr className="border-border-light" />
+
+                {/* Section 3: Alamat Domisili */}
                 <div className="flex flex-col gap-4">
-                    <label className="text-sm font-medium text-text-light">
-                        Alamat*
-                    </label>
+                    <h3 className="flex items-center gap-2 text-base font-bold text-text-light">
+                        <span className="flex size-6 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-primary">
+                            3
+                        </span>
+                        Alamat Domisili
+                    </h3>
 
                     {isAddressPreFilled ? (
                         <div className="rounded-lg border border-gray-200 bg-gray-100 px-4 py-3">
-                            <p className="text-base text-text-light">
+                            <p className="text-sm text-text-light">
                                 {bookingData.address}
                             </p>
                             <p className="mt-1 text-xs text-gray-500">
@@ -560,201 +716,165 @@ export function CustomerDataForm({
                         </div>
                     ) : (
                         <>
-                            {/* Province */}
-                            <div className="flex flex-col gap-2">
-                                <select
-                                    className="flex h-12 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-text-light transition-shadow focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                                    value={bookingData.provinceId}
-                                    onChange={handleProvinceChange}
-                                >
-                                    <option value="">Pilih Provinsi</option>
-                                    {provinces.map((province) => (
-                                        <option
-                                            key={province.id}
-                                            value={province.id}
-                                        >
-                                            {province.name}
+                            {/* Location Dropdowns - 2 columns grid */}
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                {/* Province */}
+                                <div className="w-full">
+                                    <label
+                                        className={labelClass}
+                                        htmlFor="provinsi"
+                                    >
+                                        Provinsi*
+                                    </label>
+                                    <select
+                                        className={selectClass}
+                                        id="provinsi"
+                                        value={bookingData.provinceId}
+                                        onChange={handleProvinceChange}
+                                    >
+                                        <option disabled value="">
+                                            Pilih Provinsi
                                         </option>
-                                    ))}
-                                </select>
+                                        {provinces.map((province) => (
+                                            <option
+                                                key={province.id}
+                                                value={province.id}
+                                            >
+                                                {province.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                {/* City */}
+                                <div className="w-full">
+                                    <label
+                                        className={labelClass}
+                                        htmlFor="kota"
+                                    >
+                                        Kota/Kabupaten*
+                                    </label>
+                                    <select
+                                        className={selectClass}
+                                        id="kota"
+                                        value={bookingData.cityId}
+                                        onChange={handleCityChange}
+                                        disabled={
+                                            !bookingData.provinceId ||
+                                            isLoadingCities
+                                        }
+                                    >
+                                        <option disabled value="">
+                                            {isLoadingCities
+                                                ? 'Memuat...'
+                                                : 'Pilih Kota'}
+                                        </option>
+                                        {cities.map((city) => (
+                                            <option
+                                                key={city.id}
+                                                value={city.id}
+                                            >
+                                                {city.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                {/* District */}
+                                <div className="w-full">
+                                    <label
+                                        className={labelClass}
+                                        htmlFor="kecamatan"
+                                    >
+                                        Kecamatan*
+                                    </label>
+                                    <select
+                                        className={selectClass}
+                                        id="kecamatan"
+                                        value={bookingData.districtId}
+                                        onChange={handleDistrictChange}
+                                        disabled={
+                                            !bookingData.cityId ||
+                                            isLoadingDistricts
+                                        }
+                                    >
+                                        <option disabled value="">
+                                            {isLoadingDistricts
+                                                ? 'Memuat...'
+                                                : 'Pilih Kecamatan'}
+                                        </option>
+                                        {districts.map((district) => (
+                                            <option
+                                                key={district.id}
+                                                value={district.id}
+                                            >
+                                                {district.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                {/* Village */}
+                                <div className="w-full">
+                                    <label
+                                        className={labelClass}
+                                        htmlFor="desa"
+                                    >
+                                        Desa/Kelurahan*
+                                    </label>
+                                    <select
+                                        className={selectClass}
+                                        id="desa"
+                                        value={bookingData.villageId}
+                                        onChange={handleVillageChange}
+                                        disabled={
+                                            !bookingData.districtId ||
+                                            isLoadingVillages
+                                        }
+                                    >
+                                        <option disabled value="">
+                                            {isLoadingVillages
+                                                ? 'Memuat...'
+                                                : 'Pilih Desa'}
+                                        </option>
+                                        {villages.map((village) => (
+                                            <option
+                                                key={village.id}
+                                                value={village.id}
+                                            >
+                                                {village.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
 
-                            {/* City */}
-                            <div className="flex flex-col gap-2">
-                                <select
-                                    className="flex h-12 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-text-light transition-shadow focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:bg-gray-100 disabled:text-gray-400"
-                                    value={bookingData.cityId}
-                                    onChange={handleCityChange}
-                                    disabled={!bookingData.provinceId}
-                                >
-                                    <option value="">
-                                        Pilih Kota/Kabupaten
-                                    </option>
-                                    {cities.map((city) => (
-                                        <option key={city.id} value={city.id}>
-                                            {city.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            {/* District */}
-                            <div className="flex flex-col gap-2">
-                                <select
-                                    className="flex h-12 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-text-light transition-shadow focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:bg-gray-100 disabled:text-gray-400"
-                                    value={bookingData.districtId}
-                                    onChange={handleDistrictChange}
-                                    disabled={!bookingData.cityId}
-                                >
-                                    <option value="">Pilih Kecamatan</option>
-                                    {districts.map((district) => (
-                                        <option
-                                            key={district.id}
-                                            value={district.id}
-                                        >
-                                            {district.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            {/* Village */}
-                            <div className="flex flex-col gap-2">
-                                <select
-                                    className="flex h-12 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-text-light transition-shadow focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:bg-gray-100 disabled:text-gray-400"
-                                    value={bookingData.villageId}
-                                    onChange={handleVillageChange}
-                                    disabled={!bookingData.districtId}
-                                >
-                                    <option value="">
-                                        Pilih Kelurahan/Desa
-                                    </option>
-                                    {villages.map((village) => (
-                                        <option
-                                            key={village.id}
-                                            value={village.id}
-                                        >
-                                            {village.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            {/* Display selected address */}
-                            {bookingData.address && (
-                                <p className="text-sm text-gray-600">
-                                    <span className="font-medium">
-                                        Alamat terpilih:
-                                    </span>{' '}
-                                    {bookingData.address}
-                                </p>
-                            )}
+                            {/* Alamat Lengkap */}
+                            {/* <div className="w-full">
+                                <label className={labelClass} htmlFor="address">
+                                    Alamat Lengkap*
+                                </label>
+                                <textarea
+                                    className={`${inputClass} min-h-[80px]`}
+                                    id="address"
+                                    placeholder="Nama jalan, nomor rumah, RT/RW, patokan..."
+                                    value={bookingData.address}
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            'address',
+                                            e.target.value,
+                                        )
+                                    }
+                                />
+                            </div> */}
                         </>
-                    )}
-                </div>
-
-                {/* Nomor WhatsApp */}
-                <div className="flex flex-col gap-2">
-                    <label
-                        className="text-sm font-medium text-text-light"
-                        htmlFor="whatsapp"
-                    >
-                        Nomor WhatsApp*
-                    </label>
-                    <div className="relative">
-                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                            <span className="font-medium text-gray-500">
-                                📞
-                            </span>
-                            <div className="ml-2 h-4 w-px bg-gray-300"></div>
-                        </div>
-                        <input
-                            className={`flex h-12 w-full rounded-lg border bg-white py-3 pl-[70px] pr-4 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:outline-none focus:ring-1 ${bookingData.isWhatsappVerified
-                                    ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
-                                    : 'border-gray-200 focus:border-primary focus:ring-primary'
-                                }`}
-                            id="whatsapp"
-                            placeholder="0812-3456-7890"
-                            type="tel"
-                            required
-                            value={bookingData.whatsapp}
-                            onChange={(e) =>
-                                handleInputChange('whatsapp', e.target.value)
-                            }
-                        />
-                        {bookingData.isWhatsappVerified && (
-                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
-                                <span className="material-symbols-outlined text-green-500">
-                                    verified
-                                </span>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Verify WhatsApp Button */}
-                    {!bookingData.isWhatsappVerified && (
-                        <button
-                            type="button"
-                            onClick={handleVerifyWhatsApp}
-                            disabled={
-                                isVerifying ||
-                                !bookingData.whatsapp ||
-                                bookingData.whatsapp.length < 10
-                            }
-                            className={`mt-2 flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${isVerifying ||
-                                    !bookingData.whatsapp ||
-                                    bookingData.whatsapp.length < 10
-                                    ? 'cursor-not-allowed bg-gray-200 text-gray-400'
-                                    : 'cursor-pointer bg-green-100 text-green-700 hover:bg-green-200'
-                                }`}
-                        >
-                            <span className="material-symbols-outlined text-[18px]">
-                                {isVerifying ? 'hourglass_empty' : 'send'}
-                            </span>
-                            {isVerifying
-                                ? 'Mengirim...'
-                                : 'Kirim Verifikasi WhatsApp'}
-                        </button>
-                    )}
-
-                    {/* Success Message */}
-                    {bookingData.isWhatsappVerified && (
-                        <div className="mt-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
-                            <div className="flex items-start gap-2">
-                                <span className="material-symbols-outlined text-[18px]">
-                                    check_circle
-                                </span>
-                                <p>
-                                    Nomor WhatsApp telah terverifikasi. Anda
-                                    dapat melanjutkan proses booking.
-                                </p>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Error Message */}
-                    {verificationError && (
-                        <div className="mt-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                            <div className="flex items-start gap-2">
-                                <span className="material-symbols-outlined text-[18px]">
-                                    error
-                                </span>
-                                <p>{verificationError}</p>
-                            </div>
-                        </div>
-                    )}
-
-                    {!bookingData.isWhatsappVerified && (
-                        <p className="mt-1 text-xs text-gray-400">
-                            Klik tombol di atas untuk memverifikasi nomor
-                            WhatsApp Anda sebelum melanjutkan.
-                        </p>
                     )}
                 </div>
 
                 {/* Verification Warning */}
                 {(!bookingData.isWhatsappVerified ||
-                    !bookingData.isNikChecked) && (
+                    !bookingData.isNikChecked) &&
+                    !isCreateMode && (
                         <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
                             <div className="flex items-start gap-2">
                                 <span className="material-symbols-outlined text-[20px]">
@@ -772,7 +892,7 @@ export function CustomerDataForm({
                     )}
 
                 {/* CTA Buttons */}
-                <div className="mt-4 flex flex-col justify-end gap-3 border-t border-subtle-light pt-4 sm:flex-row">
+                <div className="mt-2 pt-4">
                     {isCreateMode ? (
                         <button
                             type="button"
@@ -792,15 +912,15 @@ export function CustomerDataForm({
                                     });
                                 }
                             }}
-                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-3 font-bold transition-all md:w-auto ${isFormValid
-                                    ? 'cursor-pointer bg-primary text-white hover:bg-primary-dark focus:ring-4 focus:ring-primary/20'
-                                    : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-4 text-base font-bold shadow-lg transition-all ${isFormValid
+                                ? 'transform cursor-pointer bg-primary text-white shadow-primary/30 hover:bg-primary-dark active:scale-[0.99]'
+                                : 'cursor-not-allowed bg-gray-300 text-gray-500'
                                 }`}
                         >
-                            <span className="material-symbols-outlined text-[20px]">
+                            <span>Simpan Pasien</span>
+                            <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">
                                 save
                             </span>
-                            <span>Simpan Pasien</span>
                         </button>
                     ) : isAdmin ? (
                         /* Admin: Single "Simpan Booking" button */
@@ -829,53 +949,58 @@ export function CustomerDataForm({
                                     });
                                 }
                             }}
-                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-3 font-bold transition-all md:w-auto ${isFormValid
-                                    ? 'cursor-pointer bg-primary text-white hover:bg-primary-dark focus:ring-4 focus:ring-primary/20'
-                                    : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-4 text-base font-bold shadow-lg transition-all ${isFormValid
+                                ? 'transform cursor-pointer bg-primary text-white shadow-primary/30 hover:bg-primary-dark active:scale-[0.99]'
+                                : 'cursor-not-allowed bg-gray-300 text-gray-500'
                                 }`}
                         >
-                            <span className="material-symbols-outlined text-[20px]">
+                            <span>Simpan Booking</span>
+                            <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">
                                 save
                             </span>
-                            <span>Simpan Booking</span>
                         </button>
                     ) : (
                         /* Patient: Back + Continue buttons */
                         <>
-                            {/* Tombol Kembali */}
-                            <Link
-                                href={`/doctors/${doctorId}/booking`}
-                                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-all hover:bg-gray-50 md:w-auto"
-                            >
-                                <span className="material-symbols-outlined text-[20px]">
-                                    arrow_back
-                                </span>
-                                <span>Kembali</span>
-                            </Link>
-
-                            {/* Tombol Lanjut */}
-                            {isFormValid ? (
+                            <div className="flex flex-col gap-3 sm:flex-row-reverse">
+                                {isFormValid ? (
+                                    <Link
+                                        href={`/doctors/${doctorId}/booking/patient-data/review`}
+                                        className="group flex w-full transform cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-8 py-4 text-base font-bold text-white shadow-lg shadow-primary/30 transition-all hover:bg-primary-dark active:scale-[0.99] sm:flex-1"
+                                    >
+                                        <span>Lanjut ke Review</span>
+                                        <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">
+                                            arrow_forward
+                                        </span>
+                                    </Link>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        disabled
+                                        className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-gray-300 px-8 py-4 text-base font-bold text-gray-500 sm:flex-1"
+                                    >
+                                        <span>Lanjut ke Review</span>
+                                        <span className="material-symbols-outlined">
+                                            arrow_forward
+                                        </span>
+                                    </button>
+                                )}
                                 <Link
-                                    href={`/doctors/${doctorId}/booking/patient-data/review`}
-                                    className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-8 py-3 font-bold text-white transition-all hover:bg-primary-dark focus:ring-4 focus:ring-primary/20 md:w-auto"
+                                    href={`/doctors/${doctorId}/booking`}
+                                    className="group flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-6 py-4 text-base font-medium text-gray-700 transition-all hover:bg-gray-50 sm:w-auto"
                                 >
-                                    <span>Lanjut ke Review</span>
-                                    <span className="material-symbols-outlined text-[20px]">
-                                        arrow_forward
+                                    <span className="material-symbols-outlined transition-transform group-hover:-translate-x-1">
+                                        arrow_back
                                     </span>
+                                    <span>Kembali</span>
                                 </Link>
-                            ) : (
-                                <button
-                                    type="button"
-                                    disabled
-                                    className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-gray-300 px-8 py-3 font-bold text-gray-500 md:w-auto"
-                                >
-                                    <span>Lanjut ke Review</span>
-                                    <span className="material-symbols-outlined text-[20px]">
-                                        arrow_forward
-                                    </span>
-                                </button>
-                            )}
+                            </div>
+                            <p className="text-text-secondary mt-4 flex items-center justify-center gap-1 text-center text-xs opacity-80">
+                                <span className="material-symbols-outlined text-sm">
+                                    lock
+                                </span>
+                                Data Anda terlindungi oleh enkripsi end-to-end
+                            </p>
                         </>
                     )}
                 </div>
