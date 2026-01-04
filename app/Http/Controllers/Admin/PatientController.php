@@ -16,12 +16,21 @@ class PatientController extends Controller
         $this->patientService = $patientService;
     }
 
-    public function listPatients()
+    public function listPatients(\Illuminate\Http\Request $request)
     {
-        $patients = $this->patientService->getAllPatients();
+        $filters = $request->only([
+            'search',
+            'gender',
+            'per_page',
+            'sort_field',
+            'sort_order',
+        ]);
+
+        $patients = $this->patientService->getPatients($filters);
 
         return Inertia::render('admin/patients/ListPatient', [
             'patients' => $patients,
+            'filters' => $filters,
         ]);
     }
 

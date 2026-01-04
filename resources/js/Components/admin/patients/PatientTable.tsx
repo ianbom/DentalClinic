@@ -1,7 +1,12 @@
 import { PatientItem } from '@/types';
 import { Link } from '@inertiajs/react';
 
-type SortField = 'name' | 'total_visits' | 'last_visit';
+type SortField =
+    | 'name'
+    | 'medical_records'
+    | 'total_visits'
+    | 'last_visit'
+    | 'created_at';
 
 interface PatientTableProps {
     patients: PatientItem[];
@@ -45,36 +50,45 @@ export function PatientTable({
                                 No
                             </th>
                             <th
+                                className="min-w-[150px] cursor-pointer p-4 text-xs font-semibold uppercase tracking-wide text-slate-500 hover:text-primary"
+                                onClick={() => onSort('medical_records')}
+                            >
+                                <div className="flex items-center gap-1">
+                                    No RM
+                                    <SortIcon field="medical_records" />
+                                </div>
+                            </th>
+                            <th
                                 className="min-w-[200px] cursor-pointer p-4 text-xs font-semibold uppercase tracking-wide text-slate-500 hover:text-primary"
                                 onClick={() => onSort('name')}
                             >
                                 <div className="flex items-center gap-1">
-                                    Nama
+                                    Nama Pasien
                                     <SortIcon field="name" />
                                 </div>
                             </th>
-                            <th className="min-w-[180px] p-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                NIK
+                            <th className="min-w-[100px] p-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                Gender
                             </th>
-                            <th className="min-w-[160px] p-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                WhatsApp
+                            <th className="min-w-[150px] p-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                No WhatsApp
                             </th>
                             <th
                                 className="min-w-[140px] cursor-pointer p-4 text-center text-xs font-semibold uppercase tracking-wide text-slate-500 hover:text-primary"
                                 onClick={() => onSort('total_visits')}
                             >
                                 <div className="flex items-center justify-center gap-1">
-                                    Total Kunjungan
+                                    Kunjungan
                                     <SortIcon field="total_visits" />
                                 </div>
                             </th>
                             <th
                                 className="cursor-pointer p-4 text-xs font-semibold uppercase tracking-wide text-slate-500 hover:text-primary"
-                                onClick={() => onSort('last_visit')}
+                                onClick={() => onSort('created_at')}
                             >
                                 <div className="flex items-center gap-1">
-                                    Dipesan pada
-                                    <SortIcon field="last_visit" />
+                                    Daftar pada
+                                    <SortIcon field="created_at" />
                                 </div>
                             </th>
                             <th className="w-24 p-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -85,7 +99,7 @@ export function PatientTable({
                     <tbody className="divide-y divide-slate-100">
                         {patients.map((patient, index) => (
                             <tr
-                                key={patient.nik}
+                                key={patient.id}
                                 className="group transition-colors hover:bg-slate-50"
                             >
                                 <td className="p-4 text-center text-sm text-slate-400">
@@ -93,18 +107,23 @@ export function PatientTable({
                                         index +
                                         1}
                                 </td>
+                                <td className="p-4 font-mono text-sm font-medium text-slate-600">
+                                    {patient.medical_records || '-'}
+                                </td>
                                 <td className="p-4">
                                     <div className="flex flex-col">
                                         <span className="text-sm font-semibold text-slate-900">
                                             {patient.name}
                                         </span>
                                         <span className="text-xs text-slate-500">
-                                            {patient.email}
+                                            NIK: {patient.nik}
                                         </span>
                                     </div>
                                 </td>
-                                <td className="p-4 font-mono text-sm text-slate-600">
-                                    {patient.nik}
+                                <td className="p-4 text-sm text-slate-600">
+                                    {patient.gender === 'male'
+                                        ? 'Laki-laki'
+                                        : 'Perempuan'}
                                 </td>
                                 <td className="p-4">
                                     <div className="flex items-center gap-2">
@@ -120,11 +139,18 @@ export function PatientTable({
                                 </td>
                                 <td className="p-4 text-center">
                                     <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                                        {patient.total_visits} Kunjungan
+                                        {patient.total_visits} Kali
                                     </span>
                                 </td>
                                 <td className="p-4 text-sm text-slate-500">
-                                    {patient.first_visit_formatted}
+                                    <div className="flex flex-col">
+                                        <span>
+                                            {patient.created_at_formatted}
+                                        </span>
+                                        <span className="text-xs text-slate-400">
+                                            {patient.created_at.split(' ')[1]}
+                                        </span>
+                                    </div>
                                 </td>
                                 <td className="p-4 text-right">
                                     <div className="flex items-center justify-end gap-2">

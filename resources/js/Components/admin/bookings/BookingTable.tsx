@@ -194,6 +194,9 @@ function BookingTableHeader({
                     onSort={onSort}
                 />
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Service
+                </th>
+                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
                     Status
                 </th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
@@ -275,6 +278,9 @@ function BookingTableRow({
                 </td>
                 <td className="px-4 py-3 text-sm text-slate-500">
                     {booking.created_at_formatted}
+                </td>
+                <td className="px-4 py-3 text-sm text-slate-500">
+                    {booking.service}
                 </td>
                 <td className="px-4 py-3">
                     <StatusBadge status={booking.status} />
@@ -364,10 +370,10 @@ function BookingDetailRow({
                     </div>
                     <div>
                         <p className="text-xs font-medium text-slate-500">
-                            Service
+                            Alamat
                         </p>
                         <p className="text-sm text-slate-900">
-                            {booking.service || '-'}
+                            {booking.patient_address || '-'}
                         </p>
                     </div>
                     <div>

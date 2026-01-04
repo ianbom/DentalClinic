@@ -8,11 +8,17 @@ import { AvailableSlots, Doctor } from '@/types';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
 
+interface Province {
+    id: number;
+    name: string;
+}
+
 interface CreateBookingProps {
     allDoctors: Doctor[];
     doctor: Doctor | null;
     availableSlots: AvailableSlots;
     selectedDoctorId: number | null;
+    provinces: Province[];
 }
 
 function CreateBookingForm({
@@ -20,6 +26,7 @@ function CreateBookingForm({
     doctor,
     availableSlots,
     selectedDoctorId,
+    provinces,
 }: CreateBookingProps) {
     const { bookingData, resetBookingData } = useBooking();
     const [currentDoctorId, setCurrentDoctorId] = useState<number | null>(
@@ -172,6 +179,7 @@ function CreateBookingForm({
                                 <CustomerDataForm
                                     doctorId={String(doctor.id)}
                                     isAdmin={true}
+                                    provinces={provinces}
                                 />
                             </div>
                         )}

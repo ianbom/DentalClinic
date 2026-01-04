@@ -79,14 +79,6 @@ class BookingService
 
         // Transform the data using the dashboard service formatter
         return $bookings->through(function ($booking) {
-             // We can reuse the logic from formatBookings but executed for a single item
-             // Since formatBookings takes a collection, let's just manually format here to be efficient
-             // or check if dashboardService has a single item formatter.
-             // Looking at previous getAllBookings, it called formatBookings which takes a collection.
-             // We will implement a helper or assume formatBookings can handle single item if wrapped?
-             // No, formatBookings likely expects iteration.
-             // Let's rely on the structure we see in getBookingDetail but lighter.
-             
              return [
                 'id' => $booking->id,
                 'code' => $booking->code,
@@ -103,6 +95,7 @@ class BookingService
                 'patient_phone' => $booking->patient->patient_phone ?? '-',
                 'patient_nik' => $booking->patient->patient_nik ?? '-',
                 'patient_gender' => $booking->patient->gender ?? '-',
+                'patient_address' => $booking->patient->patient_address ?? '-',
                 
                 'doctor_name' => $booking->doctor->name ?? '-',
                 

@@ -245,6 +245,7 @@ export interface BookingFullItem extends BookingListItem {
     patient_nik: string;
     patient_email: string;
     patient_gender: string;
+    patient_address: string;
     booking_date_formatted: string;
     service: string;
     created_at_formatted: string;
@@ -316,12 +317,16 @@ export interface PatientItem {
     name: string;
     phone: string;
     email: string;
-    gender: 'male' | 'female';
+    medical_records: string;
+    gender: string;
+    address?: string;
     total_visits: number;
     first_visit: string;
     first_visit_formatted: string;
     last_visit: string;
     last_visit_formatted: string;
+    created_at: string;
+    created_at_formatted: string;
 }
 
 /** Doctor item for admin list page */

@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\UpdateBookingRequest;
 use App\Models\Booking;
 use App\Models\Doctor;
 use App\Models\Notification;
+use App\Models\Province;
 use App\Services\Admin\BookingService;
 use App\Services\BookingService as PatientBookingService;
 use Illuminate\Http\Request;
@@ -70,7 +71,7 @@ class BookingController extends Controller
     {   
         $doctorId = $request->query('doctor_id');
         $allDoctors = Doctor::where('is_active', true)->orderBy('name')->get();
-        
+        $provinces = Province::orderBy('name')->get(['id', 'name']);
         $doctor = null;
         $availableSlots = [];
         
@@ -86,6 +87,7 @@ class BookingController extends Controller
             'allDoctors' => $allDoctors,
             'doctor' => $doctor,
             'selectedDoctorId' => $doctorId ? (int) $doctorId : null,
+            'provinces' => $provinces
         ]);
     }
 
@@ -110,7 +112,7 @@ class BookingController extends Controller
     public function rescheduleBooking(Request $request, int $bookingId)
     {
         $booking = Booking::with(['patient', 'doctor'])->find($bookingId);
-
+   
         if (!$booking) {
             abort(404, 'Booking tidak ditemukan');
         }
