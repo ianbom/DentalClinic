@@ -91,4 +91,21 @@ class PatientService
             ];
         });
     }
+
+    /**
+     * Create a new patient
+     */
+    public function createPatient(array $data)
+    {
+        return Patient::create([
+            'medical_records' => $data['medical_records'] ?? null,
+            'patient_nik' => $data['patient_nik'],
+            'patient_name' => $data['patient_name'],
+            'patient_phone' => $data['patient_phone'],
+            'patient_email' => $data['patient_email'] ?? null,
+            'patient_birthdate' => $data['patient_birthdate'],
+            'gender' => $data['gender'],
+            'patient_address' => $data['patient_address'],
+        ]);
+    }
 }

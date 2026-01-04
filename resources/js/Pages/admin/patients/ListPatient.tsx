@@ -166,10 +166,6 @@ function ListPatientPage({ patients, filters }: ListPatientPageProps) {
                     />
                 </div>
             </div>
-
-            <footer className="mt-8 pb-8 text-center text-xs text-slate-400">
-                © 2024 Dental Clinic Admin. All rights reserved.
-            </footer>
         </div>
     );
 }

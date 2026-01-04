@@ -1,10 +1,16 @@
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 
 interface PatientListHeaderProps {
     totalPatients: number;
 }
 
 export function PatientListHeader({ totalPatients }: PatientListHeaderProps) {
+    const handleAddPatient = () => {
+        // Clear booking data from sessionStorage to reset form
+        sessionStorage.removeItem('bookingData');
+        router.visit('/admin/patients/create');
+    };
+
     return (
         <>
             {/* Breadcrumbs */}
@@ -32,7 +38,10 @@ export function PatientListHeader({ totalPatients }: PatientListHeaderProps) {
                         </span>
                     </p>
                 </div>
-                <button className="flex h-10 shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-6 text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-600 active:scale-95">
+                <button
+                    onClick={handleAddPatient}
+                    className="flex h-10 shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-6 text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-600 active:scale-95"
+                >
                     <span className="material-symbols-outlined text-[20px]">
                         add
                     </span>

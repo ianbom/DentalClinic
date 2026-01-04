@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StorePatientRequest;
 use App\Models\Patient;
+use App\Models\Province;
 use App\Services\Admin\PatientService;
 use Inertia\Inertia;
 
@@ -32,6 +34,33 @@ class PatientController extends Controller
             'patients' => $patients,
             'filters' => $filters,
         ]);
+    }
+
+    public function create()
+    {   
+        $provinces = Province::all()->map(function($province) {
+            return [
+               'id' => $province->id,
+               'name' => $province->name 
+            ];
+        });
+
+        return Inertia::render('admin/patients/CreatePatient', [
+            'provinces' => $provinces
+        ]);
+    }
+
+    public function store(StorePatientRequest $request)
+    {   
+        try {
+            $this->patientService->createPatient($request->validated());
+        
+        return redirect()->route('admin.patients.list')
+            ->with('success', 'Pasien berhasil ditambahkan.');
+        } catch (\Throwable $th) {
+            return response()->json(['err' => $th->getMessage()]);
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
 
     public function showPatient($patientId)

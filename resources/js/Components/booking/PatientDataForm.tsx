@@ -28,12 +28,14 @@ interface CustomerDataFormProps {
     doctorId: string;
     isAdmin?: boolean;
     provinces?: Province[];
+    isCreateMode?: boolean;
 }
 
 export function CustomerDataForm({
     doctorId,
     isAdmin = false,
     provinces = [],
+    isCreateMode = false,
 }: CustomerDataFormProps) {
     const { bookingData, setBookingData } = useBooking();
     const [isVerifying, setIsVerifying] = useState(false);
@@ -329,8 +331,8 @@ export function CustomerDataForm({
         bookingData.birthdate.trim() !== '' &&
         bookingData.gender !== '' &&
         (bookingData.villageId !== '' || bookingData.address.trim() !== '') &&
-        bookingData.isWhatsappVerified &&
-        bookingData.isNikChecked;
+        (isCreateMode ? true : bookingData.isWhatsappVerified) &&
+        (isCreateMode ? true : bookingData.isNikChecked);
 
     return (
         <div className="flex flex-col gap-6">
@@ -347,6 +349,32 @@ export function CustomerDataForm({
 
             {/* Form Fields */}
             <form className="flex flex-col gap-6">
+                {/* Medical Records - only in create mode */}
+                {isCreateMode && (
+                    <div className="flex flex-col gap-2">
+                        <label
+                            className="text-sm font-medium text-text-light"
+                            htmlFor="medicalRecords"
+                        >
+                            No. Rekam Medis*
+                        </label>
+                        <input
+                            className="flex h-12 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                            id="medicalRecords"
+                            placeholder="Masukkan No. Rekam Medis"
+                            type="text"
+                            required
+                            value={bookingData.medicalRecords}
+                            onChange={(e) =>
+                                handleInputChange(
+                                    'medicalRecords',
+                                    e.target.value.toUpperCase(),
+                                )
+                            }
+                        />
+                    </div>
+                )}
+
                 {/* NIK with Check Button */}
                 <div className="flex flex-col gap-2">
                     <label
@@ -357,13 +385,12 @@ export function CustomerDataForm({
                     </label>
                     <div className="flex gap-2">
                         <input
-                            className={`flex h-12 flex-1 rounded-lg border bg-white px-4 py-3 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:outline-none focus:ring-1 ${
-                                nikMessage?.type === 'success'
-                                    ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
-                                    : nikMessage?.type === 'error'
-                                      ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
-                                      : 'border-gray-200 focus:border-primary focus:ring-primary'
-                            }`}
+                            className={`flex h-12 flex-1 rounded-lg border bg-white px-4 py-3 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:outline-none focus:ring-1 ${nikMessage?.type === 'success'
+                                ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
+                                : nikMessage?.type === 'error'
+                                    ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
+                                    : 'border-gray-200 focus:border-primary focus:ring-primary'
+                                }`}
                             id="nik"
                             placeholder="Masukkan 16 digit NIK Anda"
                             type="text"
@@ -383,47 +410,45 @@ export function CustomerDataForm({
                             disabled={
                                 isCheckingNik || bookingData.nik.length < 16
                             }
-                            className={`flex h-12 items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition-all ${
-                                isCheckingNik || bookingData.nik.length < 16
-                                    ? 'cursor-not-allowed bg-gray-200 text-gray-400'
-                                    : bookingData.isNikChecked
-                                      ? 'cursor-pointer bg-green-100 text-green-700'
-                                      : 'cursor-pointer bg-primary text-white hover:bg-primary-dark'
-                            }`}
+                            className={`flex h-12 items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition-all ${isCheckingNik || bookingData.nik.length < 16
+                                ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                : bookingData.isNikChecked
+                                    ? 'cursor-pointer bg-green-100 text-green-700'
+                                    : 'cursor-pointer bg-primary text-white hover:bg-primary-dark'
+                                }`}
                         >
                             <span className="material-symbols-outlined text-[18px]">
                                 {isCheckingNik
                                     ? 'hourglass_empty'
                                     : bookingData.isNikChecked
-                                      ? 'check_circle'
-                                      : 'search'}
+                                        ? 'check_circle'
+                                        : 'search'}
                             </span>
                             {isCheckingNik
                                 ? 'Memeriksa...'
                                 : bookingData.isNikChecked
-                                  ? 'Terverifikasi'
-                                  : 'Cek NIK'}
+                                    ? 'Terverifikasi'
+                                    : 'Cek NIK'}
                         </button>
                     </div>
 
                     {/* NIK Message */}
                     {nikMessage && (
                         <div
-                            className={`mt-2 rounded-lg border p-3 text-sm ${
-                                nikMessage.type === 'success'
-                                    ? 'border-green-200 bg-green-50 text-green-700'
-                                    : nikMessage.type === 'info'
-                                      ? 'border-blue-200 bg-blue-50 text-blue-700'
-                                      : 'border-red-200 bg-red-50 text-red-700'
-                            }`}
+                            className={`mt-2 rounded-lg border p-3 text-sm ${nikMessage.type === 'success'
+                                ? 'border-green-200 bg-green-50 text-green-700'
+                                : nikMessage.type === 'info'
+                                    ? 'border-blue-200 bg-blue-50 text-blue-700'
+                                    : 'border-red-200 bg-red-50 text-red-700'
+                                }`}
                         >
                             <div className="flex items-start gap-2">
                                 <span className="material-symbols-outlined text-[18px]">
                                     {nikMessage.type === 'success'
                                         ? 'check_circle'
                                         : nikMessage.type === 'info'
-                                          ? 'info'
-                                          : 'error'}
+                                            ? 'info'
+                                            : 'error'}
                                 </span>
                                 <p>{nikMessage.text}</p>
                             </div>
@@ -644,11 +669,10 @@ export function CustomerDataForm({
                             <div className="ml-2 h-4 w-px bg-gray-300"></div>
                         </div>
                         <input
-                            className={`flex h-12 w-full rounded-lg border bg-white py-3 pl-[70px] pr-4 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:outline-none focus:ring-1 ${
-                                bookingData.isWhatsappVerified
-                                    ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
-                                    : 'border-gray-200 focus:border-primary focus:ring-primary'
-                            }`}
+                            className={`flex h-12 w-full rounded-lg border bg-white py-3 pl-[70px] pr-4 text-base text-text-light transition-shadow placeholder:text-gray-400 focus:outline-none focus:ring-1 ${bookingData.isWhatsappVerified
+                                ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
+                                : 'border-gray-200 focus:border-primary focus:ring-primary'
+                                }`}
                             id="whatsapp"
                             placeholder="0812-3456-7890"
                             type="tel"
@@ -677,13 +701,12 @@ export function CustomerDataForm({
                                 !bookingData.whatsapp ||
                                 bookingData.whatsapp.length < 10
                             }
-                            className={`mt-2 flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                                isVerifying ||
+                            className={`mt-2 flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${isVerifying ||
                                 !bookingData.whatsapp ||
                                 bookingData.whatsapp.length < 10
-                                    ? 'cursor-not-allowed bg-gray-200 text-gray-400'
-                                    : 'cursor-pointer bg-green-100 text-green-700 hover:bg-green-200'
-                            }`}
+                                ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                : 'cursor-pointer bg-green-100 text-green-700 hover:bg-green-200'
+                                }`}
                         >
                             <span className="material-symbols-outlined text-[18px]">
                                 {isVerifying ? 'hourglass_empty' : 'send'}
@@ -732,25 +755,53 @@ export function CustomerDataForm({
                 {/* Verification Warning */}
                 {(!bookingData.isWhatsappVerified ||
                     !bookingData.isNikChecked) && (
-                    <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
-                        <div className="flex items-start gap-2">
-                            <span className="material-symbols-outlined text-[20px]">
-                                warning
-                            </span>
-                            <p>
-                                <strong>Verifikasi diperlukan:</strong>
-                                {!bookingData.isNikChecked &&
-                                    ' Klik "Cek NIK" untuk memverifikasi NIK Anda.'}
-                                {!bookingData.isWhatsappVerified &&
-                                    ' Verifikasi nomor WhatsApp sebelum melanjutkan.'}
-                            </p>
+                        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
+                            <div className="flex items-start gap-2">
+                                <span className="material-symbols-outlined text-[20px]">
+                                    warning
+                                </span>
+                                <p>
+                                    <strong>Verifikasi diperlukan:</strong>
+                                    {!bookingData.isNikChecked &&
+                                        ' Klik "Cek NIK" untuk memverifikasi NIK Anda.'}
+                                    {!bookingData.isWhatsappVerified &&
+                                        ' Verifikasi nomor WhatsApp sebelum melanjutkan.'}
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
 
                 {/* CTA Buttons */}
                 <div className="mt-4 flex flex-col justify-end gap-3 border-t border-subtle-light pt-4 sm:flex-row">
-                    {isAdmin ? (
+                    {isCreateMode ? (
+                        <button
+                            type="button"
+                            disabled={!isFormValid}
+                            onClick={() => {
+                                if (isFormValid) {
+                                    router.post('/admin/patients/store', {
+                                        patient_name: bookingData.fullName,
+                                        patient_nik: bookingData.nik,
+                                        patient_phone: bookingData.whatsapp,
+                                        patient_birthdate:
+                                            bookingData.birthdate,
+                                        patient_address: bookingData.address,
+                                        gender: bookingData.gender,
+                                        medical_records: bookingData.medicalRecords,
+                                    });
+                                }
+                            }}
+                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-3 font-bold transition-all md:w-auto ${isFormValid
+                                ? 'cursor-pointer bg-primary text-white hover:bg-primary-dark focus:ring-4 focus:ring-primary/20'
+                                : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                                }`}
+                        >
+                            <span className="material-symbols-outlined text-[20px]">
+                                save
+                            </span>
+                            <span>Simpan Pasien</span>
+                        </button>
+                    ) : isAdmin ? (
                         /* Admin: Single "Simpan Booking" button */
                         <button
                             type="button"
@@ -777,11 +828,10 @@ export function CustomerDataForm({
                                     });
                                 }
                             }}
-                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-3 font-bold transition-all md:w-auto ${
-                                isFormValid
-                                    ? 'cursor-pointer bg-primary text-white hover:bg-primary-dark focus:ring-4 focus:ring-primary/20'
-                                    : 'cursor-not-allowed bg-gray-300 text-gray-500'
-                            }`}
+                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-3 font-bold transition-all md:w-auto ${isFormValid
+                                ? 'cursor-pointer bg-primary text-white hover:bg-primary-dark focus:ring-4 focus:ring-primary/20'
+                                : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                                }`}
                         >
                             <span className="material-symbols-outlined text-[20px]">
                                 save

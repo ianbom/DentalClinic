@@ -31,6 +31,7 @@ export interface BookingData {
     selectedTime: string;
     isWhatsappVerified: boolean;
     isNikChecked: boolean;
+    medicalRecords: string;
 }
 
 interface BookingContextType {
@@ -62,6 +63,7 @@ const defaultBookingData: BookingData = {
     selectedTime: '',
     isWhatsappVerified: false,
     isNikChecked: false,
+    medicalRecords: '',
 };
 
 const STORAGE_KEY = 'bookingData';
