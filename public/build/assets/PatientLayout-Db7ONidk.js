@@ -1,0 +1,1 @@
+import{j as e,H as a}from"./app-Ddfl5t9z.js";import{N as n,F as r}from"./Navbar-BXV_KKEP.js";function s({children:t}){return e.jsxs(e.Fragment,{children:[e.jsxs(a,{title:"Cantika Dental Care",children:[e.jsx("meta",{name:"description",content:"Webiste booking Dental Care "}),e.jsx("link",{rel:"icon",href:"/favicon.ico"})]}),e.jsx(n,{}),t,e.jsx(r,{})]})}export{s as P};
