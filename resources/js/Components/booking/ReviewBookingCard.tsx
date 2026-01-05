@@ -144,13 +144,6 @@ export function ReviewBookingCard({ doctor }: ReviewBookingCardProps) {
                         </div>
                         <p className="pl-7 font-medium text-text-light">
                             {bookingData.service || '-'}
-                            {bookingData.serviceType && (
-                                <span className="ml-2 rounded bg-primary/10 px-2 py-0.5 text-xs text-primary">
-                                    {bookingData.serviceType === 'long'
-                                        ? '45 menit'
-                                        : '15 menit'}
-                                </span>
-                            )}
                         </p>
                     </div>
                     {/* Birthdate */}

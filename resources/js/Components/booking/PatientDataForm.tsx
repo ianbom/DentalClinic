@@ -427,10 +427,10 @@ export function CustomerDataForm({
                                     isCheckingNik || bookingData.nik.length < 16
                                 }
                                 className={`flex h-[46px] items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition-all ${isCheckingNik || bookingData.nik.length < 16
-                                    ? 'cursor-not-allowed bg-gray-200 text-gray-400'
-                                    : bookingData.isNikChecked
-                                        ? 'cursor-pointer bg-green-100 text-green-700'
-                                        : 'cursor-pointer bg-primary text-white hover:bg-primary-dark'
+                                        ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                        : bookingData.isNikChecked
+                                            ? 'cursor-pointer bg-green-100 text-green-700'
+                                            : 'cursor-pointer bg-primary text-white hover:bg-primary-dark'
                                     }`}
                             >
                                 <span className="material-symbols-outlined text-[18px]">
@@ -440,6 +440,15 @@ export function CustomerDataForm({
                                             ? 'check_circle'
                                             : 'search'}
                                 </span>
+                                {/* Mobile text */}
+                                <span className="sm:hidden">
+                                    {isCheckingNik
+                                        ? '...'
+                                        : bookingData.isNikChecked
+                                            ? 'OK'
+                                            : 'Cari'}
+                                </span>
+                                {/* Desktop text */}
                                 <span className="hidden sm:inline">
                                     {isCheckingNik
                                         ? 'Memeriksa...'

@@ -41,7 +41,7 @@ export function PatientTable({
     };
 
     return (
-        <div className="w-full overflow-x-auto bg-white">
+        <div className="max-h-[calc(100vh-300px)] w-full overflow-auto bg-white">
             {patients.length > 0 ? (
                 <table className="w-full border-collapse text-left">
                     <thead>

@@ -74,7 +74,7 @@ export function BookingTable({
 
             {/* Table */}
             {bookings.length > 0 ? (
-                <div className="overflow-x-auto">
+                <div className="max-h-[calc(100vh-300px)] overflow-auto">
                     <table className="w-full border-collapse text-left">
                         <BookingTableHeader
                             showActions={showActions}
@@ -279,7 +279,10 @@ function BookingTableRow({
                 <td className="px-4 py-3 text-sm text-slate-500">
                     {booking.created_at_formatted}
                 </td>
-                <td className="px-4 py-3 text-sm text-slate-500">
+                <td
+                    className="max-w-[150px] truncate px-4 py-3 text-sm text-slate-500"
+                    title={booking.service}
+                >
                     {booking.service}
                 </td>
                 <td className="px-4 py-3">
