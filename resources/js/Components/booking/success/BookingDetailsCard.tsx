@@ -116,13 +116,6 @@ export function BookingDetailsCard({ booking }: BookingDetailsCardProps) {
                         <span className="text-sm text-gray-500">Layanan</span>
                         <span className="font-medium text-text-light">
                             {booking.service || '-'}
-                            {booking.type && (
-                                <span className="ml-2 rounded bg-primary/10 px-2 py-0.5 text-xs text-primary">
-                                    {booking.type === 'long'
-                                        ? '45 menit'
-                                        : '15 menit'}
-                                </span>
-                            )}
                         </span>
                     </div>
 

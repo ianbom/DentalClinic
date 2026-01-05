@@ -66,10 +66,21 @@ export function BookingCalendarWidget({
         }
     };
 
-    const isDateAvailable = (day: number) => {
+    // Check if date exists in available slots data (could be available or fully booked)
+    const isDateInSchedule = (day: number) => {
+        const dateString = getDateString(day);
+        return !!availableSlots[dateString];
+    };
+
+    // Check if date is fully booked (exists but no available slots)
+    const isFullyBooked = (day: number) => {
         const dateString = getDateString(day);
         const slotData = availableSlots[dateString];
-        return slotData?.slots.some((slot) => slot.available) ?? false;
+        if (!slotData) return false;
+        return (
+            slotData.slots.length > 0 &&
+            !slotData.slots.some((slot) => slot.available)
+        );
     };
 
     const isDateSelected = (day: number) => {
@@ -135,11 +146,12 @@ export function BookingCalendarWidget({
                 {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(
                     (day) => {
                         const past = checkIsPastDate(day);
-                        const available = isDateAvailable(day);
+                        const inSchedule = isDateInSchedule(day);
+                        const fullyBooked = isFullyBooked(day);
                         const selected = isDateSelected(day);
 
-                        // Past or no available slots
-                        if (past || !available) {
+                        // Past dates - disabled
+                        if (past) {
                             return (
                                 <button
                                     key={day}
@@ -151,6 +163,20 @@ export function BookingCalendarWidget({
                             );
                         }
 
+                        // Not in schedule (no slots data) - disabled
+                        if (!inSchedule) {
+                            return (
+                                <button
+                                    key={day}
+                                    className="mx-auto flex h-10 w-10 cursor-not-allowed items-center justify-center rounded-full text-sm font-medium text-gray-300"
+                                    disabled
+                                >
+                                    {day}
+                                </button>
+                            );
+                        }
+
+                        // Selected date
                         if (selected) {
                             return (
                                 <button
@@ -162,6 +188,21 @@ export function BookingCalendarWidget({
                             );
                         }
 
+                        // Fully booked but clickable - show in orange/red
+                        if (fullyBooked) {
+                            return (
+                                <button
+                                    key={day}
+                                    onClick={() => handleDateSelect(day)}
+                                    className="mx-auto flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-sm font-medium"
+                                    title="Jadwal penuh"
+                                >
+                                    {day}
+                                </button>
+                            );
+                        }
+
+                        // Available slots - normal clickable
                         return (
                             <button
                                 key={day}
