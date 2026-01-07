@@ -301,7 +301,7 @@ export default function ScheduleDoctor({
     const bookedCount = totalSlots - availableCount;
 
     return (
-        <div className="flex h-full flex-col gap-6 bg-[#f8fbfc] md:flex-row">
+        <div className="flex h-full flex-col gap-6 md:flex-row">
             {/* Calendar Section */}
             <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-6">
                 <CalendarHeader

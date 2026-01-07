@@ -63,7 +63,7 @@ function CreateBookingForm({
     };
 
     return (
-        <div className="min-h-screen bg-[#f8fbfc] p-6">
+        <div className="min-h-screen p-6">
             <div className="mx-auto max-w-6xl">
                 {/* Header */}
                 <div className="mb-8">
