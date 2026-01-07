@@ -17,7 +17,7 @@ const navLinks = [
     {
         href: '/admin/checkin/patiens',
         label: 'Cek In Pasien',
-        icon: 'circle',
+        icon: 'checklist',
     },
     { href: '/admin/patients', label: 'Pasien', icon: 'group' },
     { href: '/admin/doctors', label: 'Dokter', icon: 'stethoscope' },

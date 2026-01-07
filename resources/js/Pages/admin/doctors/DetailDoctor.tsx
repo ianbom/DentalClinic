@@ -73,18 +73,18 @@ const DetailDoctor = ({ doctor }: Props) => {
                     </p>
                 </div>
                 <div className="flex gap-3">
-                    <button className="flex h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50">
+                    <Link href={route('admin.doctors.edit', doctor.id)} className="flex h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50">
                         <span className="material-symbols-outlined text-[20px]">
                             edit
                         </span>
                         <span>Edit Dokter</span>
-                    </button>
-                    <button className="flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-white shadow-md shadow-primary/20 transition-colors hover:bg-sky-600">
+                    </Link>
+                    <Link href={route('admin.doctors.schedule', doctor.id)} className="flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-white shadow-md shadow-primary/20 transition-colors hover:bg-sky-600">
                         <span className="material-symbols-outlined text-[20px]">
                             calendar_clock
                         </span>
-                        <span>Kelola Jadwal</span>
-                    </button>
+                        <span>Jadwal</span>
+                    </Link>
                 </div>
             </div>
 
@@ -93,7 +93,7 @@ const DetailDoctor = ({ doctor }: Props) => {
                 {/* Left Column - Profile & Schedule */}
                 <div className="flex flex-col gap-6 lg:col-span-4">
                     <ProfileCard doctor={doctor} />
-                    <ScheduleCard schedule={doctor.today_schedule} />
+                    {/* <ScheduleCard schedule={doctor.today_schedule} /> */}
                 </div>
 
                 {/* Right Column - Stats & Bookings */}

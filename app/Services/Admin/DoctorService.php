@@ -273,5 +273,83 @@ class DoctorService
         }
         return false;
     }
+
+    /**
+     * Update doctor basic info
+     */
+    public function updateDoctor(int $doctorId, array $data): Doctor
+    {
+        $doctor = Doctor::findOrFail($doctorId);
+        
+        $doctor->update([
+            'name' => $data['name'],
+            'sip' => $data['sip'] ?? null,
+            'experience' => $data['experience'],
+            'is_active' => $data['is_active'],
+        ]);
+
+        return $doctor;
+    }
+
+    /**
+     * Sync working periods for a doctor
+     * This will create, update, or delete periods based on the input
+     */
+    public function syncWorkingPeriods(int $doctorId, array $periods): void
+    {
+        $doctor = Doctor::findOrFail($doctorId);
+        
+        // Map numbers to day names
+        $dayNumberToName = [
+            0 => 'Minggu',
+            1 => 'Senin',
+            2 => 'Selasa',
+            3 => 'Rabu',
+            4 => 'Kamis',
+            5 => 'Jumat',
+            6 => 'Sabtu',
+        ];
+        
+        // Get existing period IDs
+        $existingIds = $doctor->workingPeriods()->pluck('id')->toArray();
+        $submittedIds = [];
+
+        foreach ($periods as $periodData) {
+            // Convert day number to name if it's numeric
+            $dayValue = $periodData['day_of_week'];
+            if (is_numeric($dayValue)) {
+                $dayValue = $dayNumberToName[(int)$dayValue] ?? 'Senin';
+            }
+            
+            if (!empty($periodData['id'])) {
+                // Update existing period
+                $period = \App\Models\DoctorWorkingPeriod::find($periodData['id']);
+                if ($period && $period->doctor_id === $doctorId) {
+                    $period->update([
+                        'day_of_week' => $dayValue,
+                        'start_time' => $periodData['start_time'],
+                        'end_time' => $periodData['end_time'],
+                        'is_active' => $periodData['is_active'],
+                    ]);
+                    $submittedIds[] = $periodData['id'];
+                }
+            } else {
+                // Create new period
+                $newPeriod = $doctor->workingPeriods()->create([
+                    'day_of_week' => $dayValue,
+                    'start_time' => $periodData['start_time'],
+                    'end_time' => $periodData['end_time'],
+                    'is_active' => $periodData['is_active'],
+                ]);
+                $submittedIds[] = $newPeriod->id;
+            }
+        }
+
+        // Delete periods that were not submitted
+        $idsToDelete = array_diff($existingIds, $submittedIds);
+        if (!empty($idsToDelete)) {
+            \App\Models\DoctorWorkingPeriod::whereIn('id', $idsToDelete)->delete();
+        }
+    }
 }
 
