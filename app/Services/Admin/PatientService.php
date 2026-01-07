@@ -108,4 +108,27 @@ class PatientService
             'patient_address' => $data['patient_address'],
         ]);
     }
+
+    /**
+     * Update an existing patient
+     */
+    public function updatePatient(int $patientId, array $data)
+    {
+        $patient = Patient::findOrFail($patientId);
+        
+        $patient->update([
+            'patient_nik' => $data['patient_nik'] ?? null,
+            'patient_name' => $data['patient_name'],
+            'patient_phone' => $data['patient_phone'],
+            'patient_birthdate' => $data['patient_birthdate'] ?? null,
+            'gender' => $data['gender'],
+            'patient_address' => $data['patient_address'] ?? null,
+            'province_id' => $data['province_id'] ?? null,
+            'city_id' => $data['city_id'] ?? null,
+            'district_id' => $data['district_id'] ?? null,
+            'village_id' => $data['village_id'] ?? null,
+        ]);
+
+        return $patient;
+    }
 }

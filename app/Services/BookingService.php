@@ -641,7 +641,14 @@ class BookingService
         return [
             'can_checkin' => true,
             'reason' => null,
-        ];
+        ]; 
+    }
+
+    public function checkNikActiveBooking(string $nik){
+        $booking = Booking::whereHas('patient', function ($query) use ($nik) {
+            $query->where('patient_nik', $nik);
+        })->where('status', 'confirmed')->first();
+        return $booking;
     }
 }
 

@@ -101,26 +101,36 @@ export function DoctorTable({
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex items-center justify-end gap-2 opacity-80 transition-opacity group-hover:opacity-100">
-                                            <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-900 transition-colors hover:bg-slate-100">
-                                                Jadwal
-                                            </button>
                                             <Link
-                                                href={`/admin/doctors/${doctor.id}`}
-                                                className="flex size-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-primary/5 hover:text-primary"
+                                                href={route(
+                                                    'admin.doctors.schedule',
+                                                    doctor.id,
+                                                )}
+                                                className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-900 transition-colors hover:bg-slate-100"
+                                            >
+                                                Jadwal
+                                            </Link>
+                                            <Link
+                                                href={route(
+                                                    'admin.doctors.edit',
+                                                    doctor.id,
+                                                )}
+                                                className="cursor-pointer rounded-md bg-amber-500 p-1.5 text-white transition-colors hover:bg-amber-600"
                                                 title="Edit"
                                             >
-                                                <span className="material-symbols-outlined text-[20px]">
+                                                <span className="material-symbols-outlined text-lg">
                                                     edit
                                                 </span>
                                             </Link>
-                                            <button
-                                                className="flex size-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
-                                                title="More Options"
+                                            <Link
+                                                href={`/admin/doctors/${doctor.id}`}
+                                                className="cursor-pointer rounded-md bg-primary p-1.5 text-white transition-colors hover:bg-sky-600"
+                                                title="Detail"
                                             >
-                                                <span className="material-symbols-outlined text-[20px]">
-                                                    more_vert
+                                                <span className="material-symbols-outlined text-lg">
+                                                    visibility
                                                 </span>
-                                            </button>
+                                            </Link>
                                         </div>
                                     </td>
                                 </tr>

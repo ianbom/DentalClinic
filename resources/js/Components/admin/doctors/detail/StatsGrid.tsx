@@ -31,12 +31,12 @@ export function StatsGrid({ stats }: StatsGridProps) {
                 <p className="text-3xl font-black text-slate-900">
                     {stats.total_bookings.toLocaleString()}
                 </p>
-                <div className="mt-2 flex items-center gap-1 text-xs font-medium text-sky-500">
+                {/* <div className="mt-2 flex items-center gap-1 text-xs font-medium text-sky-500">
                     <span className="material-symbols-outlined text-[16px]">
                         trending_up
                     </span>
                     <span>+12% bulan ini</span>
-                </div>
+                </div> */}
             </div>
 
             {/* Selesai */}
@@ -54,9 +54,9 @@ export function StatsGrid({ stats }: StatsGridProps) {
                 <p className="text-3xl font-black text-slate-900">
                     {stats.completed_bookings.toLocaleString()}
                 </p>
-                <div className="mt-2 text-xs font-medium text-slate-500">
+                {/* <div className="mt-2 text-xs font-medium text-slate-500">
                     <span>{completionRate}% penyelesaian</span>
-                </div>
+                </div> */}
             </div>
 
             {/* Pasien */}
@@ -74,12 +74,12 @@ export function StatsGrid({ stats }: StatsGridProps) {
                 <p className="text-3xl font-black text-slate-900">
                     {stats.unique_patients.toLocaleString()}
                 </p>
-                <div className="mt-2 flex items-center gap-1 text-xs font-medium text-teal-500">
+                {/* <div className="mt-2 flex items-center gap-1 text-xs font-medium text-teal-500">
                     <span className="material-symbols-outlined text-[16px]">
                         trending_up
                     </span>
                     <span>+5% pasien baru</span>
-                </div>
+                </div> */}
             </div>
         </div>
     );

@@ -106,6 +106,17 @@ class BookingController extends Controller
 
         $patient = Patient::where('patient_nik', $request->nik)->first();
 
+        $activeBooking = $this->bookingService->checkNikActiveBooking($request->nik);
+
+        if ($activeBooking) {
+           return redirect()->back()->with('nikCheck', [
+            'found' => false,
+            'patient' => null,
+            'hasActiveBooking' => true,
+            'bookingCode' => $activeBooking->code,
+        ]);
+        }
+
         if ($patient) {
             return redirect()->back()->with('nikCheck', [
                 'found' => true,
@@ -125,14 +136,18 @@ class BookingController extends Controller
         ]);
     }
 
-    public function createBooking(Request $request)
-    {
+    public function createBooking(Request $request){
         try {
             // Create booking
+            $activeBooking = $this->bookingService->checkNikActiveBooking($request->patient_nik);
+            if ($activeBooking) {
+                throw new \Exception('Anda sudah memiliki booking aktif.');
+            }
             $booking = $this->bookingService->createBooking($request->all());
             $this->bookingService->sendBookingConfirmation($booking->id, $booking->patient->patient_phone);
             $this->bookingService->scheduleReminderNotification($booking->id);
 
+            
             return redirect()
                 ->route('booking.success', ['code' => $booking->code])
                 ->with('success', 'Booking berhasil dibuat!');

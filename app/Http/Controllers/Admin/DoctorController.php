@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdateDoctorRequest;
 use App\Models\Doctor;
 use App\Services\Admin\DoctorService;
 use App\Services\BookingService;
@@ -73,5 +74,68 @@ class DoctorController extends Controller
         );
 
         return back()->with('success', 'Jadwal berhasil dikunci');
+    }
+
+    public function edit($doctorId)
+    {
+        $doctor = Doctor::with('workingPeriods')->findOrFail($doctorId);
+
+        // Map day names to numbers
+        $dayNameToNumber = [
+            'Minggu' => 0,
+            'Senin' => 1,
+            'Selasa' => 2,
+            'Rabu' => 3,
+            'Kamis' => 4,
+            'Jumat' => 5,
+            'Sabtu' => 6,
+        ];
+
+        // Format working periods for frontend
+        $workingPeriods = $doctor->workingPeriods->map(function ($period) use ($dayNameToNumber) {
+            $dayNumber = is_numeric($period->day_of_week) 
+                ? (int) $period->day_of_week 
+                : ($dayNameToNumber[$period->day_of_week] ?? 1);
+            
+            return [
+                'id' => $period->id,
+                'day_of_week' => $dayNumber,
+                'start_time' => substr($period->start_time, 0, 5),
+                'end_time' => substr($period->end_time, 0, 5),
+                'is_active' => $period->is_active,
+            ];
+        })->toArray();
+
+        return Inertia::render('admin/doctors/EditDoctor', [
+            'doctor' => [
+                'id' => $doctor->id,
+                'name' => $doctor->name,
+                'sip' => $doctor->sip,
+                'experience' => $doctor->experience,
+                'profile_pic' => $doctor->profile_pic,
+                'is_active' => $doctor->is_active,
+            ],
+            'workingPeriods' => $workingPeriods,
+        ]);
+    }
+
+    public function update($doctorId, UpdateDoctorRequest $request)
+    {
+        try {
+            $validated = $request->validated();
+
+            // Update doctor basic info
+            $this->doctorService->updateDoctor($doctorId, $validated);
+
+            // Sync working periods if provided
+            if (isset($validated['working_periods'])) {
+                $this->doctorService->syncWorkingPeriods($doctorId, $validated['working_periods']);
+            }
+
+            return redirect()->route('admin.doctors.show', $doctorId)
+                ->with('success', 'Data dokter berhasil diperbarui.');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
 }

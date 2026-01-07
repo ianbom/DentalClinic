@@ -32,12 +32,12 @@ export function DoctorListHeader({ totalDoctors }: DoctorListHeaderProps) {
                         </span>
                     </p>
                 </div>
-                <button className="flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-600 active:scale-95">
+                {/* <button className="flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-600 active:scale-95">
                     <span className="material-symbols-outlined text-[20px]">
                         add
                     </span>
                     <span>Tambah Dokter</span>
-                </button>
+                </button> */}
             </div>
         </>
     );
