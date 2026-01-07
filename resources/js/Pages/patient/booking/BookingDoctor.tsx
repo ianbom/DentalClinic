@@ -40,26 +40,45 @@ function BookingPage({ doctor, availableSlots }: BookingPageProps) {
                             />
                         </div>
 
-                        {/* Date Selection Header */}
-                        <div className="mb-8 border-t border-gray-100 pt-8">
-                            <h3 className="mb-2 text-lg font-bold text-text-light">
-                                Pilih Tanggal
-                            </h3>
-                            <p className="text-sm text-gray-500">
-                                Silakan pilih tanggal yang tersedia untuk{' '}
-                                {bookingData.service?.toLowerCase() ||
-                                    'konsultasi'}{' '}
-                                Anda.
-                            </p>
-                        </div>
+                        {/* Date Selection - Only show after service is selected */}
+                        {bookingData.serviceId ? (
+                            <>
+                                <div className="mb-8 border-t border-gray-100 pt-8">
+                                    <h3 className="mb-2 text-lg font-bold text-text-light">
+                                        Pilih Tanggal
+                                    </h3>
+                                    <p className="text-sm text-gray-500">
+                                        Silakan pilih tanggal yang tersedia
+                                        untuk{' '}
+                                        {bookingData.service?.toLowerCase() ||
+                                            'konsultasi'}{' '}
+                                        Anda.
+                                    </p>
+                                </div>
 
-                        <BookingCalendarWidget
-                            availableSlots={availableSlots}
-                        />
+                                <BookingCalendarWidget
+                                    availableSlots={availableSlots}
+                                />
 
-                        <div className="border-t border-gray-100 pt-8">
-                            <BookingTimeSlots availableSlots={availableSlots} />
-                        </div>
+                                <div className="border-t border-gray-100 pt-8">
+                                    <BookingTimeSlots
+                                        availableSlots={availableSlots}
+                                    />
+                                </div>
+                            </>
+                        ) : (
+                            <div className="border-t border-gray-100 pt-8">
+                                <div className="rounded-lg bg-gray-50 p-6 text-center">
+                                    <span className="material-symbols-outlined mb-2 text-4xl text-gray-400">
+                                        event
+                                    </span>
+                                    <p className="text-sm text-gray-500">
+                                        Pilih jenis layanan terlebih dahulu
+                                        untuk melihat jadwal yang tersedia.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Right Column: Sticky Summary Sidebar */}

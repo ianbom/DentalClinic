@@ -41,6 +41,7 @@ export function sortDays(days: string[]): string[] {
 
 /**
  * Get formatted days string from doctor's working periods
+ * Returns format like "Senin - Jumat" for consecutive days
  */
 export function getDaysFromWorkingPeriods(doctor: Doctor): string {
     if (!doctor.working_periods || doctor.working_periods.length === 0) {
@@ -49,7 +50,25 @@ export function getDaysFromWorkingPeriods(doctor: Doctor): string {
     const uniqueDays = [
         ...new Set(doctor.working_periods.map((wp) => wp.day_of_week)),
     ];
-    return sortDays(uniqueDays).join(', ');
+    const sortedDays = sortDays(uniqueDays);
+
+    // If only one day
+    if (sortedDays.length === 1) {
+        return sortedDays[0];
+    }
+
+    // Check if days are consecutive
+    const indices = sortedDays.map((day) => DAY_ORDER.indexOf(day));
+    const isConsecutive = indices.every(
+        (val, i, arr) => i === 0 || val === arr[i - 1] + 1,
+    );
+
+    // Return range format if consecutive, otherwise list all
+    if (isConsecutive && sortedDays.length > 2) {
+        return `${sortedDays[0]} - ${sortedDays[sortedDays.length - 1]}`;
+    }
+
+    return sortedDays.join(', ');
 }
 
 /**

@@ -188,14 +188,28 @@ export function BookingCalendarWidget({
                             );
                         }
 
-                        // Fully booked but clickable - show in orange/red
+                        // Fully booked date handling based on serviceType
                         if (fullyBooked) {
+                            // For 'long' service type - fully booked dates are disabled
+                            if (bookingData.serviceType === 'long') {
+                                return (
+                                    <button
+                                        key={day}
+                                        className="mx-auto flex h-10 w-10 cursor-not-allowed items-center justify-center rounded-full text-sm font-medium text-gray-300"
+                                        disabled
+                                        title="Jadwal penuh untuk layanan ini"
+                                    >
+                                        {day}
+                                    </button>
+                                );
+                            }
+                            // For 'short' service type - still clickable
                             return (
                                 <button
                                     key={day}
                                     onClick={() => handleDateSelect(day)}
                                     className="mx-auto flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-sm font-medium"
-                                    title="Jadwal penuh"
+                                    title="Jadwal hampir penuh"
                                 >
                                     {day}
                                 </button>

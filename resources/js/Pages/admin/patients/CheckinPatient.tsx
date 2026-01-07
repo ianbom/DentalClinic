@@ -98,7 +98,7 @@ function CheckInPage({ booking, searchCode }: CheckInPageProps) {
         (booking.status === 'confirmed' || booking.status === 'pending');
 
     return (
-        <div className="flex h-full flex-col bg-[#f8fbfc]">
+        <div className="flex h-full flex-col">
             <div className="mx-auto w-full max-w-5xl flex-1">
                 {/* Header */}
                 <div className="mb-8">
