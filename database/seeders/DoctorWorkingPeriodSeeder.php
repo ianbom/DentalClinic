@@ -19,33 +19,33 @@ class DoctorWorkingPeriodSeeder extends Seeder
         $schedules = [
     // Doctor 1: drg. Anna Fikril - Senin s.d Sabtu (Sore)
     1 => [
-        ['day_of_week' => 'Senin',  'start_time' => '16:00', 'end_time' => '20:45'],
-        ['day_of_week' => 'Selasa', 'start_time' => '16:00', 'end_time' => '20:45'],
-        ['day_of_week' => 'Rabu',   'start_time' => '16:00', 'end_time' => '20:45'],
-        ['day_of_week' => 'Kamis',  'start_time' => '16:00', 'end_time' => '20:45'],
-        ['day_of_week' => 'Jumat',  'start_time' => '16:00', 'end_time' => '20:45'],
-        ['day_of_week' => 'Sabtu',  'start_time' => '16:00', 'end_time' => '20:45'],
+        ['day_of_week' => 'Senin',  'start_time' => '16:00', 'end_time' => '21:00'],
+        ['day_of_week' => 'Selasa', 'start_time' => '16:00', 'end_time' => '21:00'],
+        ['day_of_week' => 'Rabu',   'start_time' => '16:00', 'end_time' => '21:00'],
+        ['day_of_week' => 'Kamis',  'start_time' => '16:00', 'end_time' => '21:00'],
+        ['day_of_week' => 'Jumat',  'start_time' => '16:00', 'end_time' => '21:00'],
+        ['day_of_week' => 'Sabtu',  'start_time' => '16:00', 'end_time' => '21:00'],
     ],
 
-    // Doctor 2: drg. Lailiz - Senin s.d Sabtu (Siang)
+    // Doctor 2: drg: Lailiz - Senin s:d Sabtu (Siang)
     2 => [
-        ['day_of_week' => 'Senin',  'start_time' => '13:00', 'end_time' => '16:45'],
-        ['day_of_week' => 'Selasa', 'start_time' => '13:00', 'end_time' => '16:45'],
-        ['day_of_week' => 'Rabu',   'start_time' => '13:00', 'end_time' => '16:45'],
-        ['day_of_week' => 'Kamis',  'start_time' => '13:00', 'end_time' => '16:45'],
-        ['day_of_week' => 'Jumat',  'start_time' => '13:00', 'end_time' => '16:45'],
-        ['day_of_week' => 'Sabtu',  'start_time' => '13:00', 'end_time' => '16:45'],
-        ['day_of_week' => 'Minggu',  'start_time' => '8:00', 'end_time' => '12:45'],
+        ['day_of_week' => 'Senin',  'start_time' => '13:00', 'end_time' => '17:00'],
+        ['day_of_week' => 'Selasa', 'start_time' => '13:00', 'end_time' => '17:00'],
+        ['day_of_week' => 'Rabu',   'start_time' => '13:00', 'end_time' => '17:00'],
+        ['day_of_week' => 'Kamis',  'start_time' => '13:00', 'end_time' => '17:00'],
+        ['day_of_week' => 'Jumat',  'start_time' => '13:00', 'end_time' => '17:00'],
+        ['day_of_week' => 'Sabtu',  'start_time' => '13:00', 'end_time' => '17:00'],
+        ['day_of_week' => 'Minggu',  'start_time' => '8:00', 'end_time' => '13:00'],
     ],
 
-    // Doctor 3: drg. Haning - Senin s.d Sabtu (Pagi)
+    // Doctor 3: drg: Haning - Senin s:d Sabtu (Pagi)
     3 => [
-        ['day_of_week' => 'Senin',  'start_time' => '08:00', 'end_time' => '12:45'],
-        ['day_of_week' => 'Selasa', 'start_time' => '08:00', 'end_time' => '12:45'],
-        ['day_of_week' => 'Rabu',   'start_time' => '08:00', 'end_time' => '12:45'],
-        ['day_of_week' => 'Kamis',  'start_time' => '08:00', 'end_time' => '12:45'],
-        ['day_of_week' => 'Jumat',  'start_time' => '08:00', 'end_time' => '12:45'],
-        ['day_of_week' => 'Sabtu',  'start_time' => '08:00', 'end_time' => '12:45'],
+        ['day_of_week' => 'Senin',  'start_time' => '08:00', 'end_time' => '13:00'],
+        ['day_of_week' => 'Selasa', 'start_time' => '08:00', 'end_time' => '13:00'],
+        ['day_of_week' => 'Rabu',   'start_time' => '08:00', 'end_time' => '13:00'],
+        ['day_of_week' => 'Kamis',  'start_time' => '08:00', 'end_time' => '13:00'],
+        ['day_of_week' => 'Jumat',  'start_time' => '08:00', 'end_time' => '13:00'],
+        ['day_of_week' => 'Sabtu',  'start_time' => '08:00', 'end_time' => '13:00'],
     ],
 ];
 

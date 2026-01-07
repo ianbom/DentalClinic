@@ -6,6 +6,7 @@ import { Link } from '@inertiajs/react';
 interface DoctorCardProps {
     doctor: Doctor;
     days: string;
+    hours: string;
 }
 
 // Clear booking data from sessionStorage when starting new booking
@@ -17,7 +18,7 @@ const clearBookingData = () => {
     }
 };
 
-export function DoctorCard({ doctor, days }: DoctorCardProps) {
+export function DoctorCard({ doctor, days, hours }: DoctorCardProps) {
     return (
         <div className="group flex flex-col overflow-hidden rounded-2xl border border-subtle-light bg-white transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5">
             {/* Image Header */}
@@ -56,6 +57,12 @@ export function DoctorCard({ doctor, days }: DoctorCardProps) {
                             calendar_month
                         </span>
                         <span className="text-gray-600">{days}</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-sm">
+                        <span className="material-symbols-outlined text-[18px] text-primary">
+                            schedule
+                        </span>
+                        <span className="text-gray-600">{hours}</span>
                     </div>
                 </div>
 
