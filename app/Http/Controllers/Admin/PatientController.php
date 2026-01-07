@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StorePatientRequest;
+use App\Http\Requests\Admin\UpdatePatientRequest;
 use App\Models\Patient;
 use App\Models\Province;
 use App\Services\Admin\PatientService;
@@ -108,5 +109,33 @@ class PatientController extends Controller
             'doctors' => $doctors,
             'total_visits' => $patient->bookings->count(),
         ]);
+    }
+
+    public function edit($patientId)
+    {
+        $patient = Patient::findOrFail($patientId);
+        $provinces = Province::all()->map(function($province) {
+            return [
+               'id' => $province->id,
+               'name' => $province->name 
+            ];
+        });
+
+        return Inertia::render('admin/patients/EditPatient', [
+            'patient' => $patient,
+            'provinces' => $provinces
+        ]);
+    }
+
+    public function update($patientId, UpdatePatientRequest $request)
+    {
+        try {
+            $this->patientService->updatePatient($patientId, $request->validated());
+
+            return redirect()->route('admin.patients.show', $patientId)
+                ->with('success', 'Data pasien berhasil diperbarui.');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
 }

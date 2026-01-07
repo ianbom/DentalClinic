@@ -80,7 +80,7 @@ Route::post('/booking/checkin', [PatientBookingController::class, 'checkinBookin
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
 
     // Bookings
@@ -99,6 +99,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/patients/create', [AdminPatientController::class, 'create'])->name('patients.create');
     Route::post('/patients/store', [AdminPatientController::class, 'store'])->name('patients.store');
     Route::get('/patients/{patientId}', [AdminPatientController::class, 'showPatient'])->name('patients.show');
+    Route::get('/patients/{patientId}/edit', [AdminPatientController::class, 'edit'])->name('patients.edit');
+    Route::put('/patients/{patientId}/update', [AdminPatientController::class, 'update'])->name('patients.update');
 
     Route::get('/checkin/patiens', [AdminBookingController::class, 'checkinPatientPage'])->name('checkin');
     Route::post('/checkin/perform', [AdminBookingController::class, 'performCheckin'])->name('checkin.perform');

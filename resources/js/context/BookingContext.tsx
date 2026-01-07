@@ -12,6 +12,8 @@ export interface BookingData {
     fullName: string;
     nik: string;
     whatsapp: string;
+    phone: string; // Alias for whatsapp
+    email: string;
     gender: 'male' | 'female' | '';
     birthdate: string;
     address: string;
@@ -30,6 +32,7 @@ export interface BookingData {
     rawSelectedDate: string; // YYYY-MM-DD format for backend
     selectedTime: string;
     isWhatsappVerified: boolean;
+    isPhoneVerified: boolean; // Alias
     isNikChecked: boolean;
     medicalRecords: string;
 }
@@ -44,6 +47,8 @@ const defaultBookingData: BookingData = {
     fullName: '',
     nik: '',
     whatsapp: '',
+    phone: '', // Alias for whatsapp
+    email: '',
     gender: '',
     birthdate: '',
     address: '',
@@ -62,6 +67,7 @@ const defaultBookingData: BookingData = {
     rawSelectedDate: '',
     selectedTime: '',
     isWhatsappVerified: false,
+    isPhoneVerified: false, // Alias
     isNikChecked: false,
     medicalRecords: '',
 };
@@ -90,10 +96,22 @@ function getInitialBookingData(): BookingData {
     return defaultBookingData;
 }
 
-export function BookingProvider({ children }: { children: ReactNode }) {
-    const [bookingData, setBookingDataState] = useState<BookingData>(
-        getInitialBookingData,
-    );
+interface BookingProviderProps {
+    children: ReactNode;
+    initialData?: Partial<BookingData>;
+}
+
+export function BookingProvider({
+    children,
+    initialData,
+}: BookingProviderProps) {
+    const [bookingData, setBookingDataState] = useState<BookingData>(() => {
+        // If initialData is provided (edit mode), use it; otherwise load from session storage
+        if (initialData) {
+            return { ...defaultBookingData, ...initialData };
+        }
+        return getInitialBookingData();
+    });
 
     // Sync to sessionStorage whenever bookingData changes
     useEffect(() => {
