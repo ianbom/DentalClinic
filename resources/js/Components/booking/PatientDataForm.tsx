@@ -246,8 +246,21 @@ export function CustomerDataForm({
                                 patient_address: string;
                                 gender: string;
                             };
+                            hasActiveBooking?: boolean;
+                            bookingCode?: string;
                         };
                     };
+
+                    // Check if patient has active booking
+                    if (flash?.nikCheck?.hasActiveBooking) {
+                        setNikMessage({
+                            type: 'error',
+                            text: `Anda sudah memiliki booking aktif dengan kode: ${flash.nikCheck.bookingCode}. Silakan selesaikan booking tersebut terlebih dahulu atau batalkan untuk membuat booking baru.`,
+                        });
+                        setBookingData({ isNikChecked: false });
+                        setIsCheckingNik(false);
+                        return;
+                    }
 
                     if (flash?.nikCheck?.found && flash.nikCheck.patient) {
                         // Auto-fill form with existing patient data
