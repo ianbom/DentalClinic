@@ -307,6 +307,9 @@ class BookingService
             $oldSchedule
         );
 
+        // Update existing reminder notification with new schedule
+        $this->updateReminderNotification($booking->id);
+
         return $booking;
     }
 
@@ -437,25 +440,33 @@ class BookingService
     }
 
     /**
-     * Schedule reminder notification for H-1 hour (1 hour before booking)
+     * Schedule reminder notification
+     * - If booking is today: schedule immediately
+     * - If booking is future: schedule H-1 at the same time as booking
      */
     public function scheduleReminderNotification(int $bookingId): void
     {
         $booking = Booking::with(['doctor', 'patient'])->findOrFail($bookingId);
-        
-        // Calculate scheduled time: 1 hour before booking time
-        // If start_time is null (Dijadwalkan Admin), don't schedule reminder or schedule differently
+    
         if (!$booking->start_time) {
             return;
         }
         
         $bookingDate = Carbon::parse($booking->booking_date);
         $bookingTime = substr($booking->start_time, 0, 5);
-        $bookingDateTime = Carbon::parse($bookingDate->format('Y-m-d') . ' ' . $bookingTime);
-        $scheduledAt = $bookingDateTime->copy()->subHour();
+        $now = Carbon::now();
         
+        // Check if booking is for today
+        if ($bookingDate->isSameDay($now)) {
+            // Schedule immediately (now + 1 minute to ensure it gets picked up)
+            $scheduledAt = $now->copy()->addMinute();
+        } else {
+            // Schedule for H-1 at the same time as booking
+            $scheduledAt = $bookingDate->copy()->subDay()->setTimeFromTimeString($bookingTime);
+        }
+
         // Don't schedule if the reminder time has already passed
-        if ($scheduledAt->lt(Carbon::now())) {
+        if ($scheduledAt->lt($now)) {
             return;
         }
 
@@ -466,13 +477,10 @@ class BookingService
             'time' => substr($booking->start_time, 0, 5),
             'code' => $booking->code,
             'confirm_link' => url('/check-booking') . '?code=' . $booking->code . '&phone=' . $booking->patient->patient_phone,
-            'checkin_link' => url('/check-booking') . '?code=' . $booking->code . '&phone=' . $booking->patient->patient_phone,
         ];
 
-        $whatsappService = new WhatsappService();
         $message = $this->buildReminderMessage($bookingDetails);
 
-        // Create scheduled notification
         Notification::create([
             'booking_id' => $bookingId,
             'channel' => 'whatsapp',
@@ -482,6 +490,75 @@ class BookingService
             'scheduled_at' => $scheduledAt,
             'status' => 'pending',
             'attempt_count' => 0,
+        ]);
+    }
+
+    /**
+     * Update reminder notification when booking is rescheduled
+     */
+    public function updateReminderNotification(int $bookingId): void
+    {
+        $booking = Booking::with(['doctor', 'patient'])->findOrFail($bookingId);
+        
+        // Find existing pending reminder notification for this booking
+        $existingReminder = Notification::where('booking_id', $bookingId)
+            ->where('type', 'reminder')
+            ->where('status', 'pending')
+            ->first();
+        
+        // If no pending reminder exists, create a new one
+        if (!$existingReminder) {
+            $this->scheduleReminderNotification($bookingId);
+            return;
+        }
+        
+        // If no start_time, cancel the reminder
+        if (!$booking->start_time) {
+            $existingReminder->update([
+                'status' => 'cancelled',
+                'last_error' => 'Booking rescheduled without start time',
+            ]);
+            return;
+        }
+        
+        $bookingDate = Carbon::parse($booking->booking_date);
+        $bookingTime = substr($booking->start_time, 0, 5);
+        $now = Carbon::now();
+        
+        // Calculate new scheduled_at based on booking date
+        if ($bookingDate->isSameDay($now)) {
+            // Booking is today → schedule immediately
+            $scheduledAt = $now->copy()->addMinute();
+        } else {
+            // Booking is future → H-1 at the same time as booking
+            $scheduledAt = $bookingDate->copy()->subDay()->setTimeFromTimeString($bookingTime);
+        }
+        
+        // If scheduled time has passed, cancel the reminder
+        if ($scheduledAt->lt($now)) {
+            $existingReminder->update([
+                'status' => 'cancelled',
+                'last_error' => 'Reminder time has passed after reschedule',
+            ]);
+            return;
+        }
+        
+        // Update reminder with new schedule and message
+        $bookingDetails = [
+            'patient_name' => $booking->patient->patient_name,
+            'doctor_name' => $booking->doctor->name,
+            'date' => $this->formatDateIndonesian($bookingDate),
+            'time' => $bookingTime,
+            'code' => $booking->code,
+            'confirm_link' => url('/check-booking') . '?code=' . $booking->code . '&phone=' . $booking->patient->patient_phone,
+        ];
+        
+        $message = $this->buildReminderMessage($bookingDetails);
+        
+        $existingReminder->update([
+            'payload' => $message,
+            'scheduled_at' => $scheduledAt,
+            'recipient' => $booking->patient->patient_phone,
         ]);
     }
 
@@ -496,19 +573,16 @@ class BookingService
         $time = $details['time'] ?? '-';
         $code = $details['code'] ?? '-';
         $confirmLink = $details['confirm_link'] ?? '-';
-        $checkinLink = $details['checkin_link'] ?? '-';
 
         return "📢 *Pengingat Booking Pemeriksaan Gigi*\n\n"
             . "Yth. Bapak/Ibu {$patientName},\n"
-            . "Kami mengingatkan kembali jadwal booking pemeriksaan gigi Anda *BESOK* dengan rincian sebagai berikut:\n\n"
+            . "Kami mengingatkan kembali jadwal booking pemeriksaan gigi Anda dengan rincian sebagai berikut:\n\n"
             . "🗓 Tanggal : {$date}\n"
             . "⏰ Jam : {$time} WIB\n"
             . "👩‍⚕️ Dokter : {$doctorName}\n"
             . "📋 Kode Booking : *{$code}*\n\n"
             . "🔗 Konfirmasi Kehadiran:\n"
             . "{$confirmLink}\n\n"
-            . "🔗 Check-in Hari H:\n"
-            . "{$checkinLink}\n\n"
             . "📌 *Catatan:*\n"
             . "Mohon konfirmasi kehadiran Anda hari ini melalui link di atas.\n\n"
             . "_Pesan ini dikirim otomatis oleh Cantika Dental Care by drg. Anna Fikril._\n\n"

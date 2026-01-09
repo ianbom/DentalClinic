@@ -82,6 +82,71 @@ class WhatsappService
     }
 
     /**
+     * Send an existing notification from database
+     * Used for scheduled notifications (reminders)
+     */
+    public function sendExistingNotification(Notification $notification): Notification
+    {
+        try {
+            // Increment attempt count
+            $notification->increment('attempt_count');
+
+            // Send via Fonnte API
+            $response = Http::withHeaders([
+                'Authorization' => config('services.fonnte.api_key', env('FONNTE_API_KEY')),
+            ])->post('https://api.fonnte.com/send', [
+                'target' => $notification->recipient,
+                'message' => $notification->payload,
+            ]);
+
+            $result = $response->json();
+
+            // Check if successful
+            if ($response->successful() && isset($result['status']) && $result['status'] === true) {
+                $notification->update([
+                    'status' => 'sent',
+                    'sent_at' => Carbon::now(),
+                ]);
+
+                Log::info('WhatsApp notification sent successfully', [
+                    'notification_id' => $notification->id,
+                    'booking_id' => $notification->booking_id,
+                    'recipient' => $notification->recipient,
+                    'type' => $notification->type,
+                ]);
+            } else {
+                // API returned error
+                $errorMessage = $result['reason'] ?? $result['message'] ?? 'Unknown API error';
+                
+                $notification->update([
+                    'status' => 'failed',
+                    'last_error' => $errorMessage,
+                ]);
+
+                Log::warning('WhatsApp notification send failed', [
+                    'notification_id' => $notification->id,
+                    'booking_id' => $notification->booking_id,
+                    'error' => $errorMessage,
+                ]);
+            }
+        } catch (\Throwable $th) {
+            // Exception occurred
+            $notification->update([
+                'status' => 'failed',
+                'last_error' => $th->getMessage(),
+            ]);
+
+            Log::error('WhatsApp notification error', [
+                'notification_id' => $notification->id,
+                'booking_id' => $notification->booking_id,
+                'error' => $th->getMessage(),
+            ]);
+        }
+
+        return $notification->fresh();
+    }
+
+    /**
      * Send booking confirmation WhatsApp
      */
     public function sendBookingConfirmation(int $bookingId, string $target, array $bookingDetails): Notification
@@ -187,7 +252,6 @@ class WhatsappService
         $time = $details['time'] ?? '-';
         $code = $details['code'] ?? '-';
         $confirmLink = $details['confirm_link'] ?? '-';
-        $checkinLink = $details['checkin_link'] ?? '-';
 
         return "📢 *Pengingat Booking Pemeriksaan Gigi*\n\n"
             . "Yth. Bapak/Ibu {$patientName},\n"
@@ -198,8 +262,6 @@ class WhatsappService
             . "📋 Kode Booking : *{$code}*\n\n"
             . "🔗 Konfirmasi Kehadiran (H-1):\n"
             . "{$confirmLink}\n\n"
-            . "🔗 Check-in Hari H:\n"
-            . "{$checkinLink}\n\n"
             . "📌 *Catatan:*\n"
             . "Mohon lakukan konfirmasi kedatangan pada H-1 melalui link di atas.\n\n"
             . "_Pesan ini dikirim otomatis oleh Cantika Dental Care by drg. Anna Fikril._\n\n"
