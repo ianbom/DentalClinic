@@ -6,9 +6,9 @@ import { useState } from 'react';
 const navLinks = [
     { href: '/', label: 'Beranda' },
     { href: '/doctors', label: 'Dokter' },
+    { href: '/check-booking', label: 'Cek Booking' },
     { href: '/services', label: 'Layanan' },
     { href: '/about', label: 'Tentang' },
-    { href: '/check-booking', label: 'Cek Booking' },
 ];
 
 export function Navbar() {
