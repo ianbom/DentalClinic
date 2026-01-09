@@ -261,8 +261,12 @@ function BookingTableRow({
                         </p>
                     </div>
                 </td>
-                <td className="px-4 py-3 text-slate-600">
-                    {booking.doctor_name}
+                <td
+                    className="px-4 py-3 text-slate-600"
+                    title={booking.doctor_name}
+                >
+                    {booking.doctor_name.split(' ').slice(0, 2).join(' ')}
+                    {booking.doctor_name.split(' ').length > 2 ? '...' : ''}
                 </td>
                 <td className="px-4 py-3">
                     <div className="flex flex-col">
@@ -285,7 +289,7 @@ function BookingTableRow({
                 >
                     {booking.service}
                 </td>
-                <td className="px-4 py-3">
+                <td className="whitespace-nowrap px-4 py-3">
                     <StatusBadge status={booking.status} />
                 </td>
                 <td className="px-4 py-3">
