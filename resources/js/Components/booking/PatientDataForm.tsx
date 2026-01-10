@@ -416,67 +416,54 @@ export function CustomerDataForm({
                         <label className={labelClass} htmlFor="nik">
                             NIK (Nomor Induk Kependudukan)*
                         </label>
-                        <div className="flex gap-2">
-                            <input
-                                className={`flex-1 ${inputClass} ${
-                                    nikMessage?.type === 'success'
-                                        ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
-                                        : nikMessage?.type === 'error'
-                                          ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
-                                          : ''
-                                }`}
-                                id="nik"
-                                placeholder="16 digit nomor NIK"
-                                type="text"
-                                maxLength={16}
-                                required
-                                value={bookingData.nik}
-                                onChange={(e) =>
-                                    handleInputChange(
-                                        'nik',
-                                        e.target.value.replace(/\D/g, ''),
-                                    )
-                                }
-                            />
-                            <button
-                                type="button"
-                                onClick={handleCheckNik}
-                                disabled={
-                                    isCheckingNik || bookingData.nik.length < 16
-                                }
-                                className={`flex h-[46px] items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition-all ${
-                                    isCheckingNik || bookingData.nik.length < 16
-                                        ? 'cursor-not-allowed bg-gray-200 text-gray-400'
-                                        : bookingData.isNikChecked
-                                          ? 'cursor-pointer bg-green-100 text-green-700'
-                                          : 'cursor-pointer bg-primary text-white hover:bg-primary-dark'
-                                }`}
-                            >
-                                <span className="material-symbols-outlined text-[18px]">
-                                    {isCheckingNik
-                                        ? 'hourglass_empty'
-                                        : bookingData.isNikChecked
-                                          ? 'check_circle'
-                                          : 'search'}
-                                </span>
-                                {/* Mobile text */}
-                                <span className="sm:hidden">
-                                    {isCheckingNik
-                                        ? '...'
-                                        : bookingData.isNikChecked
-                                          ? 'OK'
-                                          : 'Cari'}
-                                </span>
-                                {/* Desktop text */}
-                                <span className="hidden sm:inline">
-                                    {isCheckingNik
-                                        ? 'Memeriksa...'
-                                        : bookingData.isNikChecked
-                                          ? 'Terverifikasi'
-                                          : 'Cek NIK'}
-                                </span>
-                            </button>
-                        </div>
+                        <input
+                            className={`w-full ${inputClass} ${
+                                nikMessage?.type === 'success'
+                                    ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
+                                    : nikMessage?.type === 'error'
+                                      ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
+                                      : ''
+                            }`}
+                            id="nik"
+                            placeholder="16 digit nomor NIK"
+                            type="text"
+                            maxLength={16}
+                            required
+                            value={bookingData.nik}
+                            onChange={(e) =>
+                                handleInputChange(
+                                    'nik',
+                                    e.target.value.replace(/\D/g, ''),
+                                )
+                            }
+                        />
+                        <button
+                            type="button"
+                            onClick={handleCheckNik}
+                            disabled={
+                                isCheckingNik || bookingData.nik.length < 16
+                            }
+                            className={`mt-2 flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-all ${
+                                isCheckingNik || bookingData.nik.length < 16
+                                    ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                    : bookingData.isNikChecked
+                                      ? 'cursor-pointer bg-green-100 text-green-700'
+                                      : 'cursor-pointer bg-primary text-white hover:bg-primary-dark'
+                            }`}
+                        >
+                            <span className="material-symbols-outlined text-[18px]">
+                                {isCheckingNik
+                                    ? 'hourglass_empty'
+                                    : bookingData.isNikChecked
+                                      ? 'check_circle'
+                                      : 'search'}
+                            </span>
+                            {isCheckingNik
+                                ? 'Memeriksa...'
+                                : bookingData.isNikChecked
+                                  ? 'Terverifikasi'
+                                  : 'Cek NIK'}
+                        </button>
 
                         {/* NIK Message */}
                         {nikMessage && (
@@ -639,12 +626,12 @@ export function CustomerDataForm({
                         <div className="relative">
                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                 <span className="text-sm font-medium text-gray-500">
-                                    📞
+                                    +62
                                 </span>
                                 <div className="ml-2 h-4 w-px bg-gray-300"></div>
                             </div>
                             <input
-                                className={`${inputClass} pl-[70px] pr-4 ${
+                                className={`${inputClass} pl-[55px] pr-4 ${
                                     bookingData.isWhatsappVerified
                                         ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
                                         : ''
@@ -653,13 +640,18 @@ export function CustomerDataForm({
                                 placeholder="812-3456-7890"
                                 type="tel"
                                 required
-                                value={bookingData.whatsapp}
-                                onChange={(e) =>
-                                    handleInputChange(
-                                        'whatsapp',
-                                        e.target.value,
-                                    )
+                                value={
+                                    bookingData.whatsapp.startsWith('62')
+                                        ? bookingData.whatsapp.slice(2)
+                                        : bookingData.whatsapp
                                 }
+                                onChange={(e) => {
+                                    const value = e.target.value.replace(
+                                        /\D/g,
+                                        '',
+                                    );
+                                    handleInputChange('whatsapp', '62' + value);
+                                }}
                             />
                             {bookingData.isWhatsappVerified && (
                                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">

@@ -22,6 +22,7 @@ class UpdatePatientRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'medical_records' => 'nullable|string|size:6',
             'patient_name' => 'required|string|max:255',
             'patient_nik' => 'nullable|string|max:16',
             'patient_phone' => 'required|string|max:20',

@@ -124,10 +124,8 @@ class DoctorController extends Controller
         try {
             $validated = $request->validated();
 
-            // Update doctor basic info
             $this->doctorService->updateDoctor($doctorId, $validated);
-
-            // Sync working periods if provided
+            
             if (isset($validated['working_periods'])) {
                 $this->doctorService->syncWorkingPeriods($doctorId, $validated['working_periods']);
             }
@@ -135,6 +133,7 @@ class DoctorController extends Controller
             return redirect()->route('admin.doctors.show', $doctorId)
                 ->with('success', 'Data dokter berhasil diperbarui.');
         } catch (\Throwable $th) {
+            // return response()->json(['err' => $th->getMessage()]);
             return redirect()->back()->with('error', $th->getMessage());
         }
     }

@@ -41,7 +41,7 @@ export function BookingSearchForm() {
                             </span>
                             <input
                                 className="border-border-light h-12 w-full rounded-lg border bg-background-light pl-10 pr-4 text-base text-text-main-light outline-none transition-all placeholder:text-text-sub-light/50 focus:border-primary focus:ring-2 focus:ring-primary/20"
-                                placeholder="81234567890"
+                                placeholder="6281234567890"
                                 type="tel"
                                 value={whatsapp}
                                 onChange={(e) => setWhatsapp(e.target.value)}
@@ -59,7 +59,7 @@ export function BookingSearchForm() {
                             </span>
                             <input
                                 className="border-border-light h-12 w-full rounded-lg border bg-background-light pl-10 pr-4 text-base text-text-main-light outline-none transition-all placeholder:text-text-sub-light/50 focus:border-primary focus:ring-2 focus:ring-primary/20"
-                                placeholder="BK20251230XXXXXX"
+                                placeholder="CDCXXXXX"
                                 type="text"
                                 value={bookingCode}
                                 onChange={(e) => setBookingCode(e.target.value)}

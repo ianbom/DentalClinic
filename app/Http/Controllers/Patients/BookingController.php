@@ -50,7 +50,8 @@ class BookingController extends Controller
                 'provinces' => $provinces,
             ]);
         } catch (\Throwable $th) {
-            return response()->json(['err' => $th->getMessage()]);
+            return redirect()->back()->with('error', $th->getMessage());
+            // return response()->json(['err' => $th->getMessage()]);
         }
     }
 
@@ -220,6 +221,27 @@ class BookingController extends Controller
             // return response()->json(['err' => $e->getMessage()]);
             return back()->withErrors([
                 'checkin' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function cancelBooking(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string',
+            'reason' => 'nullable|string|max:500',
+        ]);
+
+        try {
+            $booking = $this->bookingService->cancelBooking($request->code, $request->reason);
+
+            return back()->with([
+                'success' => 'Booking berhasil dibatalkan.',
+                'booking' => $booking,
+            ]);
+        } catch (\Exception $e) {
+            return back()->withErrors([
+                'cancel' => $e->getMessage(),
             ]);
         }
     }

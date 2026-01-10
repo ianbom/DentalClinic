@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 // Schedule reminder notifications to be sent every minute
 Schedule::command('notifications:send-reminders')->everyMinute();
+
+// Mark expired bookings as no_show every day at 23:00
+// Schedule::command('bookings:mark-no-show')->dailyAt('23:00');

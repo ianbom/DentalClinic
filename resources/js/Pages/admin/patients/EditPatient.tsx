@@ -282,17 +282,43 @@ export default function EditPatient({ patient, provinces }: Props) {
                                         htmlFor="medical_records"
                                         className={labelClass}
                                     >
-                                        No. Rekam Medis
+                                        No. Rekam Medis (6 digit)
                                     </label>
                                     <input
                                         type="text"
                                         id="medical_records"
                                         name="medical_records"
                                         value={formData.medical_records}
-                                        onChange={handleChange}
+                                        onChange={(e) => {
+                                            // Only allow digits, max 6
+                                            const value = e.target.value
+                                                .replace(/\D/g, '')
+                                                .slice(0, 6);
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                medical_records: value,
+                                            }));
+                                        }}
+                                        onBlur={() => {
+                                            // Pad with zeros on blur to make 6 digits
+                                            if (formData.medical_records) {
+                                                setFormData((prev) => ({
+                                                    ...prev,
+                                                    medical_records:
+                                                        prev.medical_records.padStart(
+                                                            6,
+                                                            '0',
+                                                        ),
+                                                }));
+                                            }
+                                        }}
                                         className={inputClass}
-                                        placeholder="Contoh: RM-001"
+                                        placeholder="000001"
+                                        maxLength={6}
                                     />
+                                    <p className="mt-1 text-xs text-slate-500">
+                                        Contoh: 000001, 000123
+                                    </p>
                                 </div>
 
                                 {/* NIK */}
@@ -579,11 +605,10 @@ export default function EditPatient({ patient, provinces }: Props) {
                             <button
                                 type="submit"
                                 disabled={!isFormValid || isSubmitting}
-                                className={`flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-bold transition-all ${
-                                    isFormValid && !isSubmitting
+                                className={`flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-bold transition-all ${isFormValid && !isSubmitting
                                         ? 'bg-primary text-white hover:bg-primary-dark'
                                         : 'cursor-not-allowed bg-gray-300 text-gray-500'
-                                }`}
+                                    }`}
                             >
                                 <span className="material-symbols-outlined text-lg">
                                     save

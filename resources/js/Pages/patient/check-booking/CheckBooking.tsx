@@ -1,5 +1,4 @@
 'use client';
-
 import { BookingResultCard } from '@/Components/check-booking/BookingResultCard';
 import { BookingSearchForm } from '@/Components/check-booking/BookingSearchForm';
 import PatientLayout from '@/Layouts/PatientLayout';

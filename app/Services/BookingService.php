@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Booking;
+use App\Models\BookingCancellation;
 use App\Models\Patient;
 use App\Models\Doctor;
 use App\Models\DoctorTimeOff;
@@ -606,25 +607,21 @@ class BookingService
             throw new \Exception('Booking ini sudah dibatalkan.');
         }
 
-        // Check if booking date is today
-        $bookingDate = Carbon::parse($booking->booking_date)->startOfDay();
-        $today = Carbon::today();
+        // Check if booking date allows checkin (H-24 hours)
+        $bookingDate = Carbon::parse($booking->booking_date);
+        $dateString = $bookingDate->format('Y-m-d');
+        $bookingDateTime = Carbon::parse($dateString . ' ' . $booking->start_time);
+        $now = Carbon::now();
         
-        if (!$bookingDate->isSameDay($today)) {
-            throw new \Exception('Check-in hanya bisa dilakukan pada hari H booking.');
-        }
-
         // Time restrictions only for patient self-checkin, not admin
         if (!$isAdminCheckin) {
-            // Check if within 1 hour before booking time
-            $dateString = $bookingDate->format('Y-m-d');
-            $bookingDateTime = Carbon::parse($dateString . ' ' . $booking->start_time);
-            $now = Carbon::now();
-            $oneHourBefore = $bookingDateTime->copy()->subHour();
+            // Check if within 24 hours before booking time
+            $twentyFourHoursBefore = $bookingDateTime->copy()->subHours(24);
 
-            if ($now->lt($oneHourBefore)) {
-                $formattedTime = $oneHourBefore->format('H:i');
-                throw new \Exception("Check-in baru bisa dilakukan mulai pukul {$formattedTime} WIB (1 jam sebelum jadwal).");
+            if ($now->lt($twentyFourHoursBefore)) {
+                $formattedDate = $twentyFourHoursBefore->translatedFormat('j M');
+                $formattedTime = $twentyFourHoursBefore->format('H:i');
+                throw new \Exception("Konfirmasi baru bisa dilakukan mulai {$formattedDate} pukul {$formattedTime} WIB.");
             }
 
             if ($now->gt($bookingDateTime)) {
@@ -664,22 +661,17 @@ class BookingService
      */
     public function canCheckin(Booking $booking): array
     {
-        $bookingDate = Carbon::parse($booking->booking_date)->startOfDay();
-        $today = Carbon::today();
+        $bookingDate = Carbon::parse($booking->booking_date);
+        $dateString = $bookingDate->format('Y-m-d');
+        $bookingDateTime = Carbon::parse($dateString . ' ' . $booking->start_time);
+        $now = Carbon::now();
+        $twentyFourHoursBefore = $bookingDateTime->copy()->subHours(24);
         
-        // Not today
-        if (!$bookingDate->isSameDay($today)) {
-            return [
-                'can_checkin' => false,
-                'reason' => 'Check-in hanya bisa dilakukan pada hari H booking.',
-            ];
-        }
-
         // Already checked in
         if ($booking->status === 'checked_in') {
             return [
                 'can_checkin' => false,
-                'reason' => 'Anda sudah melakukan check-in.',
+                'reason' => 'Anda sudah melakukan konfirmasi kedatangan.',
             ];
         }
 
@@ -691,17 +683,12 @@ class BookingService
             ];
         }
 
-        // Check time window
-        $dateString = $bookingDate->format('Y-m-d');
-        $bookingDateTime = Carbon::parse($dateString . ' ' . $booking->start_time);
-        $now = Carbon::now();
-        $oneHourBefore = $bookingDateTime->copy()->subHour();
-
-        if ($now->lt($oneHourBefore)) {
+        // Check 24 hour window
+        if ($now->lt($twentyFourHoursBefore)) {
             return [
                 'can_checkin' => false,
-                'reason' => 'Check-in baru bisa dilakukan 1 jam sebelum jadwal.',
-                'available_at' => $oneHourBefore->format('H:i'),
+                'reason' => 'Konfirmasi baru bisa dilakukan H-24 jam sebelum jadwal.',
+                'available_at' => $twentyFourHoursBefore->translatedFormat('j M') . ' pukul ' . $twentyFourHoursBefore->format('H:i'),
             ];
         }
 
@@ -723,6 +710,77 @@ class BookingService
             $query->where('patient_nik', $nik);
         })->where('status', 'confirmed')->first();
         return $booking;
+    }
+
+    /**
+     * Cancel a booking by code
+     * The slot will automatically become available for other bookings
+     */
+    public function cancelBooking(string $code, ?string $reason = null, ?int $cancelledByUserId = null): Booking
+    {
+        $booking = Booking::with(['patient', 'doctor'])
+            ->where('code', $code)
+            ->first();
+
+        if (!$booking) {
+            throw new \Exception('Booking tidak ditemukan.');
+        }
+
+        // Check if already cancelled
+        if ($booking->status === 'cancelled') {
+            throw new \Exception('Booking ini sudah dibatalkan sebelumnya.');
+        }
+
+        // Check if already checked in
+        // if ($booking->status === 'checked_in') {
+        //     throw new \Exception('Booking yang sudah check-in tidak bisa dibatalkan.');
+        // }
+
+        // Check if booking is in the past
+        $bookingDate = Carbon::parse($booking->booking_date);
+        $bookingDateTime = Carbon::parse($bookingDate->format('Y-m-d') . ' ' . $booking->start_time);
+        
+        if (Carbon::now()->gt($bookingDateTime)) {
+            throw new \Exception('Booking yang sudah lewat tidak bisa dibatalkan.');
+        }
+
+        // Update booking status to cancelled
+        $booking->update([
+            'status' => 'cancelled',
+            'is_active' => false
+        ]);
+
+        // Create cancellation record
+        BookingCancellation::create([
+            'booking_id' => $booking->id,
+            'cancelled_at' => Carbon::now(),
+            'cancelled_by_user_id' => $cancelledByUserId,
+            'cancelled_by' => $cancelledByUserId ? 'admin' : 'patient',
+            'reason' => $reason,
+        ]);
+
+        // Delete any pending reminder notifications
+        Notification::where('booking_id', $booking->id)
+            ->where('status', 'pending')
+            ->delete();
+
+        // Send cancellation notification via WhatsApp
+        try {
+            $whatsappService = new WhatsappService();
+            $bookingDetails = [
+                'patient_name' => $booking->patient->patient_name,
+                'doctor_name' => $booking->doctor->name,
+                'date' => $this->formatDateIndonesian(Carbon::parse($booking->booking_date)),
+                'time' => substr($booking->start_time ?? '00:00', 0, 5),
+                'code' => $booking->code,
+            ];
+            $whatsappService->sendCancellation($booking->id, $booking->patient->patient_phone, $bookingDetails);
+        } catch (\Throwable $e) {
+            // Log but don't fail if WhatsApp notification fails
+            \Illuminate\Support\Facades\Log::error('Failed to send cancellation notification: ' . $e->getMessage());
+        }
+
+        return $booking->fresh(['patient', 'doctor', 'cancellation']);
     }
 }
 

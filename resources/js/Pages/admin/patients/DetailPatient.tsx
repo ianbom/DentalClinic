@@ -188,24 +188,6 @@ export default function DetailPatient({
                     </div>
                     <div className="p-6">
                         <div className="flex flex-col gap-8 md:flex-row">
-                            {/* Avatar Section */}
-                            <div className="flex min-w-[140px] flex-col items-center gap-4">
-                                <div
-                                    className="h-28 w-28 rounded-full border-4 border-[#e7f0f4] bg-cover bg-center"
-                                    style={{
-                                        backgroundImage:
-                                            'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCkBERmg9PvhrApMxq6Cc_Gb7s43whY6-CBsEMqhi_MWwm_jcebz_nQ6xsQzTAmGFxp1tWfzqzIomJcKeDLDy_Sp631oxGsUoP5w-Ds8dWHh_As6xxP4akxNQUAcEIyzJ_O38xxhDnehaiB7srY97W9bkYjmEVlLSiMQeaESfIwY15rp6BXlELCLPVpxfnlQa09HQfF7TYkc6hiAV94fu3bFwZgBOMBGcbgrcsoDN8JHtXCB487-YFeMrZLNUBuq3omEsQ4tg7MK21m")',
-                                    }}
-                                ></div>
-                                <div className="text-center">
-                                    <p className="mb-1 text-xs font-medium uppercase tracking-wider text-primary">
-                                        Total Visits
-                                    </p>
-                                    <p className="text-2xl font-bold text-[#0d171c]">
-                                        {total_visits}
-                                    </p>
-                                </div>
-                            </div>
                             {/* Details Grid */}
                             <div className="grid flex-1 grid-cols-1 gap-x-10 gap-y-5 md:grid-cols-2">
                                 <div className="flex flex-col gap-1">
@@ -218,10 +200,10 @@ export default function DetailPatient({
                                 </div>
                                 <div className="flex flex-col gap-1">
                                     <p className="text-xs font-medium uppercase tracking-wide text-primary">
-                                        Email
+                                        Total Visits
                                     </p>
                                     <p className="text-base font-medium text-[#0d171c]">
-                                        {patient.patient_email || '-'}
+                                        {total_visits || '-'}
                                     </p>
                                 </div>
                                 <div className="flex flex-col gap-1">

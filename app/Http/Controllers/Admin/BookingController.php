@@ -13,6 +13,7 @@ use App\Models\Province;
 use App\Services\Admin\BookingService;
 use App\Services\BookingService as PatientBookingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class BookingController extends Controller
@@ -225,8 +226,8 @@ class BookingController extends Controller
             $booking = $this->patientBookingService->checkinBooking($request->code, true);
 
             return redirect()
-                ->route('admin.checkin')
-                ->with('success', 'Check-in berhasil! Pasien ' . $booking->patient->patient_name . ' sudah terdaftar.');
+                ->back()
+                ->with('success', 'Check-in berhasil! Pasien ' . $booking->patient->patient_name . ' sudah konfirmasi kehadiran.');
         } catch (\Throwable $th) {
             return redirect()
                 ->back()
@@ -341,6 +342,23 @@ class BookingController extends Controller
             return redirect()
                 ->back()
                 ->with('error', 'Gagal memperbarui booking: ' . $th->getMessage());
+        }
+    }
+
+    public function cancelBooking(Request $request, int $bookingId)
+    {
+        try {
+            $booking = Booking::findOrFail($bookingId);
+            $userId = Auth::id();
+            $this->patientBookingService->cancelBooking($booking->code, $request->reason, $userId);
+
+            return redirect()
+                ->back()
+                ->with('success', 'Booking berhasil dibatalkan.');
+        } catch (\Throwable $th) {
+            return redirect()
+                ->back()
+                ->with('error', 'Gagal membatalkan booking: ' . $th->getMessage());
         }
     }
 }
