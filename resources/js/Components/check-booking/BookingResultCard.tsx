@@ -13,6 +13,8 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
     const cardRef = useRef<HTMLDivElement>(null);
     const [isDownloading, setIsDownloading] = useState(false);
     const [isCheckingIn, setIsCheckingIn] = useState(false);
+    const [isCancelling, setIsCancelling] = useState(false);
+    const [showCancelConfirm, setShowCancelConfirm] = useState(false);
     const { errors, flash } = usePage().props as {
         errors?: Record<string, string>;
         flash?: { success?: string };
@@ -60,48 +62,49 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
         });
     };
 
-    // Check if can check-in (booking is today and within 1 hour before)
+    // Check if can check-in (H-24 hours before booking)
     const canCheckin = (): { allowed: boolean; reason: string } => {
         if (booking.status === 'checked_in') {
-            return { allowed: false, reason: 'Anda sudah melakukan check-in.' };
+            return {
+                allowed: false,
+                reason: 'Anda sudah melakukan konfirmasi kedatangan.',
+            };
         }
         if (booking.status === 'cancelled') {
             return { allowed: false, reason: 'Booking ini sudah dibatalkan.' };
         }
 
-        const today = new Date();
         const bookingDate = new Date(booking.booking_date);
-
-        // Check if same day
-        if (
-            today.getFullYear() !== bookingDate.getFullYear() ||
-            today.getMonth() !== bookingDate.getMonth() ||
-            today.getDate() !== bookingDate.getDate()
-        ) {
-            return {
-                allowed: false,
-                reason: 'Check-in hanya bisa dilakukan pada hari H booking.',
-            };
-        }
 
         // Parse booking time
         const [hours, minutes] = booking.start_time.split(':').map(Number);
         const bookingDateTime = new Date(bookingDate);
         bookingDateTime.setHours(hours, minutes, 0, 0);
 
-        const oneHourBefore = new Date(
-            bookingDateTime.getTime() - 60 * 60 * 1000,
+        // Calculate 24 hours before booking
+        const twentyFourHoursBefore = new Date(
+            bookingDateTime.getTime() - 24 * 60 * 60 * 1000,
         );
         const now = new Date();
 
-        if (now < oneHourBefore) {
-            const availableTime = oneHourBefore.toLocaleTimeString('id-ID', {
-                hour: '2-digit',
-                minute: '2-digit',
-            });
+        if (now < twentyFourHoursBefore) {
+            const availableDate = twentyFourHoursBefore.toLocaleDateString(
+                'id-ID',
+                {
+                    day: 'numeric',
+                    month: 'short',
+                },
+            );
+            const availableTime = twentyFourHoursBefore.toLocaleTimeString(
+                'id-ID',
+                {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                },
+            );
             return {
                 allowed: false,
-                reason: `Check-in baru bisa dilakukan mulai pukul ${availableTime} WIB.`,
+                reason: `Konfirmasi baru bisa dilakukan mulai ${availableDate} pukul ${availableTime} WIB.`,
             };
         }
 
@@ -289,11 +292,11 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
                     <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                         <div>
                             <h3 className="text-sm font-bold text-gray-700">
-                                Check-in Online
+                                Konfirmasi Kedatangan
                             </h3>
                             {checkinStatus.allowed ? (
                                 <p className="mt-1 text-sm text-green-600">
-                                    ✓ Anda bisa melakukan check-in sekarang
+                                    ✓ Anda bisa melakukan konfirmasi sekarang
                                 </p>
                             ) : (
                                 <p className="mt-1 text-sm text-gray-500">
@@ -317,7 +320,7 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
                             </span>
                             {isCheckingIn
                                 ? 'Memproses...'
-                                : 'Check-in Sekarang'}
+                                : 'Konfirmasi Kedatangan'}
                         </button>
                     </div>
                 </div>
@@ -499,19 +502,73 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
 
             {/* Actions Footer */}
             <div className="actions-footer flex flex-col items-center justify-end gap-3 border-t border-gray-200 bg-white px-6 py-4 sm:flex-row">
-                <button className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 sm:w-auto">
-                    <span className="material-symbols-outlined text-[18px]">
-                        cancel
-                    </span>
-                    Batalkan Booking
-                </button>
+                {/* Cancel error message */}
+                {errors?.cancel && (
+                    <div className="mb-2 w-full text-sm text-red-600">
+                        {errors.cancel}
+                    </div>
+                )}
+
+                {/* Cancel Confirmation Dialog */}
+                {showCancelConfirm && booking.status !== 'cancelled' && (
+                    <div className="mb-3 w-full rounded-lg border border-red-200 bg-red-50 p-4">
+                        <p className="mb-3 text-sm font-medium text-red-800">
+                            Apakah Anda yakin ingin membatalkan booking ini?
+                            Tindakan ini tidak dapat dibatalkan.
+                        </p>
+                        <div className="flex justify-end gap-2">
+                            <button
+                                onClick={() => setShowCancelConfirm(false)}
+                                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+                            >
+                                Tidak
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setIsCancelling(true);
+                                    router.post(
+                                        '/booking/cancel',
+                                        { code: booking.code },
+                                        {
+                                            preserveScroll: true,
+                                            onFinish: () => {
+                                                setIsCancelling(false);
+                                                setShowCancelConfirm(false);
+                                            },
+                                        },
+                                    );
+                                }}
+                                disabled={isCancelling}
+                                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50"
+                            >
+                                {isCancelling
+                                    ? 'Membatalkan...'
+                                    : 'Ya, Batalkan'}
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {booking.status !== 'cancelled' &&
+                    booking.status !== 'checked_in' && (
+                        <button
+                            onClick={() => setShowCancelConfirm(true)}
+                            disabled={isCancelling}
+                            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50 sm:w-auto"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">
+                                cancel
+                            </span>
+                            Batalkan Booking
+                        </button>
+                    )}
                 <button className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm transition-colors hover:bg-gray-200 sm:w-auto">
                     <span className="material-symbols-outlined text-[18px]">
                         chat
                     </span>
                     Hubungi Admin
                 </button>
-                <button
+                {/* <button
                     onClick={handleDownload}
                     disabled={isDownloading}
                     className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#0da2e7] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#0b8fd0] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
@@ -520,7 +577,7 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
                         {isDownloading ? 'hourglass_empty' : 'download'}
                     </span>
                     {isDownloading ? 'Mengunduh...' : 'Unduh Bukti'}
-                </button>
+                </button> */}
             </div>
         </div>
     );

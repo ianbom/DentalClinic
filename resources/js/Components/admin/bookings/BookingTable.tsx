@@ -161,7 +161,7 @@ function BookingTableHeader({
     onSort?: (field: SortField) => void;
 }) {
     return (
-        <thead className="bg-slate-50">
+        <thead className="sticky top-0 z-10 bg-slate-50">
             <tr>
                 <th className="w-10 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500">
                     No

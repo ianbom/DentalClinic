@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Models\Doctor;
+use App\Models\DoctorWorkingPeriod;
 use Carbon\Carbon;
 
 class DoctorService
@@ -290,13 +291,13 @@ class DoctorService
 
         return $doctor;
     }
-
-    /**
-     * Sync working periods for a doctor
-     * This will create, update, or delete periods based on the input
-     */
     public function syncWorkingPeriods(int $doctorId, array $periods): void
     {
+        // If no periods provided, don't delete existing ones
+        if (empty($periods)) {
+            return;
+        }
+        
         $doctor = Doctor::findOrFail($doctorId);
         
         // Map numbers to day names
@@ -323,7 +324,7 @@ class DoctorService
             
             if (!empty($periodData['id'])) {
                 // Update existing period
-                $period = \App\Models\DoctorWorkingPeriod::find($periodData['id']);
+                $period = DoctorWorkingPeriod::find($periodData['id']);
                 if ($period && $period->doctor_id === $doctorId) {
                     $period->update([
                         'day_of_week' => $dayValue,
@@ -348,7 +349,7 @@ class DoctorService
         // Delete periods that were not submitted
         $idsToDelete = array_diff($existingIds, $submittedIds);
         if (!empty($idsToDelete)) {
-            \App\Models\DoctorWorkingPeriod::whereIn('id', $idsToDelete)->delete();
+            DoctorWorkingPeriod::whereIn('id', $idsToDelete)->delete();
         }
     }
 }

@@ -19,9 +19,6 @@ export function BookingScheduleCard({
                 <h3 className="text-lg font-bold text-slate-900">
                     Detail Jadwal
                 </h3>
-                <button className="text-sm font-medium text-primary hover:underline">
-                    Ubah Jadwal
-                </button>
             </div>
             <div className="p-6">
                 <div className="flex flex-col gap-6 sm:flex-row">

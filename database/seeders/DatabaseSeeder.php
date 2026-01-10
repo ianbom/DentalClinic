@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             VillageSeeder::class,
             DoctorSeeder::class,
             DoctorWorkingPeriodSeeder::class,
+            AdminSeeder::class
         ]);
     }
 }

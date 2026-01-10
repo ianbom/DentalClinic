@@ -4,6 +4,34 @@ interface BookingTimelineProps {
     booking: BookingDetail;
 }
 
+// Format ISO datetime to readable format
+const formatDateTime = (dateString: string): string => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return (
+        date.toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        }) + ' WIB'
+    );
+};
+
+// Get cancellation description
+const getCancellationDescription = (cancellation: {
+    cancelled_by?: string;
+    reason?: string | null;
+}): string => {
+    const cancelledBy =
+        cancellation.cancelled_by === 'admin' ? 'Admin' : 'Pasien';
+    if (cancellation.reason) {
+        return `Oleh ${cancelledBy}: ${cancellation.reason}`;
+    }
+    return `Oleh ${cancelledBy}`;
+};
+
 export function BookingTimeline({ booking }: BookingTimelineProps) {
     const isConfirmed = booking.status === 'confirmed';
     const isCheckedIn = booking.status === 'checked_in';
@@ -39,14 +67,18 @@ export function BookingTimeline({ booking }: BookingTimelineProps) {
                         }
                         time={
                             isCancelled && booking.cancellation
-                                ? booking.cancellation.cancelled_at
+                                ? formatDateTime(
+                                      booking.cancellation.cancelled_at,
+                                  )
                                 : isConfirmed || isCheckedIn
                                   ? 'Terkonfirmasi'
                                   : undefined
                         }
                         description={
                             isCancelled && booking.cancellation
-                                ? `Oleh ${booking.cancellation.cancelled_by}: ${booking.cancellation.reason}`
+                                ? getCancellationDescription(
+                                      booking.cancellation,
+                                  )
                                 : undefined
                         }
                         status={

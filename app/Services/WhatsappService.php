@@ -300,14 +300,22 @@ class WhatsappService
     private function buildCancellationMessage(array $details): string
     {
         $patientName = $details['patient_name'] ?? '-';
+        $doctorName = $details['doctor_name'] ?? '-';
+        $date = $details['date'] ?? '-';
+        $time = $details['time'] ?? '-';
         $code = $details['code'] ?? '-';
-        $reason = $details['reason'] ?? 'Tidak ada alasan yang diberikan';
 
         return "❌ *BOOKING DIBATALKAN*\n\n"
-            . "Halo {$patientName},\n\n"
-            . "Booking dengan kode *{$code}* telah dibatalkan.\n"
-            . "Alasan: {$reason}\n\n"
-            . "Silakan buat booking baru jika diperlukan.\n\n"
-            . "Terima kasih! 🙏";
+            . "Yth. Bapak/Ibu {$patientName},\n\n"
+            . "Booking pemeriksaan gigi Anda telah dibatalkan dengan rincian sebagai berikut:\n\n"
+            . "📋 Kode Booking : *{$code}*\n"
+            . "🗓 Tanggal : {$date}\n"
+            . "⏰ Jam : {$time} WIB\n"
+            . "👩‍⚕️ Dokter : {$doctorName}\n\n"
+            . "📍 Lokasi : Cantika Dental Care\n"
+            . "📞 Kontak : 0822-3432-8628\n\n"
+            . "Jika Anda ingin membuat jadwal baru, silakan kunjungi website kami atau hubungi kontak di atas.\n\n"
+            . "_Pesan ini dikirim otomatis oleh Cantika Dental Care by drg. Anna Fikril._\n\n"
+            . "Terima kasih atas pengertiannya 🙏";
     }
 }

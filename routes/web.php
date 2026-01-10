@@ -73,6 +73,7 @@ Route::get('/booking/success/{code}', [PatientBookingController::class, 'booking
 Route::get('/check-booking', [PatientBookingController::class, 'checkBookingPage'])->name('check-booking');
 
 Route::post('/booking/checkin', [PatientBookingController::class, 'checkinBooking'])->name('booking.checkin');
+Route::post('/booking/cancel', [PatientBookingController::class, 'cancelBooking'])->name('booking.cancel');
 
 /*
 |--------------------------------------------------------------------------
@@ -93,6 +94,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::post('/bookings/{bookingId}/payment', [AdminBookingController::class, 'storePayment'])->name('bookings.payment');
     Route::get('/bookings/{bookingId}/edit', [AdminBookingController::class, 'editBooking'])->name('bookings.edit');
     Route::put('/bookings/{bookingId}/edit', [AdminBookingController::class, 'updateBookingFull'])->name('bookings.updateFull');
+    Route::post('/bookings/{bookingId}/cancel', [AdminBookingController::class, 'cancelBooking'])->name('bookings.cancel');
 
     // Patients
     Route::get('/patients', [AdminPatientController::class, 'listPatients'])->name('patients.list');

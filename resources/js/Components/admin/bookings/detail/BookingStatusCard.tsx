@@ -17,6 +17,8 @@ export function BookingStatusCard({
     rawStatus,
 }: BookingStatusCardProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showCheckinConfirm, setShowCheckinConfirm] = useState(false);
+    const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
     // Only show check-in and cancel for 'confirmed' status
     const canCheckinOrCancel = rawStatus === 'confirmed';
@@ -40,23 +42,26 @@ export function BookingStatusCard({
             '/admin/checkin/perform',
             { code: code.replace('#', '') },
             {
-                onFinish: () => setIsSubmitting(false),
+                onFinish: () => {
+                    setIsSubmitting(false);
+                    setShowCheckinConfirm(false);
+                },
             },
         );
     };
 
     const handleCancel = () => {
         if (isSubmitting) return;
-        if (!confirm('Apakah Anda yakin ingin membatalkan booking ini?'))
-            return;
-
         setIsSubmitting(true);
 
         router.post(
             `/admin/bookings/${bookingId}/cancel`,
             {},
             {
-                onFinish: () => setIsSubmitting(false),
+                onFinish: () => {
+                    setIsSubmitting(false);
+                    setShowCancelConfirm(false);
+                },
             },
         );
     };
@@ -98,7 +103,110 @@ export function BookingStatusCard({
                     </p>
                 </div>
             </div>
-            <div className="flex flex-wrap gap-3 border-t border-slate-100 pt-4">
+
+            {/* Checkin Confirmation Dialog */}
+            {showCheckinConfirm && (
+                <div className="mb-4 rounded-lg border border-green-200 bg-green-50 p-4">
+                    <p className="mb-3 text-sm font-medium text-green-800">
+                        Apakah Anda yakin ingin melakukan check-in untuk booking
+                        ini?
+                    </p>
+                    <div className="flex justify-end gap-2">
+                        <button
+                            onClick={() => setShowCheckinConfirm(false)}
+                            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+                        >
+                            Batal
+                        </button>
+                        <button
+                            onClick={handleCheckin}
+                            disabled={isSubmitting}
+                            className="rounded-lg bg-green-600 px-4 py-2 text-sm font-bold text-white hover:bg-green-700 disabled:opacity-50"
+                        >
+                            {isSubmitting ? 'Memproses...' : 'Ya, Check-in'}
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Cancel Confirmation Dialog */}
+            {showCancelConfirm && (
+                <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4">
+                    <p className="mb-3 text-sm font-medium text-red-800">
+                        Apakah Anda yakin ingin membatalkan booking ini?
+                        Tindakan ini tidak dapat dibatalkan.
+                    </p>
+                    <div className="flex justify-end gap-2">
+                        <button
+                            onClick={() => setShowCancelConfirm(false)}
+                            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+                        >
+                            Tidak
+                        </button>
+                        <button
+                            onClick={handleCancel}
+                            disabled={isSubmitting}
+                            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50"
+                        >
+                            {isSubmitting ? 'Membatalkan...' : 'Ya, Batalkan'}
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            <div className="flex flex-wrap items-center gap-3 border-t border-slate-100 pt-4">
+                {/* Left side buttons */}
+                <div className="flex flex-wrap gap-3">
+                    {canCheckinOrCancel && (
+                        <>
+                            <button
+                                onClick={() => setShowCheckinConfirm(true)}
+                                disabled={
+                                    isSubmitting ||
+                                    showCheckinConfirm ||
+                                    showCancelConfirm
+                                }
+                                className="inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                                <span className="material-symbols-outlined text-[20px]">
+                                    how_to_reg
+                                </span>
+                                Check-in
+                            </button>
+                            <button
+                                onClick={() => setShowCancelConfirm(true)}
+                                disabled={
+                                    isSubmitting ||
+                                    showCheckinConfirm ||
+                                    showCancelConfirm
+                                }
+                                className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-5 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                                <span className="material-symbols-outlined text-[20px]">
+                                    cancel
+                                </span>
+                                Batalkan
+                            </button>
+                        </>
+                    )}
+                    {canReschedule && (
+                        <Link
+                            href={`/admin/bookings/${bookingId}/reschedule`}
+                            onClick={handleRescheduleClick}
+                            className="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-600"
+                        >
+                            <span className="material-symbols-outlined text-[20px]">
+                                event_repeat
+                            </span>
+                            Reschedule
+                        </Link>
+                    )}
+                </div>
+
+                {/* Spacer */}
+                <div className="flex-1" />
+
+                {/* Edit button on the right */}
                 <Link
                     href={`/admin/bookings/${bookingId}/edit`}
                     className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-600"
@@ -108,44 +216,6 @@ export function BookingStatusCard({
                     </span>
                     Edit
                 </Link>
-
-                {canCheckinOrCancel && (
-                    <>
-                        <button
-                            onClick={handleCheckin}
-                            disabled={isSubmitting}
-                            className="inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                            <span className="material-symbols-outlined text-[20px]">
-                                how_to_reg
-                            </span>
-                            {isSubmitting ? 'Processing...' : 'Check-in'}
-                        </button>
-                        <button
-                            onClick={handleCancel}
-                            disabled={isSubmitting}
-                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-5 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                            <span className="material-symbols-outlined text-[20px]">
-                                cancel
-                            </span>
-                            Batalkan
-                        </button>
-                    </>
-                )}
-                {canReschedule && (
-                    <Link
-                        href={`/admin/bookings/${bookingId}/reschedule`}
-                        onClick={handleRescheduleClick}
-                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-600"
-                    >
-                        <span className="material-symbols-outlined text-[20px]">
-                            event_repeat
-                        </span>
-                        Reschedule Booking
-                    </Link>
-                )}
-                {!canCheckinOrCancel && !canReschedule && <></>}
             </div>
         </div>
     );

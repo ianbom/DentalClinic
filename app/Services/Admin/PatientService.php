@@ -117,6 +117,7 @@ class PatientService
         $patient = Patient::findOrFail($patientId);
         
         $patient->update([
+            'medical_records' => $data['medical_records'] ?? $patient->medical_records,
             'patient_nik' => $data['patient_nik'] ?? null,
             'patient_name' => $data['patient_name'],
             'patient_phone' => $data['patient_phone'],
