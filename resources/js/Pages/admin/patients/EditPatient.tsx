@@ -605,10 +605,11 @@ export default function EditPatient({ patient, provinces }: Props) {
                             <button
                                 type="submit"
                                 disabled={!isFormValid || isSubmitting}
-                                className={`flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-bold transition-all ${isFormValid && !isSubmitting
+                                className={`flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-bold transition-all ${
+                                    isFormValid && !isSubmitting
                                         ? 'bg-primary text-white hover:bg-primary-dark'
                                         : 'cursor-not-allowed bg-gray-300 text-gray-500'
-                                    }`}
+                                }`}
                             >
                                 <span className="material-symbols-outlined text-lg">
                                     save

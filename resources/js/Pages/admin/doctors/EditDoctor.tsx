@@ -10,6 +10,14 @@ interface WorkingPeriod {
     is_active: boolean;
 }
 
+interface Overtime {
+    id?: number;
+    date: string;
+    date_formatted?: string;
+    start_time: string;
+    end_time: string;
+}
+
 interface DoctorData {
     id: number;
     name: string;
@@ -22,6 +30,7 @@ interface DoctorData {
 interface Props {
     doctor: DoctorData;
     workingPeriods: WorkingPeriod[];
+    overtimes: Overtime[];
 }
 
 const DAY_NAMES = [
@@ -37,6 +46,7 @@ const DAY_NAMES = [
 export default function EditDoctor({
     doctor,
     workingPeriods: initialPeriods,
+    overtimes: initialOvertimes,
 }: Props) {
     const [formData, setFormData] = useState({
         name: doctor.name || '',
@@ -46,13 +56,22 @@ export default function EditDoctor({
     });
 
     const [periods, setPeriods] = useState<WorkingPeriod[]>(initialPeriods);
+    const [overtimes, setOvertimes] = useState<Overtime[]>(
+        initialOvertimes || [],
+    );
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showAddPeriod, setShowAddPeriod] = useState(false);
+    const [showAddOvertime, setShowAddOvertime] = useState(false);
     const [newPeriod, setNewPeriod] = useState<Omit<WorkingPeriod, 'id'>>({
         day_of_week: 1,
         start_time: '08:00',
         end_time: '12:00',
         is_active: true,
+    });
+    const [newOvertime, setNewOvertime] = useState<Omit<Overtime, 'id'>>({
+        date: '',
+        start_time: '08:00',
+        end_time: '12:00',
     });
 
     const handleChange = (
@@ -97,11 +116,29 @@ export default function EditDoctor({
         setPeriods((prev) => prev.filter((_, i) => i !== index));
     };
 
+    // Overtime handlers - now managed locally, saved with form submit
+    const handleAddOvertime = () => {
+        if (!newOvertime.date) {
+            alert('Tanggal harus diisi');
+            return;
+        }
+        setOvertimes((prev) => [...prev, { ...newOvertime }]);
+        setNewOvertime({
+            date: '',
+            start_time: '08:00',
+            end_time: '12:00',
+        });
+        setShowAddOvertime(false);
+    };
+
+    const handleRemoveOvertime = (index: number) => {
+        setOvertimes((prev) => prev.filter((_, i) => i !== index));
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
 
-        // Convert periods to plain objects for form submission
         const periodsData = periods.map((p) => ({
             id: p.id ?? null,
             day_of_week: p.day_of_week,
@@ -110,11 +147,19 @@ export default function EditDoctor({
             is_active: p.is_active,
         }));
 
+        const overtimesData = overtimes.map((o) => ({
+            id: o.id ?? null,
+            date: o.date,
+            start_time: o.start_time,
+            end_time: o.end_time,
+        }));
+
         router.put(
             `/admin/doctors/${doctor.id}/update`,
             {
                 ...formData,
                 working_periods: periodsData,
+                overtimes: overtimesData,
             },
             {
                 onFinish: () => setIsSubmitting(false),
@@ -276,7 +321,7 @@ export default function EditDoctor({
                                     <span className="flex size-6 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                                         2
                                     </span>
-                                    Jadwal Kerja
+                                    Jadwal Kerja Reguler
                                 </h3>
                                 <button
                                     type="button"
@@ -503,6 +548,169 @@ export default function EditDoctor({
                                             </div>
                                         );
                                     })}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Overtime Section */}
+                    <div className="rounded-xl border border-slate-100 bg-white p-6 shadow-sm">
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <h3 className="flex items-center gap-2 text-base font-bold text-slate-800">
+                                    <span className="flex size-6 items-center justify-center rounded-full bg-amber-100 text-xs font-bold text-amber-600">
+                                        3
+                                    </span>
+                                    Jadwal Overtime
+                                </h3>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowAddOvertime(true)}
+                                    className="flex items-center gap-1 rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-amber-600"
+                                >
+                                    <span className="material-symbols-outlined text-lg">
+                                        add
+                                    </span>
+                                    Tambah Overtime
+                                </button>
+                            </div>
+
+                            <p className="text-sm text-slate-500">
+                                Jadwal tambahan di luar jam kerja reguler untuk
+                                tanggal tertentu.
+                            </p>
+
+                            {/* Add Overtime Form */}
+                            {showAddOvertime && (
+                                <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                                    <h4 className="mb-3 text-sm font-semibold text-slate-700">
+                                        Tambah Jadwal Overtime
+                                    </h4>
+                                    <div className="grid gap-3 sm:grid-cols-4">
+                                        <div>
+                                            <label className="mb-1 block text-xs font-medium text-slate-600">
+                                                Tanggal *
+                                            </label>
+                                            <input
+                                                type="date"
+                                                value={newOvertime.date}
+                                                onChange={(e) =>
+                                                    setNewOvertime({
+                                                        ...newOvertime,
+                                                        date: e.target.value,
+                                                    })
+                                                }
+                                                min={
+                                                    new Date()
+                                                        .toISOString()
+                                                        .split('T')[0]
+                                                }
+                                                className={inputClass}
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="mb-1 block text-xs font-medium text-slate-600">
+                                                Jam Mulai
+                                            </label>
+                                            <input
+                                                type="time"
+                                                value={newOvertime.start_time}
+                                                onChange={(e) =>
+                                                    setNewOvertime({
+                                                        ...newOvertime,
+                                                        start_time:
+                                                            e.target.value,
+                                                    })
+                                                }
+                                                className={inputClass}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="mb-1 block text-xs font-medium text-slate-600">
+                                                Jam Selesai
+                                            </label>
+                                            <input
+                                                type="time"
+                                                value={newOvertime.end_time}
+                                                onChange={(e) =>
+                                                    setNewOvertime({
+                                                        ...newOvertime,
+                                                        end_time:
+                                                            e.target.value,
+                                                    })
+                                                }
+                                                className={inputClass}
+                                            />
+                                        </div>
+                                        <div className="flex items-end gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={handleAddOvertime}
+                                                className="flex-1 rounded-lg bg-amber-500 px-3 py-3 text-sm font-medium text-white transition-colors hover:bg-amber-600"
+                                            >
+                                                Tambah
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    setShowAddOvertime(false)
+                                                }
+                                                className="rounded-lg border border-slate-300 px-3 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                                            >
+                                                Batal
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Existing Overtimes */}
+                            {overtimes.length === 0 ? (
+                                <div className="rounded-lg border border-dashed border-slate-300 py-8 text-center">
+                                    <span className="material-symbols-outlined text-4xl text-slate-300">
+                                        schedule
+                                    </span>
+                                    <p className="mt-2 text-sm text-slate-500">
+                                        Belum ada jadwal overtime.
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="space-y-2">
+                                    {overtimes.map((overtime, index) => (
+                                        <div
+                                            key={overtime.id || `new-${index}`}
+                                            className="flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 p-3"
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <span className="material-symbols-outlined text-amber-600">
+                                                    schedule
+                                                </span>
+                                                <div>
+                                                    <p className="font-medium text-slate-800">
+                                                        {overtime.date_formatted ||
+                                                            overtime.date}
+                                                    </p>
+                                                    <p className="text-sm text-slate-600">
+                                                        {overtime.start_time} -{' '}
+                                                        {overtime.end_time} WIB
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleRemoveOvertime(index)
+                                                }
+                                                className="flex size-8 items-center justify-center rounded-lg text-red-500 transition-colors hover:bg-red-50"
+                                                title="Hapus"
+                                            >
+                                                <span className="material-symbols-outlined text-lg">
+                                                    delete
+                                                </span>
+                                            </button>
+                                        </div>
+                                    ))}
                                 </div>
                             )}
                         </div>

@@ -115,3 +115,4 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::put('/doctors/{doctorId}/update', [AdminDoctorController::class, 'update'])->name('doctors.update');
     Route::get('/doctors/{doctorId}', [AdminDoctorController::class, 'show'])->name('doctors.show');
 });
+

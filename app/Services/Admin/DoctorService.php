@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Models\Doctor;
+use App\Models\DoctorOvertime;
 use App\Models\DoctorWorkingPeriod;
 use Carbon\Carbon;
 
@@ -350,6 +351,72 @@ class DoctorService
         $idsToDelete = array_diff($existingIds, $submittedIds);
         if (!empty($idsToDelete)) {
             DoctorWorkingPeriod::whereIn('id', $idsToDelete)->delete();
+        }
+    }
+
+    // ========================================
+    // OVERTIME MANAGEMENT
+    // ========================================
+
+    /**
+     * Get all overtimes for a doctor
+     */
+    public function getOvertimes(int $doctorId): array
+    {
+        $overtimes = DoctorOvertime::where('doctor_id', $doctorId)
+            ->orderBy('date', 'asc')
+            ->orderBy('start_time', 'asc')
+            ->get();
+
+        return $overtimes->map(function ($overtime) {
+            return [
+                'id' => $overtime->id,
+                'date' => $overtime->date->format('Y-m-d'),
+                'date_formatted' => $overtime->date->translatedFormat('l, d M Y'),
+                'start_time' => substr($overtime->start_time, 0, 5),
+                'end_time' => substr($overtime->end_time, 0, 5),
+            ];
+        })->toArray();
+    }
+
+    /**
+     * Sync overtimes for a doctor (create, update, delete)
+     */
+    public function syncOvertimes(int $doctorId, array $overtimes): void
+    {
+        $doctor = Doctor::findOrFail($doctorId);
+        
+        // Get existing overtime IDs
+        $existingIds = $doctor->overtimes()->pluck('id')->toArray();
+        $submittedIds = [];
+
+        foreach ($overtimes as $overtimeData) {
+            if (!empty($overtimeData['id'])) {
+                // Update existing overtime
+                $overtime = DoctorOvertime::find($overtimeData['id']);
+                if ($overtime && $overtime->doctor_id === $doctorId) {
+                    $overtime->update([
+                        'date' => $overtimeData['date'],
+                        'start_time' => $overtimeData['start_time'],
+                        'end_time' => $overtimeData['end_time'],
+                    ]);
+                    $submittedIds[] = $overtimeData['id'];
+                }
+            } else {
+                // Create new overtime
+                $newOvertime = $doctor->overtimes()->create([
+                    'date' => $overtimeData['date'],
+                    'start_time' => $overtimeData['start_time'],
+                    'end_time' => $overtimeData['end_time'],
+                ]);
+                $submittedIds[] = $newOvertime->id;
+            }
+        }
+
+        // Delete overtimes that were not submitted
+        $idsToDelete = array_diff($existingIds, $submittedIds);
+        if (!empty($idsToDelete)) {
+            DoctorOvertime::whereIn('id', $idsToDelete)->delete();
         }
     }
 }
