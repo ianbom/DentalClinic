@@ -1,6 +1,5 @@
 import { ProfileCard } from '@/Components/admin/doctors/detail/ProfileCard';
 import { RecentBookingsCard } from '@/Components/admin/doctors/detail/RecentBookingsCard';
-import { ScheduleCard } from '@/Components/admin/doctors/detail/ScheduleCard';
 import { StatsGrid } from '@/Components/admin/doctors/detail/StatsGrid';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, Link } from '@inertiajs/react';
@@ -73,13 +72,19 @@ const DetailDoctor = ({ doctor }: Props) => {
                     </p>
                 </div>
                 <div className="flex gap-3">
-                    <Link href={route('admin.doctors.edit', doctor.id)} className="flex h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50">
+                    <Link
+                        href={route('admin.doctors.edit', doctor.id)}
+                        className="flex h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50"
+                    >
                         <span className="material-symbols-outlined text-[20px]">
                             edit
                         </span>
                         <span>Edit Dokter</span>
                     </Link>
-                    <Link href={route('admin.doctors.schedule', doctor.id)} className="flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-white shadow-md shadow-primary/20 transition-colors hover:bg-sky-600">
+                    <Link
+                        href={route('admin.doctors.schedule', doctor.id)}
+                        className="flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-white shadow-md shadow-primary/20 transition-colors hover:bg-sky-600"
+                    >
                         <span className="material-symbols-outlined text-[20px]">
                             calendar_clock
                         </span>

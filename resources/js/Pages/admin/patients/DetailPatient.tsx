@@ -169,7 +169,10 @@ export default function DetailPatient({
                         </p>
                     </div>
                     <div className="flex gap-3">
-                        <Link href={route('admin.patients.edit', patient.id)} className="flex h-10 items-center justify-center gap-2 rounded-lg bg-[#0d171c] px-4 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#1a2930]">
+                        <Link
+                            href={route('admin.patients.edit', patient.id)}
+                            className="flex h-10 items-center justify-center gap-2 rounded-lg bg-[#0d171c] px-4 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#1a2930]"
+                        >
                             <span className="material-symbols-outlined text-lg">
                                 edit
                             </span>

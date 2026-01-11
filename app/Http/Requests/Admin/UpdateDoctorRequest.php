@@ -34,6 +34,11 @@ class UpdateDoctorRequest extends FormRequest
             'working_periods.*.start_time' => 'required|date_format:H:i',
             'working_periods.*.end_time' => 'required|date_format:H:i|after:working_periods.*.start_time',
             'working_periods.*.is_active' => 'required|boolean',
+            'overtimes' => 'nullable|array',
+            'overtimes.*.id' => 'nullable|integer',
+            'overtimes.*.date' => 'required|date',
+            'overtimes.*.start_time' => 'required|date_format:H:i',
+            'overtimes.*.end_time' => 'required|date_format:H:i|after:overtimes.*.start_time',
         ];
     }
 

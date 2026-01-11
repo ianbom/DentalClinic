@@ -49,7 +49,13 @@ export function CustomerDataForm({
         type: 'success' | 'info' | 'error';
         text: string;
     } | null>(null);
-    const [isAddressPreFilled, setIsAddressPreFilled] = useState(false);
+
+    // Derive isAddressPreFilled from bookingData - this persists across refreshes
+    // Address is pre-filled if NIK was checked and address exists, and districtId is 'prefilled'
+    const isAddressPreFilled =
+        bookingData.isNikChecked &&
+        bookingData.address.trim() !== '' &&
+        bookingData.districtId === 'prefilled';
 
     // Derived lists for cascading dropdowns
     const [cities, setCities] = useState<City[]>([]);
@@ -284,7 +290,6 @@ export function CustomerDataForm({
                             // If address exists, set districtId to a placeholder to pass validation
                             districtId: hasExistingAddress ? 'prefilled' : '',
                         });
-                        setIsAddressPreFilled(hasExistingAddress);
                         setNikMessage({
                             type: 'success',
                             text: 'Data ditemukan! Form telah terisi otomatis.',
@@ -417,13 +422,12 @@ export function CustomerDataForm({
                             NIK (Nomor Induk Kependudukan)*
                         </label>
                         <input
-                            className={`w-full ${inputClass} ${
-                                nikMessage?.type === 'success'
-                                    ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
-                                    : nikMessage?.type === 'error'
-                                      ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
-                                      : ''
-                            }`}
+                            className={`w-full ${inputClass} ${nikMessage?.type === 'success'
+                                ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
+                                : nikMessage?.type === 'error'
+                                    ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
+                                    : ''
+                                }`}
                             id="nik"
                             placeholder="16 digit nomor NIK"
                             type="text"
@@ -443,46 +447,44 @@ export function CustomerDataForm({
                             disabled={
                                 isCheckingNik || bookingData.nik.length < 16
                             }
-                            className={`mt-2 flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-all ${
-                                isCheckingNik || bookingData.nik.length < 16
-                                    ? 'cursor-not-allowed bg-gray-200 text-gray-400'
-                                    : bookingData.isNikChecked
-                                      ? 'cursor-pointer bg-green-100 text-green-700'
-                                      : 'cursor-pointer bg-primary text-white hover:bg-primary-dark'
-                            }`}
+                            className={`mt-2 flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-all ${isCheckingNik || bookingData.nik.length < 16
+                                ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                : bookingData.isNikChecked
+                                    ? 'cursor-pointer bg-green-100 text-green-700'
+                                    : 'cursor-pointer bg-primary text-white hover:bg-primary-dark'
+                                }`}
                         >
                             <span className="material-symbols-outlined text-[18px]">
                                 {isCheckingNik
                                     ? 'hourglass_empty'
                                     : bookingData.isNikChecked
-                                      ? 'check_circle'
-                                      : 'search'}
+                                        ? 'check_circle'
+                                        : 'search'}
                             </span>
                             {isCheckingNik
                                 ? 'Memeriksa...'
                                 : bookingData.isNikChecked
-                                  ? 'Terverifikasi'
-                                  : 'Cek NIK'}
+                                    ? 'Terverifikasi'
+                                    : 'Cek NIK'}
                         </button>
 
                         {/* NIK Message */}
                         {nikMessage && (
                             <div
-                                className={`mt-2 rounded-lg border p-3 text-sm ${
-                                    nikMessage.type === 'success'
-                                        ? 'border-green-200 bg-green-50 text-green-700'
-                                        : nikMessage.type === 'info'
-                                          ? 'border-blue-200 bg-blue-50 text-blue-700'
-                                          : 'border-red-200 bg-red-50 text-red-700'
-                                }`}
+                                className={`mt-2 rounded-lg border p-3 text-sm ${nikMessage.type === 'success'
+                                    ? 'border-green-200 bg-green-50 text-green-700'
+                                    : nikMessage.type === 'info'
+                                        ? 'border-blue-200 bg-blue-50 text-blue-700'
+                                        : 'border-red-200 bg-red-50 text-red-700'
+                                    }`}
                             >
                                 <div className="flex items-start gap-2">
                                     <span className="material-symbols-outlined text-[18px]">
                                         {nikMessage.type === 'success'
                                             ? 'check_circle'
                                             : nikMessage.type === 'info'
-                                              ? 'info'
-                                              : 'error'}
+                                                ? 'info'
+                                                : 'error'}
                                     </span>
                                     <p>{nikMessage.text}</p>
                                 </div>
@@ -549,18 +551,16 @@ export function CustomerDataForm({
                                         }
                                     />
                                     <div
-                                        className={`flex h-[46px] items-center gap-2 rounded-lg border px-3 py-3 transition-colors ${
-                                            bookingData.gender === 'male'
-                                                ? 'border-primary bg-blue-50 text-primary'
-                                                : 'border-gray-300 hover:bg-gray-50'
-                                        }`}
+                                        className={`flex h-[46px] items-center gap-2 rounded-lg border px-3 py-3 transition-colors ${bookingData.gender === 'male'
+                                            ? 'border-primary bg-blue-50 text-primary'
+                                            : 'border-gray-300 hover:bg-gray-50'
+                                            }`}
                                     >
                                         <div
-                                            className={`size-4 shrink-0 rounded-full border transition-all ${
-                                                bookingData.gender === 'male'
-                                                    ? 'border-primary bg-primary shadow-[inset_0_0_0_2px_white]'
-                                                    : 'border-gray-400'
-                                            }`}
+                                            className={`size-4 shrink-0 rounded-full border transition-all ${bookingData.gender === 'male'
+                                                ? 'border-primary bg-primary shadow-[inset_0_0_0_2px_white]'
+                                                : 'border-gray-400'
+                                                }`}
                                         ></div>
                                         <span className="text-sm">
                                             Laki-laki
@@ -584,18 +584,16 @@ export function CustomerDataForm({
                                         }
                                     />
                                     <div
-                                        className={`flex h-[46px] items-center gap-2 rounded-lg border px-3 py-3 transition-colors ${
-                                            bookingData.gender === 'female'
-                                                ? 'border-primary bg-blue-50 text-primary'
-                                                : 'border-gray-300 hover:bg-gray-50'
-                                        }`}
+                                        className={`flex h-[46px] items-center gap-2 rounded-lg border px-3 py-3 transition-colors ${bookingData.gender === 'female'
+                                            ? 'border-primary bg-blue-50 text-primary'
+                                            : 'border-gray-300 hover:bg-gray-50'
+                                            }`}
                                     >
                                         <div
-                                            className={`size-4 shrink-0 rounded-full border transition-all ${
-                                                bookingData.gender === 'female'
-                                                    ? 'border-primary bg-primary shadow-[inset_0_0_0_2px_white]'
-                                                    : 'border-gray-400'
-                                            }`}
+                                            className={`size-4 shrink-0 rounded-full border transition-all ${bookingData.gender === 'female'
+                                                ? 'border-primary bg-primary shadow-[inset_0_0_0_2px_white]'
+                                                : 'border-gray-400'
+                                                }`}
                                         ></div>
                                         <span className="text-sm">
                                             Perempuan
@@ -631,11 +629,10 @@ export function CustomerDataForm({
                                 <div className="ml-2 h-4 w-px bg-gray-300"></div>
                             </div>
                             <input
-                                className={`${inputClass} pl-[55px] pr-4 ${
-                                    bookingData.isWhatsappVerified
-                                        ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
-                                        : ''
-                                }`}
+                                className={`${inputClass} pl-[55px] pr-4 ${bookingData.isWhatsappVerified
+                                    ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
+                                    : ''
+                                    }`}
                                 id="whatsapp"
                                 placeholder="812-3456-7890"
                                 type="tel"
@@ -675,13 +672,12 @@ export function CustomerDataForm({
                                     !bookingData.whatsapp ||
                                     bookingData.whatsapp.length < 10
                                 }
-                                className={`mt-2 flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                                    isVerifying ||
+                                className={`mt-2 flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${isVerifying ||
                                     !bookingData.whatsapp ||
                                     bookingData.whatsapp.length < 10
-                                        ? 'cursor-not-allowed bg-gray-200 text-gray-400'
-                                        : 'cursor-pointer bg-green-100 text-green-700 hover:bg-green-200'
-                                }`}
+                                    ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                    : 'cursor-pointer bg-green-100 text-green-700 hover:bg-green-200'
+                                    }`}
                             >
                                 <span className="material-symbols-outlined text-[18px]">
                                     {isVerifying ? 'hourglass_empty' : 'send'}
@@ -951,11 +947,10 @@ export function CustomerDataForm({
                                     );
                                 }
                             }}
-                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-4 text-base font-bold shadow-lg transition-all ${
-                                isFormValid
-                                    ? 'transform cursor-pointer bg-primary text-white shadow-primary/30 hover:bg-primary-dark active:scale-[0.99]'
-                                    : 'cursor-not-allowed bg-gray-300 text-gray-500'
-                            }`}
+                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-4 text-base font-bold shadow-lg transition-all ${isFormValid
+                                ? 'transform cursor-pointer bg-primary text-white shadow-primary/30 hover:bg-primary-dark active:scale-[0.99]'
+                                : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                                }`}
                         >
                             <span>Simpan Perubahan</span>
                             <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">
@@ -981,11 +976,10 @@ export function CustomerDataForm({
                                     });
                                 }
                             }}
-                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-4 text-base font-bold shadow-lg transition-all ${
-                                isFormValid
-                                    ? 'transform cursor-pointer bg-primary text-white shadow-primary/30 hover:bg-primary-dark active:scale-[0.99]'
-                                    : 'cursor-not-allowed bg-gray-300 text-gray-500'
-                            }`}
+                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-4 text-base font-bold shadow-lg transition-all ${isFormValid
+                                ? 'transform cursor-pointer bg-primary text-white shadow-primary/30 hover:bg-primary-dark active:scale-[0.99]'
+                                : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                                }`}
                         >
                             <span>Simpan Pasien</span>
                             <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">
@@ -1019,11 +1013,10 @@ export function CustomerDataForm({
                                     });
                                 }
                             }}
-                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-4 text-base font-bold shadow-lg transition-all ${
-                                isFormValid
-                                    ? 'transform cursor-pointer bg-primary text-white shadow-primary/30 hover:bg-primary-dark active:scale-[0.99]'
-                                    : 'cursor-not-allowed bg-gray-300 text-gray-500'
-                            }`}
+                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-4 text-base font-bold shadow-lg transition-all ${isFormValid
+                                ? 'transform cursor-pointer bg-primary text-white shadow-primary/30 hover:bg-primary-dark active:scale-[0.99]'
+                                : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                                }`}
                         >
                             <span>Simpan Booking</span>
                             <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">

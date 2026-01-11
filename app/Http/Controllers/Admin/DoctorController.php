@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\CreateOvertimeRequest;
 use App\Http\Requests\Admin\UpdateDoctorRequest;
+use App\Http\Requests\Admin\UpdateOvertimeRequest;
 use App\Models\Doctor;
 use App\Services\Admin\DoctorService;
 use App\Services\BookingService;
@@ -78,7 +80,7 @@ class DoctorController extends Controller
 
     public function edit($doctorId)
     {
-        $doctor = Doctor::with('workingPeriods')->findOrFail($doctorId);
+        $doctor = Doctor::with(['workingPeriods', 'overtimes'])->findOrFail($doctorId);
 
         // Map day names to numbers
         $dayNameToNumber = [
@@ -106,6 +108,9 @@ class DoctorController extends Controller
             ];
         })->toArray();
 
+        // Format overtimes for frontend
+        $overtimes = $this->doctorService->getOvertimes($doctorId);
+
         return Inertia::render('admin/doctors/EditDoctor', [
             'doctor' => [
                 'id' => $doctor->id,
@@ -116,6 +121,7 @@ class DoctorController extends Controller
                 'is_active' => $doctor->is_active,
             ],
             'workingPeriods' => $workingPeriods,
+            'overtimes' => $overtimes,
         ]);
     }
 
@@ -130,11 +136,15 @@ class DoctorController extends Controller
                 $this->doctorService->syncWorkingPeriods($doctorId, $validated['working_periods']);
             }
 
+            if (isset($validated['overtimes'])) {
+                $this->doctorService->syncOvertimes($doctorId, $validated['overtimes']);
+            }
+
             return redirect()->route('admin.doctors.show', $doctorId)
                 ->with('success', 'Data dokter berhasil diperbarui.');
         } catch (\Throwable $th) {
-            // return response()->json(['err' => $th->getMessage()]);
             return redirect()->back()->with('error', $th->getMessage());
         }
     }
 }
+

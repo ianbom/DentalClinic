@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\BookingCancellation;
 use App\Models\Patient;
 use App\Models\Doctor;
+use App\Models\DoctorOvertime;
 use App\Models\DoctorTimeOff;
 use App\Models\DoctorWorkingPeriod;
 use App\Models\Notification;
@@ -18,7 +19,7 @@ class BookingService
  
     public function getAvailableSlotsForDoctor(int $doctorId, int $daysAhead = 30)
     {
-        $doctor = Doctor::with(['workingPeriods', 'timeOff'])->findOrFail($doctorId);
+        $doctor = Doctor::with(['workingPeriods', 'timeOff', 'overtimes'])->findOrFail($doctorId);
         
         $startDate = Carbon::today();
         $endDate = Carbon::today()->addDays($daysAhead);
@@ -28,8 +29,6 @@ class BookingService
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
             $daySlots = $this->getSlotsForDate($doctor, $date);
 
-        
-
             if (!empty($daySlots)) {
                 $availableSlots[$date->format('Y-m-d')] = [
                     'date' => $date->format('Y-m-d'),
@@ -38,7 +37,6 @@ class BookingService
                     'slots' => $daySlots,
                 ];
             }
-            
         }
         
         return $availableSlots;
@@ -86,17 +84,23 @@ class BookingService
     public function getSlotsForDate(Doctor $doctor, Carbon $date): array
     {
         $dayName = $this->getDayName($date->dayOfWeek);
+        $dateString = $date->format('Y-m-d');
         
         // Get working periods for this day
         $workingPeriods = $doctor->workingPeriods
             ->where('day_of_week', $dayName)
             ->where('is_active', true);
         
-        if ($workingPeriods->isEmpty()) {
+        // Get overtime for this specific date
+        $overtimes = $doctor->overtimes->filter(function ($overtime) use ($dateString) {
+            return $overtime->date->format('Y-m-d') === $dateString;
+        });
+        
+        // If no working periods and no overtimes, return empty
+        if ($workingPeriods->isEmpty() && $overtimes->isEmpty()) {
             return [];
         }
         
-        $dateString = $date->format('Y-m-d');
         $timeOffs = $doctor->timeOff->filter(function ($timeOff) use ($dateString) {
             return $timeOff->date->format('Y-m-d') === $dateString;
         });
@@ -113,66 +117,113 @@ class BookingService
         
         $slots = [];
         
+        // Generate slots from working periods
         foreach ($workingPeriods as $period) {
-            $startTime = Carbon::parse($period->start_time);
-            $endTime = Carbon::parse($period->end_time);
-
-            $isLongSlot = true; 
-            
-            while ($startTime->lt($endTime)) {
-                $slotTime = $startTime->format('H:i');
-                $slotMinute = (int) $startTime->format('i');
-                
-                // Determine slot type based on minute
-                // :00 slots are for LONG service, :45 slots are for SHORT service
-                $slotType = ($slotMinute === 0) ? 'long' : 'short';
-                
-                // Check if slot is during time off
-                $slotDuration = $slotType === 'long' ? 45 : 15;
-                $slotEnd = $startTime->copy()->addMinutes($slotDuration);
-                
-                $isDuringTimeOff = $this->isSlotDuringTimeOff($timeOffs, $slotTime, $slotEnd->format('H:i'));
-                
-                // Check if slot is already booked
-                $isBooked = in_array($slotTime, $bookedSlots);
-                $booking = $bookedSlotData->get($slotTime);
-                
-                // Check if slot is in the past (for today)
-                $isPast = $date->isToday() && Carbon::parse($slotTime)->lt(Carbon::now());
-                
-                // Check if there's enough time remaining for this slot
-                $hasEnoughTime = $slotEnd->lte($endTime);
-                
-                $isAvailable = !$isDuringTimeOff && !$isBooked && !$isPast && $hasEnoughTime;
-                
-                $slots[] = [
-                    'time' => $slotTime,
-                    'available' => $isAvailable,
-                    'reason' => $isDuringTimeOff ? 'time_off' : ($isBooked ? 'booked' : ($isPast ? 'past' : null)),
-                    'slot_type' => $slotType, // 'long' for :00, 'short' for :45
-                    'available_for_short' => $slotType === 'short' && $isAvailable,
-                    'available_for_long' => $slotType === 'long' && $isAvailable,
-                    // Include booking details for booked slots
-                    'patient_name' => $booking?->patient?->patient_name,
-                    'service' => $booking?->service,
-                    'booking_id' => $booking?->id,
-                ];
-                
-                // Alternate between 45 min and 15 min intervals
-                if ($isLongSlot) {
-                    $startTime->addMinutes(45); // Next slot after 45 min (e.g., 8:00 -> 8:45)
-                } else {
-                    $startTime->addMinutes(15); // Next slot after 15 min (e.g., 8:45 -> 9:00)
-                }
-                $isLongSlot = !$isLongSlot; // Toggle
+            $this->generateSlotsFromPeriod(
+                $slots,
+                Carbon::parse($period->start_time),
+                Carbon::parse($period->end_time),
+                $date,
+                $timeOffs,
+                $bookedSlots,
+                $bookedSlotData,
+                false // isOvertime
+            );
+        }
+        
+        // Generate slots from overtime
+        foreach ($overtimes as $overtime) {
+            $this->generateSlotsFromPeriod(
+                $slots,
+                Carbon::parse($overtime->start_time),
+                Carbon::parse($overtime->end_time),
+                $date,
+                $timeOffs,
+                $bookedSlots,
+                $bookedSlotData,
+                true // isOvertime
+            );
+        }
+        
+        // Remove duplicate slots (in case overtime overlaps with regular schedule)
+        $uniqueSlots = [];
+        $seenTimes = [];
+        foreach ($slots as $slot) {
+            if (!in_array($slot['time'], $seenTimes)) {
+                $uniqueSlots[] = $slot;
+                $seenTimes[] = $slot['time'];
             }
         }
         
         // Sort by time
-        usort($slots, fn($a, $b) => strcmp($a['time'], $b['time']));
-    
+        usort($uniqueSlots, fn($a, $b) => strcmp($a['time'], $b['time']));
 
-        return $slots;
+        return $uniqueSlots;
+    }
+
+    /**
+     * Generate slots from a time period (working period or overtime)
+     */
+    private function generateSlotsFromPeriod(
+        array &$slots,
+        Carbon $startTime,
+        Carbon $endTime,
+        Carbon $date,
+        $timeOffs,
+        array $bookedSlots,
+        $bookedSlotData,
+        bool $isOvertime = false
+    ): void {
+        $isLongSlot = true;
+        
+        while ($startTime->lt($endTime)) {
+            $slotTime = $startTime->format('H:i');
+            $slotMinute = (int) $startTime->format('i');
+            
+            // Determine slot type based on minute
+            // :00 slots are for LONG service, :45 slots are for SHORT service
+            $slotType = ($slotMinute === 0) ? 'long' : 'short';
+            
+            // Check if slot is during time off
+            $slotDuration = $slotType === 'long' ? 45 : 15;
+            $slotEnd = $startTime->copy()->addMinutes($slotDuration);
+            
+            $isDuringTimeOff = $this->isSlotDuringTimeOff($timeOffs, $slotTime, $slotEnd->format('H:i'));
+            
+            // Check if slot is already booked
+            $isBooked = in_array($slotTime, $bookedSlots);
+            $booking = $bookedSlotData->get($slotTime);
+            
+            // Check if slot is in the past (for today)
+            $isPast = $date->isToday() && Carbon::parse($slotTime)->lt(Carbon::now());
+            
+            // Check if there's enough time remaining for this slot
+            $hasEnoughTime = $slotEnd->lte($endTime);
+            
+            $isAvailable = !$isDuringTimeOff && !$isBooked && !$isPast && $hasEnoughTime;
+            
+            $slots[] = [
+                'time' => $slotTime,
+                'available' => $isAvailable,
+                'reason' => $isDuringTimeOff ? 'time_off' : ($isBooked ? 'booked' : ($isPast ? 'past' : null)),
+                'slot_type' => $slotType,
+                'available_for_short' => $slotType === 'short' && $isAvailable,
+                'available_for_long' => $slotType === 'long' && $isAvailable,
+                'is_overtime' => $isOvertime, // Flag to indicate overtime slot
+                // Include booking details for booked slots
+                'patient_name' => $booking?->patient?->patient_name,
+                'service' => $booking?->service,
+                'booking_id' => $booking?->id,
+            ];
+            
+            // Alternate between 45 min and 15 min intervals
+            if ($isLongSlot) {
+                $startTime->addMinutes(45);
+            } else {
+                $startTime->addMinutes(15);
+            }
+            $isLongSlot = !$isLongSlot;
+        }
     }
 
     /**

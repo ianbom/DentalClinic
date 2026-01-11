@@ -34,4 +34,9 @@ class Doctor extends Model
     {
         return $this->hasMany(Booking::class);
     }
+
+    public function overtimes(): HasMany
+    {
+        return $this->hasMany(DoctorOvertime::class);
+    }
 }
