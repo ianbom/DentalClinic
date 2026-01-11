@@ -1,5 +1,5 @@
 import AdminLayout from '@/Layouts/AdminLayout';
-import { router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { useState } from 'react';
 
 interface BookingData {
@@ -207,6 +207,15 @@ function CheckInPage({ booking, searchCode }: CheckInPageProps) {
                                         #{booking.code}
                                     </span>
                                 </span>
+                                <Link
+                                    href={`/admin/bookings/${booking.id}`}
+                                    className="flex items-center gap-1.5 rounded-md border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
+                                >
+                                    <span className="material-symbols-outlined text-[16px]">
+                                        visibility
+                                    </span>
+                                    Detail
+                                </Link>
                             </div>
                         </div>
 
