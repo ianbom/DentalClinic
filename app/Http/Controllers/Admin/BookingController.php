@@ -216,6 +216,8 @@ class BookingController extends Controller
         ]);
     }
 
+    // 
+    //
     public function performCheckin(Request $request)
     {
         $request->validate([
