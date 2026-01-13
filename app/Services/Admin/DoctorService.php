@@ -309,7 +309,6 @@ class DoctorService
     }
     public function syncWorkingPeriods(int $doctorId, array $periods): void
     {
-        // If no periods provided, don't delete existing ones
         if (empty($periods)) {
             return;
         }
@@ -399,6 +398,10 @@ class DoctorService
      */
     public function syncOvertimes(int $doctorId, array $overtimes): void
     {
+        if (empty($overtimes)) {
+            return;
+        }
+
         $doctor = Doctor::findOrFail($doctorId);
         
         // Get existing overtime IDs
