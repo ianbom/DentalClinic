@@ -43,7 +43,7 @@ class DoctorService
             $query->with('patient')->latest()->limit(5);
         }])
             ->withCount(['bookings', 'bookings as completed_bookings_count' => function ($query) {
-                $query->where('status', 'completed');
+                $query->where('status', 'checked_in');
             }])
             ->find($id);
 
