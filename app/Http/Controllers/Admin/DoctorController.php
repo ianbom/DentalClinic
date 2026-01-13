@@ -155,13 +155,13 @@ class DoctorController extends Controller
 
             $this->doctorService->updateDoctor($doctorId, $validated);
             
-            if (isset($validated['working_periods'])) {
-                $this->doctorService->syncWorkingPeriods($doctorId, $validated['working_periods']);
-            }
-
-            if (isset($validated['overtimes'])) {
-                $this->doctorService->syncOvertimes($doctorId, $validated['overtimes']);
-            }
+            // Always call sync methods - use input() to ensure we get the array even if empty
+            // This prevents data loss when arrays are stripped from validated()
+            $workingPeriods = $request->input('working_periods', []);
+            $overtimes = $request->input('overtimes', []);
+            
+            $this->doctorService->syncWorkingPeriods($doctorId, $workingPeriods);
+            $this->doctorService->syncOvertimes($doctorId, $overtimes);
 
             return redirect()->route('admin.doctors.show', $doctorId)
                 ->with('success', 'Data dokter berhasil diperbarui.');
