@@ -246,6 +246,25 @@ function SlotItem({ slot, doctorId, date }: SlotItemProps) {
     }
 
     if (slot.status === 'off') {
+        const handleUnlockClick = () => {
+            if (!confirm('Apakah Anda yakin ingin membuka kunci slot ini?')) {
+                return;
+            }
+
+            router.post(
+                '/admin/doctors/schedule/unlock',
+                {
+                    doctor_id: doctorId,
+                    date: date,
+                    start_time: slot.time,
+                    end_time: slot.endTime,
+                },
+                {
+                    preserveScroll: true,
+                },
+            );
+        };
+
         return (
             <div className="flex items-center justify-between rounded-lg border border-yellow-200 bg-yellow-50 p-3 opacity-75">
                 <div className="flex items-center gap-3">
@@ -261,6 +280,18 @@ function SlotItem({ slot, doctorId, date }: SlotItemProps) {
                         </p>
                     </div>
                 </div>
+                <button
+                    onClick={handleUnlockClick}
+                    className="flex size-8 items-center justify-center rounded-md bg-green-500 text-white transition-colors hover:bg-green-600"
+                    title="Buka Kunci"
+                >
+                    <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: '16px' }}
+                    >
+                        lock_open
+                    </span>
+                </button>
             </div>
         );
     }

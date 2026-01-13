@@ -24,7 +24,7 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -111,6 +111,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/doctors', [AdminDoctorController::class, 'listDoctors'])->name('doctors.list');
     Route::get('/schedule/{doctorId}', [AdminDoctorController::class, 'schedule'])->name('doctors.schedule');
     Route::post('/doctors/schedule/lock', [AdminDoctorController::class, 'lockDoctorSchedule'])->name('doctors.lock');
+    Route::post('/doctors/schedule/unlock', [AdminDoctorController::class, 'unlockDoctorSchedule'])->name('doctors.unlock');
     Route::get('/doctors/{doctorId}/edit', [AdminDoctorController::class, 'edit'])->name('doctors.edit');
     Route::put('/doctors/{doctorId}/update', [AdminDoctorController::class, 'update'])->name('doctors.update');
     Route::get('/doctors/{doctorId}', [AdminDoctorController::class, 'show'])->name('doctors.show');
