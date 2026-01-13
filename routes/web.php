@@ -115,5 +115,20 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/doctors/{doctorId}/edit', [AdminDoctorController::class, 'edit'])->name('doctors.edit');
     Route::put('/doctors/{doctorId}/update', [AdminDoctorController::class, 'update'])->name('doctors.update');
     Route::get('/doctors/{doctorId}', [AdminDoctorController::class, 'show'])->name('doctors.show');
+
+    // Doctor Time Off CRUD
+    Route::post('/doctors/timeoff', [App\Http\Controllers\Admin\DoctorTimeOffController::class, 'store'])->name('doctors.timeoff.store');
+    Route::put('/doctors/timeoff/{id}', [App\Http\Controllers\Admin\DoctorTimeOffController::class, 'update'])->name('doctors.timeoff.update');
+    Route::delete('/doctors/timeoff/{id}', [App\Http\Controllers\Admin\DoctorTimeOffController::class, 'destroy'])->name('doctors.timeoff.destroy');
+
+    // Doctor Overtime CRUD
+    Route::post('/doctors/overtime', [App\Http\Controllers\Admin\DoctorOvertimeController::class, 'store'])->name('doctors.overtime.store');
+    Route::put('/doctors/overtime/{id}', [App\Http\Controllers\Admin\DoctorOvertimeController::class, 'update'])->name('doctors.overtime.update');
+    Route::delete('/doctors/overtime/{id}', [App\Http\Controllers\Admin\DoctorOvertimeController::class, 'destroy'])->name('doctors.overtime.destroy');
+
+    // Doctor Working Period CRUD
+    Route::post('/doctors/working-period', [App\Http\Controllers\Admin\DoctorWorkingPeriodController::class, 'store'])->name('doctors.working-period.store');
+    Route::put('/doctors/working-period/{id}', [App\Http\Controllers\Admin\DoctorWorkingPeriodController::class, 'update'])->name('doctors.working-period.update');
+    Route::delete('/doctors/working-period/{id}', [App\Http\Controllers\Admin\DoctorWorkingPeriodController::class, 'destroy'])->name('doctors.working-period.destroy');
 });
 

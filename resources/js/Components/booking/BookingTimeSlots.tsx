@@ -10,7 +10,9 @@ interface BookingTimeSlotsProps {
 
 export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
     const { bookingData, setBookingData } = useBooking();
-    const [customTime, setCustomTime] = useState(bookingData.selectedTime || '');
+    const [customTime, setCustomTime] = useState(
+        bookingData.selectedTime || '',
+    );
 
     // Get time slots for selected date
     const timeSlots = useMemo((): TimeSlot[] => {
@@ -124,7 +126,8 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
                                 Input Jam Bebas
                             </p>
                             <p className="text-sm text-amber-700">
-                                Masukkan jam yang diinginkan untuk booking sisipan
+                                Masukkan jam yang diinginkan untuk booking
+                                sisipan
                             </p>
                         </div>
                     </div>
@@ -163,9 +166,11 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
                             {timeSlots.map((slot) => (
                                 <span
                                     key={slot.time}
-                                    className={`rounded px-2 py-1 text-xs ${slot.available
+                                    className={`rounded px-2 py-1 text-xs ${
+                                        slot.available
                                             ? 'bg-red-100 text-gray-700'
-                                            : 'bg-gray-100 text-gray-500 line-through'                                        }`}
+                                            : 'bg-gray-100 text-gray-500 line-through'
+                                    }`}
                                 >
                                     {slot.time}
                                 </span>
@@ -228,8 +233,8 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
                                     slot.reason === 'booked'
                                         ? 'Sudah dibooking'
                                         : slot.reason === 'time_off'
-                                            ? 'Dokter tidak tersedia'
-                                            : 'Tidak tersedia'
+                                          ? 'Dokter tidak tersedia'
+                                          : 'Tidak tersedia'
                                 }
                             >
                                 {slot.time} WIB
@@ -262,10 +267,11 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
                 {allShortSlotsFull && (
                     <button
                         onClick={() => handleTimeSelect('Dijadwalkan Admin')}
-                        className={`flex flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2.5 text-center text-xs font-medium transition-all sm:text-sm ${bookingData.selectedTime === 'Dijadwalkan Admin'
+                        className={`flex flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2.5 text-center text-xs font-medium transition-all sm:text-sm ${
+                            bookingData.selectedTime === 'Dijadwalkan Admin'
                                 ? 'border-primary bg-primary/10 text-primary shadow-sm ring-1 ring-primary/20'
                                 : 'border-amber-200 bg-amber-50 text-amber-900 hover:border-amber-300 hover:bg-amber-100'
-                            }`}
+                        }`}
                     >
                         <span className="material-symbols-outlined text-[20px]">
                             support_agent
@@ -277,4 +283,3 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
         </>
     );
 }
-

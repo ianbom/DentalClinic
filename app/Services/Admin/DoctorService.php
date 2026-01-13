@@ -278,6 +278,28 @@ class DoctorService
     }
 
     /**
+     * Get all time offs for a doctor
+     */
+    public function getTimeOffs(int $doctorId): array
+    {
+        $timeOffs = DoctorTimeOff::where('doctor_id', $doctorId)
+            ->orderBy('date', 'asc')
+            ->orderBy('start_time', 'asc')
+            ->get();
+
+        return $timeOffs->map(function ($timeOff) {
+            return [
+                'id' => $timeOff->id,
+                'date' => $timeOff->date->format('Y-m-d'),
+                'date_formatted' => $timeOff->date->translatedFormat('l, d M Y'),
+                'start_time' => substr($timeOff->start_time, 0, 5),
+                'end_time' => substr($timeOff->end_time, 0, 5),
+                'note' => $timeOff->note,
+            ];
+        })->toArray();
+    }
+
+    /**
      * Unlock a schedule slot by deleting matching DoctorTimeOff entry
      */
     public function unlockSchedule(int $doctorId, string $date, string $startTime, string $endTime): bool
