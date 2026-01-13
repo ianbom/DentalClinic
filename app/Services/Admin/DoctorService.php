@@ -4,6 +4,7 @@ namespace App\Services\Admin;
 
 use App\Models\Doctor;
 use App\Models\DoctorOvertime;
+use App\Models\DoctorTimeOff;
 use App\Models\DoctorWorkingPeriod;
 use Carbon\Carbon;
 
@@ -269,11 +270,25 @@ class DoctorService
      */
     public function deleteTimeOff(int $timeOffId): bool
     {
-        $timeOff = \App\Models\DoctorTimeOff::find($timeOffId);
+        $timeOff = DoctorTimeOff::find($timeOffId);
         if ($timeOff) {
             return $timeOff->delete();
         }
         return false;
+    }
+
+    /**
+     * Unlock a schedule slot by deleting matching DoctorTimeOff entry
+     */
+    public function unlockSchedule(int $doctorId, string $date, string $startTime, string $endTime): bool
+    {
+        $deleted = DoctorTimeOff::where('doctor_id', $doctorId)
+            ->whereDate('date', $date)
+            ->where('start_time', $startTime)
+            ->where('end_time', $endTime)
+            ->delete();
+
+        return $deleted > 0;
     }
 
     /**

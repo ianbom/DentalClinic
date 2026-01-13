@@ -78,6 +78,29 @@ class DoctorController extends Controller
         return back()->with('success', 'Jadwal berhasil dikunci');
     }
 
+    public function unlockDoctorSchedule(Request $request)
+    {
+        $validated = $request->validate([
+            'doctor_id' => 'required|exists:doctors,id',
+            'date' => 'required|date',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i',
+        ]);
+
+        $deleted = $this->doctorService->unlockSchedule(
+            $validated['doctor_id'],
+            $validated['date'],
+            $validated['start_time'],
+            $validated['end_time']
+        );
+
+        if ($deleted) {
+            return back()->with('success', 'Jadwal berhasil dibuka');
+        }
+
+        return back()->with('error', 'Jadwal tidak ditemukan');
+    }
+
     public function edit($doctorId)
     {
         $doctor = Doctor::with(['workingPeriods', 'overtimes'])->findOrFail($doctorId);

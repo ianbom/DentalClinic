@@ -1,5 +1,7 @@
 'use client';
 
+import { PageProps } from '@/types';
+import { usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 function getCurrentDate(): string {
@@ -41,6 +43,8 @@ interface AdminHeaderProps {
 }
 
 export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
+    const { props } = usePage<PageProps>();
+    const user = props.auth?.user;
     const [currentDate, setCurrentDate] = useState('');
 
     useEffect(() => {
@@ -77,9 +81,8 @@ export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
                 <div className="flex items-center gap-3 border-l border-slate-200 pl-4 md:pl-6">
                     <div className="hidden text-right sm:block">
                         <p className="text-sm font-semibold text-slate-900">
-                            Dr. Sarah Admin
+                            {user?.name || 'Admin'}
                         </p>
-                        <p className="text-xs text-slate-500">Clinic Manager</p>
                     </div>
                     <div className="size-10 overflow-hidden rounded-full bg-slate-200 ring-2 ring-primary/20">
                         <img
