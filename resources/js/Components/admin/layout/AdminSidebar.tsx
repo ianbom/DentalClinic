@@ -97,6 +97,16 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             {/* Sidebar Footer */}
             <div className="border-t border-slate-200 p-4">
                 <Link
+                    href="/admin/statistic"
+                    onClick={onClose}
+                    className="flex items-center gap-3 rounded-lg px-4 py-2 text-slate-500 transition-colors hover:bg-slate-50 hover:text-primary"
+                >
+                    <span className="material-symbols-outlined text-xl">
+                        bar_chart
+                    </span>
+                    <span className="text-sm font-medium">Statistik</span>
+                </Link>
+                <Link
                     href="/admin/profile"
                     onClick={onClose}
                     className="flex items-center gap-3 rounded-lg px-4 py-2 text-slate-500 transition-colors hover:bg-slate-50 hover:text-primary"

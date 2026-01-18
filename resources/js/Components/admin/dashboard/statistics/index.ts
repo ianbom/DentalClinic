@@ -1,0 +1,22 @@
+// Statistics Components
+export { BookingRevenueTrendsChart } from './BookingRevenueTrendsChart';
+export type { BookingRevenueTrendData } from './BookingRevenueTrendsChart';
+export { BookingTrendsChart } from './BookingTrendsChart';
+export type { BookingTrendData } from './BookingTrendsChart';
+export { CancellationRateCard } from './CancellationRateCard';
+export { DoctorBookingsChart } from './DoctorBookingsChart';
+export type { DoctorBookingData } from './DoctorBookingsChart';
+export { NewPatientsTable } from './NewPatientsTable';
+export type { NewPatientItem } from './NewPatientsTable';
+export { PeakHoursHeatmap } from './PeakHoursHeatmap';
+export type { PeakHourCell } from './PeakHoursHeatmap';
+export { RecentBookingsTable } from './RecentBookingsTable';
+export type { RecentBookingItem } from './RecentBookingsTable';
+export { RecentPatientsTable } from './RecentPatientsTable';
+export type { RecentPatientItem } from './RecentPatientsTable';
+export { RevenueSourcesChart } from './RevenueSourcesChart';
+export type { RevenueSourceData } from './RevenueSourcesChart';
+export { SparklineChart } from './SparklineChart';
+export { StatCard } from './StatCard';
+export { TopServicesChart } from './TopServicesChart';
+export type { TopServiceData } from './TopServicesChart';

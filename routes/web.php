@@ -83,6 +83,8 @@ Route::post('/booking/cancel', [PatientBookingController::class, 'cancelBooking'
 
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/statistic', [AdminDashboardController::class, 'statistic'])->name('statistic');
+    Route::get('/statistic/export', [AdminDashboardController::class, 'exportCsv'])->name('statistic.export');
 
     // Bookings
     Route::get('/bookings', [AdminBookingController::class, 'listBooking'])->name('bookings.list');
