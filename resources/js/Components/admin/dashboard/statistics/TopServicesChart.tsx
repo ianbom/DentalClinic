@@ -22,13 +22,13 @@ const COLORS = [
 ];
 
 export function TopServicesChart({
-    title = 'Top 5 Services',
+    title = 'Top Services',
     subtitle = 'Most booked services',
     services,
 }: TopServicesChartProps) {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-    const total = services.reduce((sum, s) => sum + s.count, 0);
+    const total = services.reduce((sum, s) => sum + Number(s.count), 0);
 
     // Calculate pie chart segments
     const size = 160;
@@ -116,7 +116,7 @@ export function TopServicesChart({
                                             style={{
                                                 opacity:
                                                     hoveredIndex !== null &&
-                                                    !isHovered
+                                                        !isHovered
                                                         ? 0.5
                                                         : 1,
                                             }}
@@ -141,11 +141,10 @@ export function TopServicesChart({
                             {segments.map((segment, index) => (
                                 <div
                                     key={index}
-                                    className={`flex cursor-pointer items-center justify-between rounded px-2 py-1.5 transition-all ${
-                                        hoveredIndex === index
+                                    className={`flex cursor-pointer items-center justify-between rounded px-2 py-1.5 transition-all ${hoveredIndex === index
                                             ? 'bg-slate-100'
                                             : 'hover:bg-slate-50'
-                                    }`}
+                                        }`}
                                     onMouseEnter={() => setHoveredIndex(index)}
                                     onMouseLeave={() => setHoveredIndex(null)}
                                 >

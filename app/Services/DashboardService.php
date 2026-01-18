@@ -266,7 +266,7 @@ class DashboardService
         return $services->map(function ($service) use ($total) {
             return [
                 'name' => $service->service,
-                'count' => $service->count,
+                'count' => (int) $service->count,
                 'percentage' => $total > 0 ? round(($service->count / $total) * 100) : 0,
             ];
         })->toArray();

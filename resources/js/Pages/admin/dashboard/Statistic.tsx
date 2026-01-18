@@ -171,7 +171,7 @@ function StatisticPage({
                     />
                 </div>
                 <TopServicesChart
-                    title="Top 5 Services"
+                    title="Top Services"
                     subtitle={`Most booked services - ${getFilterLabel()}`}
                     services={topServices}
                 />
