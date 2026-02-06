@@ -704,6 +704,9 @@ class BookingService
 
         $whatsappService->sendCheckin($booking->id, $booking->patient->patient_phone, $bookingDetails);
 
+        // Schedule post check-in reminder (3 days after check-in)
+        $this->schedulePostCheckinReminder($booking->id);
+
         return $booking->fresh(['patient', 'doctor', 'checkin']);
     }
 
@@ -832,6 +835,56 @@ class BookingService
         }
 
         return $booking->fresh(['patient', 'doctor', 'cancellation']);
+    }
+
+    /**
+     * Schedule post check-in reminder (3 days after check-in)
+     * Sends a follow-up message to ask about patient's condition
+     */
+    public function schedulePostCheckinReminder(int $bookingId): void
+    {
+        $booking = Booking::with(['doctor', 'patient'])->findOrFail($bookingId);
+        
+        // Schedule for 3 days after check-in
+        $scheduledAt = Carbon::now()->addDays(3);
+        
+        $bookingDetails = [
+            'patient_name' => $booking->patient->patient_name,
+            'doctor_name' => $booking->doctor->name,
+        ];
+
+        $message = $this->buildPostCheckinReminderMessage($bookingDetails);
+
+        Notification::create([
+            'booking_id' => $bookingId,
+            'channel' => 'whatsapp',
+            'type' => 'reminder',
+            'recipient' => $booking->patient->patient_phone,
+            'payload' => $message,
+            'scheduled_at' => $scheduledAt,
+            'status' => 'pending',
+            'attempt_count' => 0,
+        ]);
+    }
+
+    /**
+     * Build post check-in reminder message (3 days after check-in)
+     */
+    private function buildPostCheckinReminderMessage(array $details): string
+    {
+        $patientName = $details['patient_name'] ?? '-';
+        $doctorName = $details['doctor_name'] ?? 'drg. Anna Fikril';
+
+        return "*Assalamu'alaikum warahmatullahi wabarakatuh*\n\n"
+            . "Yth. Bapak/Ibu {$patientName},\n\n"
+            . "Bagaimana kondisi gigi setelah dari sini kemarin?\n\n"
+            . "Apabila masih terdapat keluhan atau rasa kurang nyaman, silakan menginformasikannya kepada kami. "
+            . "Kami dengan senang hati siap membantu.\n\n"
+            . "Untuk keluhan bisa langsung chat dengan {$doctorName} di nomor di bawah ini:\n"
+            . "📞 https://wa.me/6282234328628\n\n"
+            . "Salam sehat,\n"
+            . "{$doctorName}\n\n"
+            . "_Pesan ini dikirim otomatis oleh Cantika Dental Care by drg. Anna Fikril._";
     }
 }
 
