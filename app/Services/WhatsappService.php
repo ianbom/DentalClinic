@@ -162,7 +162,7 @@ class WhatsappService
         "Jika kamu menerima pesan ini, berarti nomor WhatsApp kamu berhasil diverifikasi.\n" .
         "Silakan lanjutkan proses *booking pemeriksaan gigi* melalui website kami.\n\n" .
         "Terima kasih atas kepercayaan Anda 🙏\n" .
-        "Kami menantikan kedatangan Anda di *Cantika Dental Care* 😊";
+        "Kami menantikan kedatangan Anda di *Cantika Dental Care* 😊\n";
 
     return $this->sendWA(null, $target, $message, 'check_booking');
     }
@@ -215,9 +215,9 @@ class WhatsappService
             . "👩‍⚕️ Dokter : {$doctorName}\n\n"
             . "🔗 Cek Data Booking\n"
             . "{$checkinLink}\n\n"
-            . "_Pesan ini dikirim otomatis oleh Cantika Dental Care by drg. Anna Fikril._\n\n"
             . "Terima kasih atas pengertian Anda.\n"
-            . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊";
+            . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊\n"
+            . "Untuk chat admin silakan ke no WhatsApp 📞 https://wa.me/6285231519966\n\n";
     }
 
     private function buildConfirmationMessage(array $details): string {
@@ -240,9 +240,9 @@ class WhatsappService
             . "{$confirmLink}\n\n"
             . "📌 *Catatan:*\n"
             . "Mohon lakukan konfirmasi kedatangan pada H-1 melalui link di atas.\n\n"
-            . "_Pesan ini dikirim otomatis oleh Cantika Dental Care by drg. Anna Fikril._\n\n"
             . "Terima kasih atas kepercayaan Anda.\n"
-            . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊";
+            . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊\n"
+            . "Untuk chat admin silakan ke no WhatsApp 📞 https://wa.me/6285231519966\n\n";
     }
 
     private function buildReminderMessage(array $details): string {
@@ -264,9 +264,10 @@ class WhatsappService
             . "{$confirmLink}\n\n"
             . "📌 *Catatan:*\n"
             . "Mohon lakukan konfirmasi kedatangan pada H-1 melalui link di atas.\n\n"
-            . "_Pesan ini dikirim otomatis oleh Cantika Dental Care by drg. Anna Fikril._\n\n"
             . "Terima kasih atas kepercayaan Anda.\n"
-            . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊";
+            . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊\n"
+            . "Untuk chat admin silakan ke no WhatsApp 📞 https://wa.me/6285231519966\n\n";
+
     }
 
     /**
@@ -315,7 +316,7 @@ class WhatsappService
             . "📍 Lokasi : Cantika Dental Care\n"
             . "📞 Kontak : 0822-3432-8628\n\n"
             . "Jika Anda ingin membuat jadwal baru, silakan kunjungi website kami atau hubungi kontak di atas.\n\n"
-            . "_Pesan ini dikirim otomatis oleh Cantika Dental Care by drg. Anna Fikril._\n\n"
+            . "Untuk chat admin silakan ke no WhatsApp 📞 https://wa.me/6285231519966\n\n"
             . "Terima kasih atas pengertiannya 🙏";
     }
 }

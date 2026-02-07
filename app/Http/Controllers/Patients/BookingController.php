@@ -193,8 +193,9 @@ class BookingController extends Controller
             if (!$booking) {
                 return Inertia::render('patient/check-booking/CheckBooking', [
                     'booking' => null,
-                ])->withViewData('errors', [
-                    'booking' => 'Booking tidak ditemukan. Pastikan kode booking dan nomor WhatsApp sudah benar.',
+                    'errors' => [
+                        'booking' => 'Booking tidak ditemukan. Pastikan kode booking dan nomor WhatsApp sudah benar.',
+                    ]
                 ]);
             }
         }

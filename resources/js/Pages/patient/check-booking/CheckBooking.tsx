@@ -28,8 +28,19 @@ function CheckBookingPage({ booking }: CheckBookingPageProps) {
 
                 {/* Error Message */}
                 {errors?.booking && (
-                    <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-red-700">
+                    <div className="flex flex-col items-center gap-4 rounded-lg border border-red-200 bg-red-50 p-6 text-center text-red-700">
                         <p className="font-medium">{errors.booking}</p>
+                        <a
+                            href="https://wa.me/6285231519966?text=Halo%20Admin%2C%20saya%20mengalami%20kendala%20saat%20mengecek%20booking%20saya."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-green-700"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">
+                                chat
+                            </span>
+                            Hubungi Admin
+                        </a>
                     </div>
                 )}
 

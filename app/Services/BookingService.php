@@ -637,9 +637,9 @@ class BookingService
             . "{$confirmLink}\n\n"
             . "📌 *Catatan:*\n"
             . "Mohon konfirmasi kehadiran Anda hari ini melalui link di atas.\n\n"
-            . "_Pesan ini dikirim otomatis oleh Cantika Dental Care by drg. Anna Fikril._\n\n"
             . "Terima kasih atas kepercayaan Anda.\n"
-            . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊";
+            . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊\n"
+            . "Untuk chat admin silakan ke no WhatsApp 📞 https://wa.me/6285231519966\n\n";
     }
 
     public function checkinBooking(string $code, bool $isAdminCheckin = false): Booking

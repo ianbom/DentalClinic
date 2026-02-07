@@ -13,19 +13,18 @@ export function Features() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-                    {/* Step 1 */}
                     <div className="group flex flex-col items-center rounded-2xl border border-subtle-light bg-background-light p-6 text-center transition-all duration-300 hover:border-primary/30 hover:shadow-xl">
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 text-primary transition-transform group-hover:scale-110">
                             <span className="material-symbols-outlined text-3xl">
-                                person_add
+                                calendar_month
                             </span>
                         </div>
                         <h3 className="mb-2 text-xl font-bold">
-                            1. Booking Jadwal
+                            1. Pilih Dokter & Jadwal
                         </h3>
                         <p className="text-sm text-gray-500">
-                            Isi data diri Anda dengan singkat untuk membuat
-                            rekam medis digital.
+                            Pilih dokter, jenis layanan, dan tentukan jadwal
+                            kunjungan yang sesuai dengan kebutuhan Anda.
                         </p>
                     </div>
 
@@ -33,15 +32,15 @@ export function Features() {
                     <div className="group flex flex-col items-center rounded-2xl border border-subtle-light bg-background-light p-6 text-center transition-all duration-300 hover:border-primary/30 hover:shadow-xl">
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-50 text-green-600 transition-transform group-hover:scale-110">
                             <span className="material-symbols-outlined text-3xl">
-                                chat
+                                person_edit
                             </span>
                         </div>
                         <h3 className="mb-2 text-xl font-bold">
-                            2. Verifikasi WA
+                            2. Isi Identitas
                         </h3>
                         <p className="text-sm text-gray-500">
-                            Verifikasi nomor WhatsApp Anda untuk keamanan data
-                            dan notifikasi.
+                            Lengkapi data diri Anda secara lengkap agar rekam
+                            medis dapat tercatat dengan baik.
                         </p>
                     </div>
 
@@ -49,15 +48,15 @@ export function Features() {
                     <div className="group flex flex-col items-center rounded-2xl border border-subtle-light bg-background-light p-6 text-center transition-all duration-300 hover:border-primary/30 hover:shadow-xl">
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-purple-50 text-purple-600 transition-transform group-hover:scale-110">
                             <span className="material-symbols-outlined text-3xl">
-                                calendar_month
+                                verified_user
                             </span>
                         </div>
                         <h3 className="mb-2 text-xl font-bold">
-                            3. Pilih Jadwal
+                            3. Verifikasi WA
                         </h3>
                         <p className="text-sm text-gray-500">
-                            Lihat ketersediaan dokter secara real-time dan pilih
-                            waktu yang cocok.
+                            Konfirmasi nomor WhatsApp Anda untuk mendapatkan
+                            notifikasi dan pengingat jadwal.
                         </p>
                     </div>
 
@@ -65,15 +64,15 @@ export function Features() {
                     <div className="group flex flex-col items-center rounded-2xl border border-subtle-light bg-background-light p-6 text-center transition-all duration-300 hover:border-primary/30 hover:shadow-xl">
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-50 text-orange-600 transition-transform group-hover:scale-110">
                             <span className="material-symbols-outlined text-3xl">
-                                account_balance_wallet
+                                payments
                             </span>
                         </div>
                         <h3 className="mb-2 text-xl font-bold">
                             4. Bayar Di Klinik
                         </h3>
                         <p className="text-sm text-gray-500">
-                            Lakukan pembayaran di klinik dengan tunai maupun non
-                            tunai
+                            Selesaikan pembayaran layanan Anda dengan mudah saat
+                            datang ke klinik.
                         </p>
                     </div>
                 </div>

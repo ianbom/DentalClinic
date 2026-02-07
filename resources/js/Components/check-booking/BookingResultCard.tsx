@@ -307,11 +307,10 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
                         <button
                             onClick={handleCheckin}
                             disabled={!checkinStatus.allowed || isCheckingIn}
-                            className={`flex items-center justify-center gap-2 rounded-lg px-6 py-2.5 text-sm font-bold transition-all ${
-                                checkinStatus.allowed && !isCheckingIn
+                            className={`flex items-center justify-center gap-2 rounded-lg px-6 py-2.5 text-sm font-bold transition-all ${checkinStatus.allowed && !isCheckingIn
                                     ? 'cursor-pointer bg-blue-600 text-white hover:bg-blue-700'
                                     : 'cursor-not-allowed bg-gray-200 text-gray-400'
-                            }`}
+                                }`}
                         >
                             <span className="material-symbols-outlined text-[18px]">
                                 {isCheckingIn
@@ -390,8 +389,8 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
                             <p className="text-base font-semibold text-gray-900">
                                 {patientDetail?.patient_birthdate
                                     ? formatBirthdate(
-                                          patientDetail.patient_birthdate,
-                                      )
+                                        patientDetail.patient_birthdate,
+                                    )
                                     : '-'}
                             </p>
                         </div>
@@ -562,12 +561,17 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
                             Batalkan Booking
                         </button>
                     )}
-                <button className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm transition-colors hover:bg-gray-200 sm:w-auto">
+                <a
+                    href={`https://wa.me/6285231519966?text=Halo%20Admin%2C%20saya%20ingin%20bertanya%20mengenai%20booking%20dengan%20kode%20${booking.code}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm transition-colors hover:bg-gray-200 sm:w-auto"
+                >
                     <span className="material-symbols-outlined text-[18px]">
                         chat
                     </span>
                     Hubungi Admin
-                </button>
+                </a>
                 {/* <button
                     onClick={handleDownload}
                     disabled={isDownloading}

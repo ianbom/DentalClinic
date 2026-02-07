@@ -116,7 +116,7 @@ export function TopServicesChart({
                                             style={{
                                                 opacity:
                                                     hoveredIndex !== null &&
-                                                        !isHovered
+                                                    !isHovered
                                                         ? 0.5
                                                         : 1,
                                             }}
@@ -141,10 +141,11 @@ export function TopServicesChart({
                             {segments.map((segment, index) => (
                                 <div
                                     key={index}
-                                    className={`flex cursor-pointer items-center justify-between rounded px-2 py-1.5 transition-all ${hoveredIndex === index
+                                    className={`flex cursor-pointer items-center justify-between rounded px-2 py-1.5 transition-all ${
+                                        hoveredIndex === index
                                             ? 'bg-slate-100'
                                             : 'hover:bg-slate-50'
-                                        }`}
+                                    }`}
                                     onMouseEnter={() => setHoveredIndex(index)}
                                     onMouseLeave={() => setHoveredIndex(null)}
                                 >

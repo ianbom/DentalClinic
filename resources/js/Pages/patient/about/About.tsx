@@ -6,14 +6,19 @@ import { TeamSection } from '@/Components/about/TeamSection';
 import { VisionMission } from '@/Components/about/VisionMission';
 import { FloatingWhatsApp } from '@/Components/layout/FloatingWhatsApp';
 import PatientLayout from '@/Layouts/PatientLayout';
+import { Doctor } from '@/types';
 
-function AboutPage() {
+interface AboutPageProps {
+    doctors: Doctor[];
+}
+
+function AboutPage({ doctors }: AboutPageProps) {
     return (
         <div className="flex min-h-screen flex-col font-display">
             <AboutHero />
             <AboutStory />
             <VisionMission />
-            <TeamSection />
+            <TeamSection doctors={doctors} />
             <LocationContact />
             <AboutCTA />
             <FloatingWhatsApp />
