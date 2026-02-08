@@ -631,7 +631,7 @@ export function CustomerDataForm({
                         <div className="relative">
                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                 <span className="text-sm font-medium text-gray-500">
-                                    +62
+                                    📞
                                 </span>
                                 <div className="ml-2 h-4 w-px bg-gray-300"></div>
                             </div>
@@ -642,20 +642,16 @@ export function CustomerDataForm({
                                         : ''
                                 }`}
                                 id="whatsapp"
-                                placeholder="812-3456-7890"
+                                placeholder="6281234567890"
                                 type="tel"
                                 required
-                                value={
-                                    bookingData.whatsapp.startsWith('62')
-                                        ? bookingData.whatsapp.slice(2)
-                                        : bookingData.whatsapp
-                                }
+                                value={bookingData.whatsapp}
                                 onChange={(e) => {
                                     const value = e.target.value.replace(
                                         /\D/g,
                                         '',
                                     );
-                                    handleInputChange('whatsapp', '62' + value);
+                                    handleInputChange('whatsapp', value);
                                 }}
                             />
                             {bookingData.isWhatsappVerified && (

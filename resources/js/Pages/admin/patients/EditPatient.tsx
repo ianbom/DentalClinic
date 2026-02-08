@@ -427,7 +427,7 @@ export default function EditPatient({ patient, provinces }: Props) {
                                     value={formData.patient_phone}
                                     onChange={handleChange}
                                     className={`${inputClass} max-w-md`}
-                                    placeholder="08xxxxxxxxxx"
+                                    placeholder="628xxxxxxxxxx"
                                     required
                                 />
                             </div>
