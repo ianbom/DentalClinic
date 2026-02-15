@@ -154,10 +154,6 @@ class BookingController extends Controller
                 ->with('success', 'Booking berhasil dibuat!');
                 
         } catch (\Exception $e) {
-            // return response()->json([
-            //     'success' => false,
-            //     'message' => $e->getMessage(),
-            // ]);
             return back()
                 ->withErrors(['slot' => $e->getMessage()])
                 ->withInput();

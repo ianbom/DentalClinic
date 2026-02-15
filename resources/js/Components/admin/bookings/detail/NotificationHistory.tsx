@@ -139,12 +139,25 @@ export function NotificationHistory({
                                                         <td className="w-1/4 bg-slate-50 px-4 py-2 text-xs font-medium text-slate-500">
                                                             Penerima
                                                         </td>
+                                                        
                                                         <td className="px-4 py-2 font-mono text-xs text-slate-700">
                                                             {
                                                                 notification.recipient
                                                             }
                                                         </td>
                                                     </tr>
+                                                    {notification.scheduled_at && (
+                                                        <tr>
+                                                            <td className="bg-slate-50 px-4 py-2 text-xs font-medium text-slate-500">
+                                                                Dijadwalkan Pada
+                                                            </td>
+                                                            <td className="px-4 py-2 text-xs text-slate-700">
+                                                                {formatDate(
+                                                                    notification.scheduled_at,
+                                                                )}
+                                                            </td>
+                                                        </tr>
+                                                    )}
                                                     {notification.sent_at && (
                                                         <tr>
                                                             <td className="bg-slate-50 px-4 py-2 text-xs font-medium text-slate-500">

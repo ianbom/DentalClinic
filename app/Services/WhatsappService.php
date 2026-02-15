@@ -217,7 +217,7 @@ class WhatsappService
             . "{$checkinLink}\n\n"
             . "Terima kasih atas pengertian Anda.\n"
             . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊\n\n"
-            . "Untuk chat admin silakan ke no WhatsApp 📞 https://wa.me/6285231519966";
+            . "📱Untuk chat admin silakan ke no WhatsApp https://wa.me/6285231519966";
     }
 
     private function buildConfirmationMessage(array $details): string {
@@ -242,7 +242,7 @@ class WhatsappService
             . "Mohon lakukan konfirmasi kedatangan pada H-1 melalui link di atas.\n\n"
             . "Terima kasih atas kepercayaan Anda.\n"
             . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊\n\n"
-            . "Untuk chat admin silakan ke no WhatsApp 📞 https://wa.me/6285231519966";
+            . "📱Untuk chat admin silakan ke no WhatsApp https://wa.me/6285231519966";
     }
 
     private function buildReminderMessage(array $details): string {
@@ -266,7 +266,7 @@ class WhatsappService
             . "Mohon lakukan konfirmasi kedatangan pada H-1 melalui link di atas.\n\n"
             . "Terima kasih atas kepercayaan Anda.\n"
             . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊\n\n"
-            . "Untuk chat admin silakan ke no WhatsApp 📞 https://wa.me/6285231519966";
+            . "📱Untuk chat admin silakan ke no WhatsApp https://wa.me/6285231519966";
 
     }
 
@@ -316,7 +316,7 @@ class WhatsappService
             . "📍 Lokasi : Cantika Dental Care\n"
             . "📞 Kontak : 0822-3432-8628\n\n"
             . "Jika Anda ingin membuat jadwal baru, silakan kunjungi website kami atau hubungi kontak di atas.\n\n"
-            . "Untuk chat admin silakan ke no WhatsApp 📞 https://wa.me/6285231519966\n"
+            . "📱Untuk chat admin silakan ke no WhatsApp https://wa.me/6285231519966\n"
             . "Terima kasih atas pengertiannya 🙏";
     }
 }

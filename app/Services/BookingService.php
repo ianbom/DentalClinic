@@ -13,6 +13,7 @@ use App\Models\Notification;
 use App\Services\WhatsappService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class BookingService
 {
@@ -491,15 +492,10 @@ class BookingService
         return $whatsappService->sendReschedule($bookingId, $phone, $bookingDetails);
     }
 
-    /**
-     * Schedule reminder notification
-     * - If booking is today: schedule immediately
-     * - If booking is future: schedule H-1 at the same time as booking
-     */
     public function scheduleReminderNotification(int $bookingId): void
     {
         $booking = Booking::with(['doctor', 'patient'])->findOrFail($bookingId);
-    
+
         if (!$booking->start_time) {
             return;
         }
@@ -508,18 +504,28 @@ class BookingService
         $bookingTime = substr($booking->start_time, 0, 5);
         $now = Carbon::now();
         
-        // Check if booking is for today
-        if ($bookingDate->isSameDay($now)) {
-            // Schedule immediately (now + 1 minute to ensure it gets picked up)
+        // Buat datetime lengkap dari tanggal + jam booking
+        $bookingDateTime = $bookingDate->copy()->setTimeFromTimeString($bookingTime);
+        
+        // Reminder = H-1 jam sebelum jadwal booking
+        $reminderTime = $bookingDateTime->copy()->subHour();
+        
+        if ($now->gte($reminderTime)) {
+            // User memesan kurang dari 1 jam sebelum jadwal
+            // Kirim reminder langsung dengan jeda 1 menit
             $scheduledAt = $now->copy()->addMinute();
+            Log::info('Reminder langsung dikirim (user pesan < H-1 jam)', [
+                'booking_time' => $bookingDateTime->toDateTimeString(),
+                'scheduled_at' => $scheduledAt->toDateTimeString(),
+            ]);
         } else {
-            // Schedule for H-1 at the same time as booking
-            $scheduledAt = $bookingDate->copy()->subDay()->setTimeFromTimeString($bookingTime);
-        }
-
-        // Don't schedule if the reminder time has already passed
-        if ($scheduledAt->lt($now)) {
-            return;
+            // User memesan lebih dari 1 jam sebelum jadwal
+            // Schedule reminder H-1 jam sebelum booking
+            $scheduledAt = $reminderTime;
+            Log::info('Reminder dijadwalkan H-1 jam', [
+                'booking_time' => $bookingDateTime->toDateTimeString(),
+                'scheduled_at' => $scheduledAt->toDateTimeString(),
+            ]);
         }
 
         $bookingDetails = [
@@ -532,6 +538,8 @@ class BookingService
         ];
 
         $message = $this->buildReminderMessage($bookingDetails);
+
+        Log::info('Reminder dibuat untuk booking: ' . $booking->code);
 
         Notification::create([
             'booking_id' => $bookingId,
@@ -639,7 +647,7 @@ class BookingService
             . "Mohon konfirmasi kehadiran Anda hari ini melalui link di atas.\n\n"
             . "Terima kasih atas kepercayaan Anda.\n"
             . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊\n\n"
-            . "Untuk chat admin silakan ke no WhatsApp 📞 https://wa.me/6285231519966";
+            . "📱Untuk chat admin silakan ke no WhatsApp https://wa.me/6285231519966";
     }
 
     public function checkinBooking(string $code, bool $isAdminCheckin = false): Booking
@@ -880,11 +888,10 @@ class BookingService
             . "Bagaimana kondisi gigi setelah dari sini kemarin?\n\n"
             . "Apabila masih terdapat keluhan atau rasa kurang nyaman, silakan menginformasikannya kepada kami. "
             . "Kami dengan senang hati siap membantu.\n\n"
-            . "Untuk keluhan bisa langsung chat dengan {$doctorName} di nomor di bawah ini:\n"
-            . "📞 https://wa.me/6282234328628\n\n"
+            . "Untuk keluhan bisa langsung chat dengan drg. Anna Fikril di nomor di bawah ini:\n"
+            . "📱https://wa.me/6282234328628\n\n"
             . "Salam sehat,\n"
-            . "{$doctorName}\n\n"
-            . "_Pesan ini dikirim otomatis oleh Cantika Dental Care by drg. Anna Fikril._";
+            . "drg. Anna Fikril";
     }
 }
 
