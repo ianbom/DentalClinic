@@ -44,7 +44,7 @@ export function BookingDetailsCard({ booking }: BookingDetailsCardProps) {
                 <h3 className="text-lg font-bold text-text-light">
                     Detail Booking
                 </h3>
-                <div className="flex gap-2">
+                {/* <div className="flex gap-2">
                     <button
                         className="cursor-pointer text-gray-400 transition-colors hover:text-primary"
                         title="Download PDF"
@@ -59,7 +59,7 @@ export function BookingDetailsCard({ booking }: BookingDetailsCardProps) {
                     >
                         <span className="material-symbols-outlined">print</span>
                     </button>
-                </div>
+                </div> */}
             </div>
             <div className="p-6">
                 <div className="grid grid-cols-1 gap-x-12 gap-y-6 md:grid-cols-2">

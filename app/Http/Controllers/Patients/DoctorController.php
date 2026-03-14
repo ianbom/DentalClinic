@@ -10,7 +10,7 @@ use Inertia\Inertia;
 class DoctorController extends Controller
 {
     public function listDoctors(){ 
-        $doctors = Doctor::with('workingPeriods')->get();
+        $doctors = Doctor::with('workingPeriods')->where('is_active', true)->get();
 
         return Inertia::render('patient/doctors/ListDoctor', [
             'doctors' => $doctors,

@@ -1,0 +1,94 @@
+version: "2"
+type: backend
+tech_stack:
+  - php
+  - laravel
+  - mysql
+routes:
+  - path: /login
+    file: app/Http/Controllers/Auth/AuthenticatedSessionController.php
+    auth_required: false
+    description: Login admin/pasien
+  - path: /register
+    file: app/Http/Controllers/Auth/RegisteredUserController.php
+    auth_required: false
+    description: Register akun pasien baru
+  - path: /booking/create
+    file: app/Http/Controllers/Patients/BookingController.php
+    auth_required: true
+    description: Pasien membuat janji temu berdasarkan slot jadwal dokter
+  - path: /check-booking
+    file: app/Http/Controllers/Patients/BookingController.php
+    auth_required: false
+    description: Cek status pendaftaran booking dari pasien secara publik
+  - path: /admin/bookings/store
+    file: app/Http/Controllers/Admin/BookingController.php
+    auth_required: true
+    description: Admin membuat janji secara walk-in atas nama pasien
+  - path: /admin/doctors/schedule/lock
+    file: app/Http/Controllers/Admin/DoctorController.php
+    auth_required: true
+    description: Admin membekukan jadwal dokter dari sistem
+features:
+  - name: User Authentication
+    description: Login dan Register untuk Pasien dan Admin
+    files:
+      - app/Http/Controllers/Auth/AuthenticatedSessionController.php
+      - app/Http/Controllers/Auth/RegisteredUserController.php
+    entry_route: /login
+    user_interactions: []
+    api_calls:
+      - method: POST
+        endpoint: /login
+      - method: POST
+        endpoint: /register
+    auth_required: false
+  - name: Public Booking Flow
+    description: Autentikasi dan pembuatan booking pasien ke sistem
+    files:
+      - app/Http/Controllers/Patients/BookingController.php
+    entry_route: /booking/create
+    user_interactions: []
+    api_calls:
+      - method: POST
+        endpoint: /booking/create
+    auth_required: true
+  - name: Public Check Booking
+    description: Melihat status booking menggunakan kode tanpa auth
+    files:
+      - app/Http/Controllers/Patients/BookingController.php
+    entry_route: /check-booking
+    user_interactions: []
+    api_calls:
+      - method: GET
+        endpoint: /check-booking
+      - method: POST
+        endpoint: /check-nik
+    auth_required: false
+  - name: Admin Booking Management
+    description: Admin dapat melakukan Create/Update/Cancel terhadap data booking pasien.
+    files:
+      - app/Http/Controllers/Admin/BookingController.php
+    entry_route: /admin/bookings/store
+    user_interactions: []
+    api_calls:
+      - method: POST
+        endpoint: /admin/bookings/store
+      - method: POST
+        endpoint: /admin/bookings/{bookingId}/cancel
+      - method: PUT
+        endpoint: /admin/bookings/{bookingId}/reschedule
+    auth_required: true
+  - name: Admin Doctor Schedule Management
+    description: Lock Schedule dan Add Time-Off
+    files:
+      - app/Http/Controllers/Admin/DoctorController.php
+    entry_route: /admin/doctors/schedule/lock
+    user_interactions: []
+    api_calls:
+      - method: POST
+        endpoint: /admin/doctors/schedule/lock
+      - method: POST
+        endpoint: /admin/doctors/timeoff
+    auth_required: true
+known_limitations: []

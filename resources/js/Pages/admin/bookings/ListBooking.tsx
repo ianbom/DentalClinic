@@ -171,6 +171,7 @@ function ListBookingPage({ bookings, doctors, filters }: ListBookingPageProps) {
                     </span>
                     <Link
                         href="/admin/bookings/create"
+                        onClick={() => sessionStorage.removeItem('bookingData')}
                         className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-dark"
                     >
                         <span className="material-symbols-outlined text-[18px]">

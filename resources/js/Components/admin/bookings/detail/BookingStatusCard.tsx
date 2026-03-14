@@ -25,7 +25,7 @@ export function BookingStatusCard({
     // Reschedule available for confirmed and pending
     const canReschedule = rawStatus === 'confirmed' || rawStatus === 'pending';
 
-    const handleRescheduleClick = () => {
+    const handleClearBookingSession = () => {
         // Clear booking context state before navigating
         try {
             sessionStorage.removeItem('bookingData');
@@ -192,7 +192,7 @@ export function BookingStatusCard({
                     {canReschedule && (
                         <Link
                             href={`/admin/bookings/${bookingId}/reschedule`}
-                            onClick={handleRescheduleClick}
+                            onClick={handleClearBookingSession}
                             className="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-600"
                         >
                             <span className="material-symbols-outlined text-[20px]">
@@ -209,6 +209,7 @@ export function BookingStatusCard({
                 {/* Edit button on the right */}
                 <Link
                     href={`/admin/bookings/${bookingId}/edit`}
+                    onClick={handleClearBookingSession}
                     className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-600"
                 >
                     <span className="material-symbols-outlined text-[20px]">

@@ -132,7 +132,7 @@ export function ScheduleSidebar({
                 {morningSlots.length > 0 && (
                     <div className="flex flex-col gap-3">
                         <h4 className="mb-2 text-sm font-bold uppercase tracking-wider text-[#0d171c]">
-                            Slot Pagi
+                            Slot Tersedia
                         </h4>
                         {morningSlots.map((slot, index) => (
                             <SlotItem
@@ -152,7 +152,7 @@ export function ScheduleSidebar({
                 {afternoonSlots.length > 0 && (
                     <div className="flex flex-col gap-3">
                         <h4 className="mb-2 text-sm font-bold uppercase tracking-wider text-[#0d171c]">
-                            Slot Siang
+                            Slot Tersedia
                         </h4>
                         {afternoonSlots.map((slot, index) => (
                             <SlotItem

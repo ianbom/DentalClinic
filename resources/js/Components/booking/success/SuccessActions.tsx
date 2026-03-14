@@ -22,7 +22,9 @@ export function SuccessActions() {
                     Butuh bantuan?{' '}
                     <a
                         className="font-medium text-primary hover:underline"
-                        href="#"
+                        href="https://wa.me/6285231519966"
+                        target="_blank"
+                        rel="noopener noreferrer"
                     >
                         Chat Admin via WhatsApp
                     </a>

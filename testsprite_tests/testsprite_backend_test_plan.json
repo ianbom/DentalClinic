@@ -1,0 +1,32 @@
+[
+  {
+    "id": "TC001",
+    "title": "post login with valid credentials",
+    "description": "Test the POST /login endpoint with valid patient and admin credentials to ensure successful authentication and receipt of JWT token and user role."
+  },
+  {
+    "id": "TC002",
+    "title": "post register with new patient data",
+    "description": "Test the POST /register endpoint with valid new patient data including NIK, name, and WA number to verify successful patient account creation and response with 201 Created and patient ID."
+  },
+  {
+    "id": "TC003",
+    "title": "post booking create with valid auth and data",
+    "description": "Test the POST /booking/create endpoint with valid Authorization token and booking payload including doctor, service, date, slot, and patient data to verify booking creation with 201 Created status and booking code with status pending or confirmed."
+  },
+  {
+    "id": "TC004",
+    "title": "get check booking with valid and invalid codes",
+    "description": "Test the GET /check-booking endpoint with valid booking code to receive booking details and with invalid booking code to receive 404 Not Found error."
+  },
+  {
+    "id": "TC005",
+    "title": "post admin bookings store with valid admin auth",
+    "description": "Test the POST /admin/bookings/store endpoint with valid admin Authorization token and payload to create walk-in booking on behalf of patient, expecting 201 Created with bookingId and booking code."
+  },
+  {
+    "id": "TC006",
+    "title": "post admin doctors schedule lock with valid and invalid doctor id",
+    "description": "Test the POST /admin/doctors/schedule/lock endpoint with valid admin Authorization token and valid doctor_id to lock schedule successfully, and with invalid doctor_id to receive 404 Not Found error."
+  }
+]

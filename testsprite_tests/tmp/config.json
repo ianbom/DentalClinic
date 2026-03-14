@@ -1,0 +1,21 @@
+{
+  "status": "commited",
+  "type": "backend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:8000",
+  "backendAuthType": "basic token",
+  "backendUsername": "admincdc@gmail.com",
+  "backendPassword": "admin123",
+  "executionArgs": {
+    "projectName": "DentalClinic",
+    "projectPath": "e:\\laragon\\www\\DentalClinic",
+    "testIds": [],
+    "additionalInstruction": "",
+    "serverMode": "development",
+    "envs": {
+      "API_KEY": "sk-user-vJlcfjh_IM4lasoRLDPnUMW58I1PoHsctUhki_wO6OHjk-RR8R5uyurXMoHV4kfk5_BdmS5hgxcU-9O-kVodKeyuY9WSeaNqgRRmgpgZ2ScJYmhGiVBhKOoj2SqJv3y2368"
+    }
+  },
+  "serverPort": 62771,
+  "proxy": "http://ffd02140-4904-4c2c-b30f-865278307953:bVyXB9XHW3149gTgFrjTAnZ5sSXXmg1n@tun.testsprite.com:8080"
+}

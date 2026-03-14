@@ -1,0 +1,2991 @@
+[
+  {
+    "id": "TC001",
+    "title": "Landing page menampilkan hero banner dan CTA Booking",
+    "description": "Memastikan Beranda (Landing) dapat dibuka dan menampilkan elemen utama hero serta tombol CTA Booking.",
+    "category": "Beranda (Landing)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Hero banner\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"CTA Booking\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Ringkasan layanan\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Testimonial\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Floating WhatsApp\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "CTA Booking dari Landing mengarah ke daftar dokter",
+    "description": "Memastikan klik CTA Booking pada Beranda membuka halaman /doctors dan menampilkan daftar dokter.",
+    "category": "Beranda (Landing)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"CTA Booking\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"CTA Booking\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/doctors\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify page title contains \"Dokter\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"List of doctors\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Navigasi langsung ke halaman Doctors dari Landing melalui CTA (validasi konten daftar)",
+    "description": "Memastikan setelah dari Landing ke /doctors, pengguna melihat konten daftar dokter yang dapat dipakai untuk booking.",
+    "category": "Beranda (Landing)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"CTA Booking\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/doctors\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Doctor card\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Dokter\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Landing menampilkan ringkasan layanan dan statistik singkat",
+    "description": "Memastikan bagian ringkasan layanan dan statistik singkat tampil pada Landing.",
+    "category": "Beranda (Landing)",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Ringkasan layanan\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Statistik singkat\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to \"Testimonial\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Testimonial\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "View services list on Services page",
+    "description": "Verifies that the Services page shows a visible list of available services with brief descriptions.",
+    "category": "Layanan (Services)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /services"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify page title contains \"Services\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layanan\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Daftar layanan\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Item layanan\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Deskripsi singkat layanan\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Open a service item to view details (modal or expanded panel)",
+    "description": "Verifies that clicking a service item reveals its detailed information on the page.",
+    "category": "Layanan (Services)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /services"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Item layanan\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Item layanan\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Detail layanan\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Harga layanan\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Deskripsi lengkap layanan\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Close service details modal/panel",
+    "description": "Verifies that the service details view can be dismissed and returns to the services list view.",
+    "category": "Layanan (Services)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /services"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Item layanan\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Detail layanan\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Tutup\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Detail layanan\" is not visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Daftar layanan\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Service details show meaningful content (not empty placeholders)",
+    "description": "Verifies that the opened service details include non-empty content such as a name and description.",
+    "category": "Layanan (Services)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /services"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Item layanan\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Nama layanan\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Deskripsi lengkap layanan\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Rp\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "View doctors list shows doctor cards with key summary info",
+    "description": "Verifies the doctors list page renders doctor cards with visible name, photo, and specialization summary.",
+    "category": "Review Jadwal Dokter (Daftar Dokter & Detail)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /doctors"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify page title contains \"Dokter\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Dokter\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"doctor list\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"a doctor card\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"doctor card name\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"doctor card photo\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"doctor card specialization\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Open a doctor profile from a doctor card",
+    "description": "Verifies clicking a doctor card opens the doctor profile view with visible profile information.",
+    "category": "Review Jadwal Dokter (Daftar Dokter & Detail)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /doctors"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"a doctor card\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"a doctor card\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"doctor profile\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"doctor name\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"doctor specialization\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Booking\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Doctor profile shows booking call-to-action",
+    "description": "Verifies the doctor profile page includes a visible Booking CTA that a patient can use to start booking.",
+    "category": "Review Jadwal Dokter (Daftar Dokter & Detail)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /doctors"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"a doctor card\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"doctor profile\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Booking\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Booking\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"doctor schedule\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Start booking from doctor profile (requires login)",
+    "description": "Verifies a logged-in patient can click Booking from a doctor profile and reach the booking page for that doctor.",
+    "category": "Review Jadwal Dokter (Daftar Dokter & Detail)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Dokter\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"a doctor card\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Booking\""
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Booking CTA leads to booking page for selected doctor (URL validation)",
+    "description": "Verifies that clicking Booking transitions to a booking route for a specific doctor.",
+    "category": "Review Jadwal Dokter (Daftar Dokter & Detail)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Login\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Dokter\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"a doctor card\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Booking\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/doctors/\""
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Login lalu berhasil menyelesaikan booking dokter sampai halaman sukses",
+    "description": "Memverifikasi pasien bisa login lalu menyelesaikan seluruh langkah booking hingga muncul kode booking dan instruksi.",
+    "category": "Booking Dokter (Multi-step Booking)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /doctors/1/booking"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Booking\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Konfirmasi\" or \"Confirm\" button"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Validasi wajib isi: konfirmasi booking dengan data pasien belum lengkap menampilkan error",
+    "description": "Memverifikasi sistem menolak konfirmasi jika field wajib data pasien belum diisi dan menampilkan pesan/indikator validasi.",
+    "category": "Booking Dokter (Multi-step Booking)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /doctors/1/booking"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Konfirmasi\" or \"Confirm\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"wajib\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"harus diisi\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Slot waktu sudah diambil: muncul error slot tidak tersedia",
+    "description": "Memverifikasi saat memilih jam yang sudah tidak tersedia, sistem menampilkan error dan meminta pilih waktu lain.",
+    "category": "Booking Dokter (Multi-step Booking)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /doctors/1/booking"
+      },
+      {
+        "type": "action",
+        "description": "Click an available date on the booking form calendar"
+      },
+      {
+        "type": "action",
+        "description": "Click a time slot option that appears in the list"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Konfirmasi\" or \"Confirm\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Slot sudah tidak tersedia, pilih waktu lain\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Halaman booking dokter menampilkan konteks dokter yang dipilih",
+    "description": "Memverifikasi halaman booking untuk dokter tertentu menampilkan informasi dokter yang relevan dan form booking terlihat.",
+    "category": "Booking Dokter (Multi-step Booking)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /doctors/1/booking"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"doctor name\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"booking form\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Cari booking publik dengan kode booking valid menampilkan detail dan status",
+    "description": "Memastikan pengguna publik dapat mencari booking dengan kode valid dan melihat detail booking serta statusnya.",
+    "category": "Cek Booking (Cari Booking Publik)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cek Booking\" link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Cek Booking\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Booking code\" field is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"VALID_BOOKING_CODE\" into \"Booking code\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Search\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Status\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Booking details\" section is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Cari booking publik dengan kode tidak valid menampilkan pesan tidak ditemukan",
+    "description": "Memastikan pencarian dengan kode booking tidak valid menampilkan pesan error \"Booking tidak ditemukan\".",
+    "category": "Cek Booking (Cari Booking Publik)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cek Booking\" link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Booking code\" field is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"INVALID-CODE-12345\" into \"Booking code\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Search\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Booking tidak ditemukan\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Cari booking publik untuk booking yang dibatalkan menampilkan status Cancelled dan alasan pembatalan",
+    "description": "Memastikan booking yang berstatus dibatalkan tetap bisa ditemukan dan menampilkan status \"Cancelled\" serta alasan pembatalan.",
+    "category": "Cek Booking (Cari Booking Publik)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cek Booking\" link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Booking code\" field is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"CANCELLED_BOOKING_CODE\" into \"Booking code\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Search\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Cancelled\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Alasan\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Cancellation reason\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "Validasi wajib isi: klik Search tanpa mengisi kode menampilkan pesan validasi",
+    "description": "Memastikan form Cek Booking memblok pencarian kosong dan menampilkan pesan validasi yang terlihat.",
+    "category": "Cek Booking (Cari Booking Publik)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cek Booking\" link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Booking code\" field is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Search\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"wajib\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC022",
+    "title": "Kode booking dengan spasi di awal/akhir tetap bisa dicari (trim input)",
+    "description": "Memastikan sistem menangani input kode booking dengan spasi dan tetap mengembalikan hasil yang benar.",
+    "category": "Cek Booking (Cari Booking Publik)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cek Booking\" link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Booking code\" field is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"  VALID_BOOKING_CODE  \" into \"Booking code\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Search\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Booking details\" section is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Status\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC023",
+    "title": "Hasil pencarian menampilkan data pasien dan status pembayaran",
+    "description": "Memastikan detail booking yang ditampilkan mencakup data pasien dan status pembayaran yang terlihat di layar.",
+    "category": "Cek Booking (Cari Booking Publik)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cek Booking\" link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Booking code\" field is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"VALID_BOOKING_CODE\" into \"Booking code\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Search\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Data Pasien\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Status Pembayaran\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC024",
+    "title": "Hasil pencarian menampilkan detail jadwal (tanggal dan jam)",
+    "description": "Memastikan detail booking yang ditampilkan mencakup informasi jadwal seperti tanggal dan jam kunjungan.",
+    "category": "Cek Booking (Cari Booking Publik)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cek Booking\" link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Booking code\" field is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"VALID_BOOKING_CODE\" into \"Booking code\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Search\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Jadwal\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Tanggal\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Jam\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC025",
+    "title": "Public check-in berhasil dengan kode booking valid menampilkan status 'Checked In'",
+    "description": "Memastikan pasien publik dapat melakukan check-in menggunakan kode booking yang valid dan melihat pesan sukses serta status berubah menjadi 'Checked In'.",
+    "category": "Public Check-in",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /home"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cek Booking\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Check-in\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"VALID_BOOKING_CODE\" into the booking code field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Check-in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"success\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Checked In\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC026",
+    "title": "Public check-in gagal untuk booking yang sudah dibatalkan",
+    "description": "Memastikan sistem menolak check-in jika kode booking valid namun status booking sudah dibatalkan, dengan pesan error yang sesuai.",
+    "category": "Public Check-in",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /home"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cek Booking\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Check-in\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"CANCELLED_BOOKING_CODE\" into the booking code field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Check-in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Booking tidak dapat di-check-in karena telah dibatalkan\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Checked In\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC027",
+    "title": "Public check-in gagal dengan kode booking tidak valid",
+    "description": "Memastikan sistem menampilkan error saat pengguna memasukkan kode booking yang tidak valid.",
+    "category": "Public Check-in",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /home"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cek Booking\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Check-in\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"INVALID-CODE-999999\" into the booking code field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Check-in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Kode booking tidak valid\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Checked In\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC028",
+    "title": "Validasi form: check-in tanpa mengisi kode booking",
+    "description": "Memastikan tombol check-in tidak memproses atau menampilkan pesan validasi ketika field kode booking kosong.",
+    "category": "Public Check-in",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /home"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cek Booking\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Check-in\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Check-in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Kode booking\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Kode booking tidak valid\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC029",
+    "title": "Trim/spasi pada kode booking: kode dengan spasi tetap diproses benar",
+    "description": "Memastikan kode booking yang valid tetapi memiliki spasi di awal/akhir tetap dapat diproses (atau menghasilkan pesan error yang konsisten).",
+    "category": "Public Check-in",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /home"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cek Booking\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Check-in\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"  VALID_BOOKING_CODE  \" into the booking code field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Check-in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Checked In\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC030",
+    "title": "Idempotensi UI: melakukan check-in kedua kali untuk booking yang sudah 'Checked In'",
+    "description": "Memastikan sistem menangani percobaan check-in ulang untuk booking yang sudah checked-in dengan pesan yang sesuai atau tidak mengubah status secara salah.",
+    "category": "Public Check-in",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /home"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cek Booking\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Check-in\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"ALREADY_CHECKED_IN_CODE\" into the booking code field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Check-in\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Checked In\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"tidak dapat\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC031",
+    "title": "Validasi form: kode booking kosong saat mencoba cancel",
+    "description": "Memverifikasi user tidak bisa melanjutkan pembatalan ketika kode booking belum diisi dan melihat pesan validasi.",
+    "category": "Batalkan Booking (Publik)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cek Booking\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Cek Booking\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Cancel Booking\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"kode booking\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC032",
+    "title": "Validasi form: kode booking tidak dikenal saat mencoba cancel",
+    "description": "Memverifikasi sistem menampilkan error yang terlihat ketika kode booking tidak valid/tidak ditemukan.",
+    "category": "Batalkan Booking (Publik)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cek Booking\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Cek Booking\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"KODE-TIDAK-VALID-123\" into the booking code field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Cancel Booking\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"tidak ditemukan\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC033",
+    "title": "Admin Dashboard menampilkan kartu metrik ringkasan saat berhasil dimuat",
+    "description": "Memastikan halaman /dashboard menampilkan kartu metrik ringkasan yang utama ketika data berhasil dimuat.",
+    "category": "Admin Dashboard",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Total Booking\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Total Pasien\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Booking Hari Ini\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC034",
+    "title": "Admin Dashboard menampilkan metrik revenue dan top services",
+    "description": "Memastikan metrik revenue dan bagian layanan teratas (top services) tampil di dashboard.",
+    "category": "Admin Dashboard",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Revenue\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Top Services\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC035",
+    "title": "Admin Dashboard menyediakan akses cepat ke Manajemen Booking",
+    "description": "Memastikan link 'Manajemen Booking' dari dashboard dapat diklik dan modul terkait terbuka (minimal ada indikasi perubahan halaman/section).",
+    "category": "Admin Dashboard",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Manajemen Booking\" link on the dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Manajemen Booking\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC036",
+    "title": "Dashboard menampilkan placeholder error saat metrik gagal dimuat",
+    "description": "Memastikan ketika metrik gagal dimuat, dashboard menampilkan pesan placeholder error yang tepat.",
+    "category": "Admin Dashboard",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Gagal memuat metrik, muat ulang\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC037",
+    "title": "Admin melihat daftar booking dan melakukan pencarian dari Manajemen Booking",
+    "description": "Memverifikasi tabel booking tampil dan fitur pencarian memfilter hasil berdasarkan kata kunci.",
+    "category": "Manajemen Booking (Admin)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Booking\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"booking table\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Cari kode, nama, atau telepon...\" into the search input"
+      }
+    ]
+  },
+  {
+    "id": "TC038",
+    "title": "Pencarian booking menampilkan hasil yang terfilter",
+    "description": "Memverifikasi hasil pencarian berubah sesuai kata kunci yang dimasukkan dan menampilkan hasil yang relevan.",
+    "category": "Manajemen Booking (Admin)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Booking\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"Cari kode, nama, atau telepon...\" into the search input"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"filtered booking results\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC039",
+    "title": "Admin menerapkan filter tanggal dan filter dokter lalu menghapus filter (Clear)",
+    "description": "Memverifikasi filter dapat diterapkan dan tombol Clear mengembalikan daftar ke kondisi tanpa filter.",
+    "category": "Manajemen Booking (Admin)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Booking\""
+      },
+      {
+        "type": "action",
+        "description": "Select a date range in the date filter"
+      },
+      {
+        "type": "action",
+        "description": "Select a doctor from the doctor filter dropdown"
+      }
+    ]
+  },
+  {
+    "id": "TC040",
+    "title": "Clear menghapus filter dan menampilkan daftar booking lengkap",
+    "description": "Memverifikasi setelah Clear, indikator filter kembali kosong dan tabel menampilkan list penuh.",
+    "category": "Manajemen Booking (Admin)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Clear\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"booking table\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC041",
+    "title": "Admin membuka baris booking (expand) untuk melihat detail tambahan",
+    "description": "Memverifikasi expandable row menampilkan detail termasuk NIK dan alamat.",
+    "category": "Manajemen Booking (Admin)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click the expand control on a booking row"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"NIK\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC042",
+    "title": "Detail expanded row menampilkan alamat pasien",
+    "description": "Memverifikasi informasi alamat tampil pada bagian detail setelah expand.",
+    "category": "Manajemen Booking (Admin)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click the expand control on a booking row"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"alamat\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC043",
+    "title": "Admin melakukan Check-in pada booking berstatus confirmed",
+    "description": "Memverifikasi aksi check-in memunculkan dialog konfirmasi dan status berubah menjadi Checked In.",
+    "category": "Manajemen Booking (Admin)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Check-in\" action on a booking with status \"Confirmed\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Confirm\" button in the confirmation dialog"
+      }
+    ]
+  },
+  {
+    "id": "TC044",
+    "title": "Status booking berubah menjadi Checked In setelah Check-in berhasil",
+    "description": "Memverifikasi UI memperlihatkan status baru 'Checked In' pada baris booking yang di-check-in.",
+    "category": "Manajemen Booking (Admin)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Check-in\" action on a booking with status \"Confirmed\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Checked In\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC045",
+    "title": "Admin mencoba Check-in booking yang sudah dibatalkan (Cancelled)",
+    "description": "Memverifikasi sistem menolak check-in pada booking cancelled dengan aksi non-aktif atau pesan error yang sesuai.",
+    "category": "Manajemen Booking (Admin)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Check-in\" action on a booking with status \"Cancelled\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Tidak dapat check-in booking yang dibatalkan\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC046",
+    "title": "Admin checks in a confirmed booking and sees timeline updated",
+    "description": "Verifies that the Check-in action updates the booking status/timeline and is visible on the detail page.",
+    "category": "Detail Booking (Admin Actions & Timeline)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click a booking item in the bookings list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Detail Booking\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a status badge is visible on the booking detail page"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Check-in\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Confirm\" button in the confirmation dialog"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Pasien Check-in\" is visible in the timeline"
+      }
+    ]
+  },
+  {
+    "id": "TC047",
+    "title": "Admin cancels a booking with a reason and sees status and timeline updated",
+    "description": "Verifies that cancelling a booking requires a reason and results in visible Cancelled status and timeline entry.",
+    "category": "Detail Booking (Admin Actions & Timeline)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click a booking item in the bookings list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Detail Booking\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Cancel\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Confirm\" button in the confirmation dialog"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Batal karena pasien tidak bisa hadir\" into the cancellation reason field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Confirm\" button to submit cancellation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Cancelled\" is visible as the booking status"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Cancelled\" is visible in the timeline"
+      }
+    ]
+  },
+  {
+    "id": "TC048",
+    "title": "Admin reschedules a booking and sees old/new schedule reflected in timeline",
+    "description": "Verifies that rescheduling a booking updates schedule information and adds a visible timeline entry showing the change.",
+    "category": "Detail Booking (Admin Actions & Timeline)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click a booking item in the bookings list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Detail Booking\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the schedule card is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Reschedule\" button"
+      },
+      {
+        "type": "action",
+        "description": "Select a new date from the date picker"
+      },
+      {
+        "type": "action",
+        "description": "Select a new time from the time selector"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Confirm\" button to apply the reschedule"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Reschedule\" is visible in the timeline"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify updated schedule information is visible on the schedule card"
+      }
+    ]
+  },
+  {
+    "id": "TC049",
+    "title": "Admin attempts to check-in a pending booking and sees error message",
+    "description": "Verifies that Check-in is blocked for non-confirmed bookings and shows the expected validation error message.",
+    "category": "Detail Booking (Admin Actions & Timeline)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click a booking item in the bookings list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Detail Booking\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"pending\" is visible as the booking status"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Check-in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Hanya booking confirmed yang bisa di-check-in\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC050",
+    "title": "Admin berhasil menyimpan pembayaran dan kartu pembayaran ter-update",
+    "description": "Memverifikasi admin dapat membuka modal pembayaran, mengisi nominal dan metode, menyimpan, lalu melihat ringkasan pembayaran ter-update pada detail booking.",
+    "category": "Input Pembayaran (Admin Modal)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a booking item to open its detail view"
+      },
+      {
+        "type": "action",
+        "description": "Click the payment icon or the \"Input Pembayaran\" button/link"
+      }
+    ]
+  },
+  {
+    "id": "TC051",
+    "title": "Tampilan modal pembayaran muncul dengan field utama",
+    "description": "Memverifikasi modal pembayaran tampil saat dibuka dari detail booking dan menampilkan input Nominal, pilihan Metode, Catatan, serta tombol Simpan.",
+    "category": "Input Pembayaran (Admin Modal)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a booking item to open its detail view"
+      },
+      {
+        "type": "action",
+        "description": "Click the payment icon or the \"Input Pembayaran\" button/link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Input Pembayaran\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC052",
+    "title": "Validasi: nominal non-numeric menampilkan error",
+    "description": "Memverifikasi sistem menolak nominal non-numeric dan menampilkan pesan validasi \"Masukkan nominal yang valid\".",
+    "category": "Input Pembayaran (Admin Modal)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a booking item to open its detail view"
+      },
+      {
+        "type": "action",
+        "description": "Click the payment icon or the \"Input Pembayaran\" button/link"
+      },
+      {
+        "type": "action",
+        "description": "Type \"abc\" into the \"Nominal\" field"
+      }
+    ]
+  },
+  {
+    "id": "TC053",
+    "title": "Validasi: klik Simpan dengan nominal non-numeric tetap menahan modal dan tampilkan pesan error",
+    "description": "Memverifikasi setelah klik Simpan dengan nominal tidak valid, modal tidak sukses menyimpan dan pesan \"Masukkan nominal yang valid\" terlihat.",
+    "category": "Input Pembayaran (Admin Modal)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a booking item to open its detail view"
+      },
+      {
+        "type": "action",
+        "description": "Click the payment icon or the \"Input Pembayaran\" button/link"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Simpan\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Masukkan nominal yang valid\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC054",
+    "title": "Menyimpan pembayaran menampilkan nominal terformat Rupiah pada ringkasan",
+    "description": "Memverifikasi input nominal numerik disimpan dan ditampilkan kembali dalam format Rupiah pada kartu/section pembayaran di detail booking.",
+    "category": "Input Pembayaran (Admin Modal)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a booking item to open its detail view"
+      },
+      {
+        "type": "action",
+        "description": "Click the payment icon or the \"Input Pembayaran\" button/link"
+      },
+      {
+        "type": "action",
+        "description": "Type \"150000\" into the \"Nominal\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Simpan\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Rp\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC055",
+    "title": "Memilih metode pembayaran tersimpan dan tampil pada ringkasan",
+    "description": "Memverifikasi pilihan metode pada modal tersimpan dan tampil pada kartu/section pembayaran setelah simpan.",
+    "category": "Input Pembayaran (Admin Modal)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a booking item to open its detail view"
+      },
+      {
+        "type": "action",
+        "description": "Click the payment icon or the \"Input Pembayaran\" button/link"
+      },
+      {
+        "type": "action",
+        "description": "Select an available option from the \"Metode\" dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Simpan\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Metode\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC056",
+    "title": "View patient list and search from Manajemen Pasien",
+    "description": "Verifies admin can open Manajemen Pasien, see the patient list, and use search to narrow results.",
+    "category": "Manajemen Pasien",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Pasien\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Manajemen Pasien\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"patient list\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC057",
+    "title": "Search patient with a keyword that returns results",
+    "description": "Verifies searching for an existing patient shows matching results in the list.",
+    "category": "Manajemen Pasien",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Pasien\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"a\" into the search field"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"patient list\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"at least one patient row\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC058",
+    "title": "Search patient with a keyword that returns no results",
+    "description": "Verifies searching with a non-matching keyword shows an empty state message or no rows.",
+    "category": "Manajemen Pasien",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Pasien\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"zzzz-nonexistent-patient\" into the search field"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Tidak ada data\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"patient list\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC059",
+    "title": "Open patient detail from the patient list",
+    "description": "Verifies clicking a patient from the list opens patient detail including booking history section.",
+    "category": "Manajemen Pasien",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Pasien\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first patient in the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Detail Pasien\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Riwayat Booking\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC060",
+    "title": "Create a new patient from Manajemen Pasien (valid data)",
+    "description": "Verifies admin can add a patient with required fields (including NIK and WhatsApp) and see it in the list afterward.",
+    "category": "Manajemen Pasien",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Pasien\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Tambah Pasien\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Tambah Pasien\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Nama\" with \"Pasien Otomatis\""
+      },
+      {
+        "type": "action",
+        "description": "Fill \"NIK\" with \"3201010101010101\""
+      },
+      {
+        "type": "action",
+        "description": "Fill \"No. WhatsApp\" with \"081234567890\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Simpan\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Pasien Otomatis\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC061",
+    "title": "Create patient validation: missing required fields shows errors",
+    "description": "Verifies patient creation blocks saving and shows validation messages when required fields are empty.",
+    "category": "Manajemen Pasien",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Pasien\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Tambah Pasien\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Simpan\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Wajib diisi\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Tambah Pasien\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC062",
+    "title": "Akses Manajemen Dokter dari Dashboard dan melihat daftar dokter",
+    "description": "Memverifikasi admin/pasien yang login dapat membuka menu Manajemen Dokter dari Dashboard dan melihat daftar dokter tampil.",
+    "category": "Manajemen Dokter & Jadwal",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Dokter\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Manajemen Dokter\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"list of doctors\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC063",
+    "title": "Buka detail jadwal dokter dari daftar dokter",
+    "description": "Memverifikasi pengguna dapat memilih satu dokter dari daftar dan melihat tampilan jadwal/working periods dokter tersebut.",
+    "category": "Manajemen Dokter & Jadwal",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Dokter\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first doctor in the doctors list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Jadwal Dokter\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC064",
+    "title": "Tambah working period baru pada jadwal dokter",
+    "description": "Memverifikasi pengguna dapat menambahkan working period dengan waktu mulai/selesai dan melihatnya muncul pada daftar jadwal.",
+    "category": "Manajemen Dokter & Jadwal",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Dokter\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first doctor in the doctors list"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Tambah Working Period\""
+      },
+      {
+        "type": "action",
+        "description": "Fill \"09:00\" into the start time field"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"10:00\" into the end time field"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Simpan\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"09:00\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"10:00\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC065",
+    "title": "Validasi saat mencoba menambah working period tanpa mengisi waktu lengkap",
+    "description": "Memverifikasi form menampilkan error ketika start/end time tidak diisi lengkap dan tidak menambah jadwal baru.",
+    "category": "Manajemen Dokter & Jadwal",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Manajemen Dokter\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the first doctor in the doctors list"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Tambah Working Period\""
+      },
+      {
+        "type": "action",
+        "description": "Fill \"09:00\" into the start time field"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Simpan\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"wajib\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC066",
+    "title": "View notification history list from a booking detail",
+    "description": "Verifies users can open a booking's notification history and see notification rows with channel, status, and timestamps.",
+    "category": "Notifikasi & History",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a booking item from the dashboard list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Notification History\" in the booking detail page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Channel\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC067",
+    "title": "Open a single notification to view payload and logs",
+    "description": "Verifies users can drill into a notification entry and view payload content and delivery logs.",
+    "category": "Notifikasi & History",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a booking item from the dashboard list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Notification History\" in the booking detail page"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first notification item in the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Payload\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC068",
+    "title": "Verify notification list shows timestamps (scheduled_at and sent_at)",
+    "description": "Verifies the notification history list surfaces timestamp information for scheduling and sending.",
+    "category": "Notifikasi & History",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a booking item from the dashboard list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Notification History\" in the booking detail page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Scheduled\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC069",
+    "title": "Trigger reminder notification and see a pending notification entry appear",
+    "description": "Verifies triggering a reminder from booking detail creates a new notification record in pending state.",
+    "category": "Notifikasi & History",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a booking item from the dashboard list"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Trigger Reminder\" button on the booking detail page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"pending\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC070",
+    "title": "After send attempt, notification shows status sent or failed and exposes logs",
+    "description": "Verifies notification status updates from pending to sent/failed and details can be opened to view logs.",
+    "category": "Notifikasi & History",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a booking item from the dashboard list"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Notification History\" in the booking detail page"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the notification status to update in the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"sent\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC071",
+    "title": "Open a failed notification and view error details",
+    "description": "Verifies failed notifications expose error details (error log) in the notification detail view.",
+    "category": "Notifikasi & History",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Notification History\" on the dashboard page"
+      },
+      {
+        "type": "action",
+        "description": "Click on a notification item labeled with status \"failed\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Error\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC072",
+    "title": "Retry a failed notification and see it move to pending or sent",
+    "description": "Verifies the retry action is available for failed notifications and updates status accordingly.",
+    "category": "Notifikasi & History",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Notification History\" on the dashboard page"
+      },
+      {
+        "type": "action",
+        "description": "Click on a notification item labeled with status \"failed\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Retry\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"pending\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC073",
+    "title": "Notification history list supports empty state messaging",
+    "description": "Verifies an informative empty state is shown when no notifications exist for a booking.",
+    "category": "Notifikasi & History",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a booking item from the dashboard list with no notification history"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Notification History\" in the booking detail page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"No notifications\" is visible"
+      }
+    ]
+  }
+]

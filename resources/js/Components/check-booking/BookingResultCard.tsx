@@ -508,42 +508,62 @@ export function BookingResultCard({ booking }: BookingResultCardProps) {
                     </div>
                 )}
 
-                {/* Cancel Confirmation Dialog */}
+                {/* Cancel Confirmation Modal Dialog */}
                 {showCancelConfirm && booking.status !== 'cancelled' && (
-                    <div className="mb-3 w-full rounded-lg border border-red-200 bg-red-50 p-4">
-                        <p className="mb-3 text-sm font-medium text-red-800">
-                            Apakah Anda yakin ingin membatalkan booking ini?
-                            Tindakan ini tidak dapat dibatalkan.
-                        </p>
-                        <div className="flex justify-end gap-2">
-                            <button
-                                onClick={() => setShowCancelConfirm(false)}
-                                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-                            >
-                                Tidak
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setIsCancelling(true);
-                                    router.post(
-                                        '/booking/cancel',
-                                        { code: booking.code },
-                                        {
-                                            preserveScroll: true,
-                                            onFinish: () => {
-                                                setIsCancelling(false);
-                                                setShowCancelConfirm(false);
+                    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/50 p-4 backdrop-blur-sm">
+                        <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+                            <div className="mb-5 flex items-start gap-4">
+                                <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
+                                    <span className="material-symbols-outlined text-[24px]">
+                                        warning
+                                    </span>
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-900">
+                                        Batalkan Booking
+                                    </h3>
+                                    <p className="mt-2 text-sm text-gray-600">
+                                        Apakah Anda yakin ingin membatalkan booking ini? Tindakan ini tidak dapat dibatalkan.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="mt-6 flex flex-col-reverse justify-end gap-3 sm:flex-row">
+                                <button
+                                    onClick={() => setShowCancelConfirm(false)}
+                                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 sm:w-auto"
+                                >
+                                    Tidak, Kembali
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setIsCancelling(true);
+                                        router.post(
+                                            '/booking/cancel',
+                                            { code: booking.code },
+                                            {
+                                                preserveScroll: true,
+                                                onFinish: () => {
+                                                    setIsCancelling(false);
+                                                    setShowCancelConfirm(false);
+                                                },
                                             },
-                                        },
-                                    );
-                                }}
-                                disabled={isCancelling}
-                                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50"
-                            >
-                                {isCancelling
-                                    ? 'Membatalkan...'
-                                    : 'Ya, Batalkan'}
-                            </button>
+                                        );
+                                    }}
+                                    disabled={isCancelling}
+                                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50 sm:w-auto"
+                                >
+                                    {isCancelling ? (
+                                        <>
+                                            <span className="material-symbols-outlined animate-spin text-[18px]">
+                                                progress_activity
+                                            </span>
+                                            Membatalkan...
+                                        </>
+                                    ) : (
+                                        'Ya, Batalkan'
+                                    )}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}

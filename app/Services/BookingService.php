@@ -802,9 +802,9 @@ class BookingService
         $bookingDate = Carbon::parse($booking->booking_date);
         $bookingDateTime = Carbon::parse($bookingDate->format('Y-m-d') . ' ' . $booking->start_time);
         
-        if (Carbon::now()->gt($bookingDateTime)) {
-            throw new \Exception('Booking yang sudah lewat tidak bisa dibatalkan.');
-        }
+        // if (Carbon::now()->gt($bookingDateTime)) {
+        //     throw new \Exception('Booking yang sudah lewat tidak bisa dibatalkan.');
+        // }
 
         // Update booking status to cancelled
         $booking->update([
