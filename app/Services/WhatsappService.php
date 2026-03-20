@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 class WhatsappService
 {
 
-    public function sendWA(int $bookingId = null, string $target, string $message, string $type = 'booking_confirmation')
+    public function sendWA(?int $bookingId = null, string $target, string $message, string $type = 'booking_confirmation')
     {
         // Create notification record first (pending status)
         $notification = Notification::create([
@@ -27,41 +27,43 @@ class WhatsappService
             // Increment attempt count
             $notification->increment('attempt_count');
 
-            // Send via Fonnte API
+            // Send via WAHA API
             $response = Http::withHeaders([
-                'Authorization' => config('services.fonnte.api_key', env('FONNTE_API_KEY')),
-            ])->post('https://api.fonnte.com/send', [
-                'target' => $target,
-                'message' => $message,
+                'X-Api-Key' => config('waha.api_key'),
+            ])->post(rtrim(config('waha.base_url'), '/') . '/api/sendText', [
+                'session' => config('waha.session'),
+                'chatId'  => $this->formatChatId($target),
+                'text'    => $message,
             ]);
 
             $result = $response->json();
 
             // Check if successful
-            if ($response->successful() && isset($result['status']) && $result['status'] === true) {
+            if ($response->successful()) {
                 $notification->update([
                     'status' => 'sent',
                     'sent_at' => Carbon::now(),
                 ]);
 
-                Log::info('WhatsApp sent successfully', [
+                Log::info('WhatsApp sent successfully via WAHA', [
                     'booking_id' => $bookingId,
                     'target' => $target,
                     'type' => $type,
                 ]);
             } else {
                 // API returned error
-                $errorMessage = $result['reason'] ?? $result['message'] ?? 'Unknown API error';
+                $errorMessage = $result['message'] ?? $result['error'] ?? 'Unknown WAHA API error';
                 
                 $notification->update([
                     'status' => 'failed',
                     'last_error' => $errorMessage,
                 ]);
 
-                Log::warning('WhatsApp send failed', [
+                Log::warning('WhatsApp send failed via WAHA', [
                     'booking_id' => $bookingId,
                     'target' => $target,
                     'error' => $errorMessage,
+                    'response' => $result,
                 ]);
             }
         } catch (\Throwable $th) {
@@ -91,24 +93,25 @@ class WhatsappService
             // Increment attempt count
             $notification->increment('attempt_count');
 
-            // Send via Fonnte API
+            // Send via WAHA API
             $response = Http::withHeaders([
-                'Authorization' => config('services.fonnte.api_key', env('FONNTE_API_KEY')),
-            ])->post('https://api.fonnte.com/send', [
-                'target' => $notification->recipient,
-                'message' => $notification->payload,
+                'X-Api-Key' => config('waha.api_key'),
+            ])->post(rtrim(config('waha.base_url'), '/') . '/api/sendText', [
+                'session' => config('waha.session'),
+                'chatId'  => $this->formatChatId($notification->recipient),
+                'text'    => $notification->payload,
             ]);
 
             $result = $response->json();
 
             // Check if successful
-            if ($response->successful() && isset($result['status']) && $result['status'] === true) {
+            if ($response->successful()) {
                 $notification->update([
                     'status' => 'sent',
                     'sent_at' => Carbon::now(),
                 ]);
 
-                Log::info('WhatsApp notification sent successfully', [
+                Log::info('WhatsApp notification sent successfully via WAHA', [
                     'notification_id' => $notification->id,
                     'booking_id' => $notification->booking_id,
                     'recipient' => $notification->recipient,
@@ -116,17 +119,18 @@ class WhatsappService
                 ]);
             } else {
                 // API returned error
-                $errorMessage = $result['reason'] ?? $result['message'] ?? 'Unknown API error';
+                $errorMessage = $result['message'] ?? $result['error'] ?? 'Unknown WAHA API error';
                 
                 $notification->update([
                     'status' => 'failed',
                     'last_error' => $errorMessage,
                 ]);
 
-                Log::warning('WhatsApp notification send failed', [
+                Log::warning('WhatsApp notification send failed via WAHA', [
                     'notification_id' => $notification->id,
                     'booking_id' => $notification->booking_id,
                     'error' => $errorMessage,
+                    'response' => $result,
                 ]);
             }
         } catch (\Throwable $th) {
@@ -144,6 +148,28 @@ class WhatsappService
         }
 
         return $notification->fresh();
+    }
+
+    /**
+     * Format phone number to WAHA chatId format
+     * WAHA requires format: 6281234567890@c.us
+     */
+    private function formatChatId(string $phone): string
+    {
+        // Remove all non-numeric characters
+        $phone = preg_replace('/\D/', '', $phone);
+
+        // Convert leading 0 to 62 (Indonesia country code)
+        if (str_starts_with($phone, '0')) {
+            $phone = '62' . substr($phone, 1);
+        }
+
+        // Add +62 prefix if number starts without country code
+        if (!str_starts_with($phone, '62')) {
+            $phone = '62' . $phone;
+        }
+
+        return $phone . '@c.us';
     }
 
     /**
