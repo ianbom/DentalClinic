@@ -26,7 +26,7 @@ export function ReviewSidebar() {
                             WhatsApp Admin
                         </p>
                         <p className="text-sm font-bold group-hover:underline">
-                            +62 812-3456-7890
+                            +62 852-3151-9966
                         </p>
                     </div>
                 </a>
