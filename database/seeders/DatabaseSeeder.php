@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             DoctorSeeder::class,
             DoctorWorkingPeriodSeeder::class,
             AdminSeeder::class,
-            BookingSeeder::class,
+            // BookingSeeder::class,
         ]);
     }
 }
