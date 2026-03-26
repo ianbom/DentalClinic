@@ -507,22 +507,30 @@ class BookingService
         // Buat datetime lengkap dari tanggal + jam booking
         $bookingDateTime = $bookingDate->copy()->setTimeFromTimeString($bookingTime);
         
-        // Reminder = H-1 jam sebelum jadwal booking
-        $reminderTime = $bookingDateTime->copy()->subHour();
-        
-        if ($now->gte($reminderTime)) {
-            // User memesan kurang dari 1 jam sebelum jadwal
-            // Kirim reminder langsung dengan jeda 1 menit
-            $scheduledAt = $now->copy()->addMinute();
-            Log::info('Reminder langsung dikirim (user pesan < H-1 jam)', [
+        // Hitung selisih waktu antara sekarang dan jadwal booking
+        $hoursUntilBooking = $now->diffInHours($bookingDateTime, false);
+
+        if ($hoursUntilBooking >= 24) {
+            // User memesan >= H-24 jam sebelum jadwal
+            // Reminder dikirim H-24 jam sebelum booking
+            $scheduledAt = $bookingDateTime->copy()->subHours(24);
+            Log::info('Reminder dijadwalkan H-24 jam sebelum booking', [
+                'booking_time' => $bookingDateTime->toDateTimeString(),
+                'scheduled_at' => $scheduledAt->toDateTimeString(),
+            ]);
+        } elseif ($hoursUntilBooking >= 1) {
+            // User memesan < H-24 jam tapi >= H-1 jam sebelum jadwal
+            // Reminder dikirim H-1 jam sebelum booking
+            $scheduledAt = $bookingDateTime->copy()->subHour();
+            Log::info('Reminder dijadwalkan H-1 jam sebelum booking', [
                 'booking_time' => $bookingDateTime->toDateTimeString(),
                 'scheduled_at' => $scheduledAt->toDateTimeString(),
             ]);
         } else {
-            // User memesan lebih dari 1 jam sebelum jadwal
-            // Schedule reminder H-1 jam sebelum booking
-            $scheduledAt = $reminderTime;
-            Log::info('Reminder dijadwalkan H-1 jam', [
+            // User memesan kurang dari 1 jam sebelum jadwal
+            // Kirim reminder langsung dengan jeda 1 menit
+            $scheduledAt = $now->copy()->addMinute();
+            Log::info('Reminder langsung dikirim (user pesan < H-1 jam)', [
                 'booking_time' => $bookingDateTime->toDateTimeString(),
                 'scheduled_at' => $scheduledAt->toDateTimeString(),
             ]);
