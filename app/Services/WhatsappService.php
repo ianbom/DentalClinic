@@ -345,7 +345,7 @@ class WhatsappService
             . "⏰ Jam : {$time} WIB\n"
             . "👩‍⚕️ Dokter : {$doctorName}\n\n"
             . "📍 Lokasi : Cantika Dental Care\n"
-            . "📞 Kontak : 0822-3432-8628\n\n"
+            . "📞 Kontak : 0852-3151-9966\n\n"
             . "Jika Anda ingin membuat jadwal baru, silakan kunjungi website kami atau hubungi kontak di atas.\n\n"
             . "❌JANGAN BALAS CHAT INI\n"
             . "📱Untuk chat admin silakan ke no WhatsApp https://wa.me/6285231519966\n"
