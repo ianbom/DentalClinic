@@ -188,7 +188,9 @@ class WhatsappService
         "Jika kamu menerima pesan ini, berarti nomor WhatsApp kamu berhasil diverifikasi.\n" .
         "Silakan lanjutkan proses *booking pemeriksaan gigi* melalui website kami.\n\n" .
         "Terima kasih atas kepercayaan Anda 🙏\n" .
-        "Kami menantikan kedatangan Anda di *Cantika Dental Care* 😊\n";
+        "Kami menantikan kedatangan Anda di *Cantika Dental Care* 😊\n\n" .
+        "❌JANGAN BALAS CHAT INI\n" .
+        "📱Untuk chat admin silakan ke no WhatsApp https://wa.me/6285231519966";
 
     return $this->sendWA(null, $target, $message, 'check_booking');
     }
@@ -243,6 +245,7 @@ class WhatsappService
             . "{$checkinLink}\n\n"
             . "Terima kasih atas pengertian Anda.\n"
             . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊\n\n"
+            . "❌JANGAN BALAS CHAT INI\n"
             . "📱Untuk chat admin silakan ke no WhatsApp https://wa.me/6285231519966";
     }
 
@@ -268,6 +271,7 @@ class WhatsappService
             . "Mohon lakukan konfirmasi kedatangan pada H-1 melalui link di atas.\n\n"
             . "Terima kasih atas kepercayaan Anda.\n"
             . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊\n\n"
+            . "❌JANGAN BALAS CHAT INI\n"
             . "📱Untuk chat admin silakan ke no WhatsApp https://wa.me/6285231519966";
     }
 
@@ -292,6 +296,7 @@ class WhatsappService
             . "Mohon lakukan konfirmasi kedatangan pada H-1 melalui link di atas.\n\n"
             . "Terima kasih atas kepercayaan Anda.\n"
             . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊\n\n"
+            . "❌JANGAN BALAS CHAT INI\n"
             . "📱Untuk chat admin silakan ke no WhatsApp https://wa.me/6285231519966";
 
     }
@@ -342,6 +347,7 @@ class WhatsappService
             . "📍 Lokasi : Cantika Dental Care\n"
             . "📞 Kontak : 0822-3432-8628\n\n"
             . "Jika Anda ingin membuat jadwal baru, silakan kunjungi website kami atau hubungi kontak di atas.\n\n"
+            . "❌JANGAN BALAS CHAT INI\n"
             . "📱Untuk chat admin silakan ke no WhatsApp https://wa.me/6285231519966\n"
             . "Terima kasih atas pengertiannya 🙏";
     }

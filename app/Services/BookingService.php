@@ -655,6 +655,7 @@ class BookingService
             . "Mohon konfirmasi kehadiran Anda hari ini melalui link di atas.\n\n"
             . "Terima kasih atas kepercayaan Anda.\n"
             . "Kami menantikan kedatangan Anda di Cantika Dental Care 😊\n\n"
+            . "❌JANGAN BALAS CHAT INI"
             . "📱Untuk chat admin silakan ke no WhatsApp https://wa.me/6285231519966";
     }
 
