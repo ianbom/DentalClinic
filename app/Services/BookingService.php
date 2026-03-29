@@ -898,7 +898,7 @@ class BookingService
             . "Apabila masih terdapat keluhan atau rasa kurang nyaman, silakan menginformasikannya kepada kami. "
             . "Kami dengan senang hati siap membantu.\n\n"
             . "Untuk keluhan bisa langsung chat dengan drg. Anna Fikril di nomor di bawah ini:\n"
-            . "📱https://wa.me/6282234328628\n\n"
+            . "📱https://wa.me/6285231519966\n\n"
             . "Salam sehat,\n"
             . "drg. Anna Fikril";
     }

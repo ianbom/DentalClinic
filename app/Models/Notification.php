@@ -48,6 +48,16 @@ class Notification extends Model
         return $this->status === 'failed';
     }
 
+    public function isRetrying(): bool
+    {
+        return $this->status === 'retrying';
+    }
+
+    public function isPermanentlyFailed(): bool
+    {
+        return $this->status === 'permanently_failed';
+    }
+
     public function isCancelled(): bool
     {
         return $this->status === 'cancelled';

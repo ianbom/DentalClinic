@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DoctorController as AdminDoctorController;
 use App\Http\Controllers\Admin\DoctorOvertimeController;
 use App\Http\Controllers\Admin\DoctorTimeOffController;
 use App\Http\Controllers\Admin\DoctorWorkingPeriodController;
+use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Admin\PatientController as AdminPatientController;
 use App\Http\Controllers\Patients\BookingController as PatientBookingController;
 use App\Http\Controllers\Patients\DoctorController as PatientDoctorController;
@@ -134,5 +135,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::post('/doctors/working-period', [DoctorWorkingPeriodController::class, 'store'])->name('doctors.working-period.store');
     Route::put('/doctors/working-period/{id}', [DoctorWorkingPeriodController::class, 'update'])->name('doctors.working-period.update');
     Route::delete('/doctors/working-period/{id}', [DoctorWorkingPeriodController::class, 'destroy'])->name('doctors.working-period.destroy');
+
+    // Notifications
+    Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications.list');
 });
 
