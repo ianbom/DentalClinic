@@ -1071,7 +1071,7 @@ export function CustomerDataForm({
                                 <span className="material-symbols-outlined text-sm">
                                     lock
                                 </span>
-                                Data Anda terlindungi oleh enkripsi end-to-end
+                                Data Anda terlindungi
                             </p>
                         </>
                     )}

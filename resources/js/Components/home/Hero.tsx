@@ -22,8 +22,7 @@ export function Hero() {
 
                         <p className="max-w-lg text-lg leading-relaxed text-gray-600">
                             Dapatkan perawatan gigi profesional dengan dokter
-                            ahli. Proses booking yang mudah melalui WhatsApp dan
-                            sistem pembayaran yang aman.
+                            ahli. Proses booking yang mudah melalui WhatsApp atau Web kami.
                         </p>
 
                         <div className="mt-4 flex w-full flex-col gap-4 sm:w-auto sm:flex-row">

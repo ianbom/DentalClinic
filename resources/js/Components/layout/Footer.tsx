@@ -37,8 +37,7 @@ export function Footer() {
                             />
                         </Link>
                         <p className="text-sm leading-relaxed text-gray-500">
-                            Klinik gigi terpercaya dengan standar pelayanan
-                            internasional dan teknologi modern.
+                            Praktek gigi terpercaya dengan standar pelayanan terbaik dan ramah anak.
                         </p>
                         {/* Social Media */}
                         <div className="mt-2 flex gap-3">
