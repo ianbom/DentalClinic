@@ -21,8 +21,8 @@ function CheckBookingPage({ booking }: CheckBookingPageProps) {
                         Lacak Janji Temu Anda
                     </h1>
                     <p className="mx-auto max-w-lg text-base text-text-sub-light md:text-lg">
-                        Masukkan nomor WhatsApp dan kode booking yang Anda
-                        terima untuk melihat status terkini.
+                        Masukkan NIK (Nomor Induk Kependudukan) Anda untuk
+                        melihat booking terbaru Anda.
                     </p>
                 </div>
 

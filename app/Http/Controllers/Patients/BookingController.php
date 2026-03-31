@@ -177,20 +177,20 @@ class BookingController extends Controller
     {
         $booking = null;
 
-        // If code and phone are provided, search for booking
-        if ($request->filled('code') && $request->filled('phone')) {
+        // If nik is provided, search for the latest booking belonging to that patient
+        if ($request->filled('nik')) {
             $booking = Booking::with(['doctor', 'patient'])
-                ->where('code', $request->code)
                 ->whereHas('patient', function ($query) use ($request) {
-                    $query->where('patient_phone', $request->phone);
+                    $query->where('patient_nik', $request->nik);
                 })
+                ->latest('booking_date')
                 ->first();
 
             if (!$booking) {
                 return Inertia::render('patient/check-booking/CheckBooking', [
                     'booking' => null,
                     'errors' => [
-                        'booking' => 'Booking tidak ditemukan. Pastikan kode booking dan nomor WhatsApp sudah benar.',
+                        'booking' => 'Booking tidak ditemukan. Pastikan NIK yang Anda masukkan sudah benar.',
                     ]
                 ]);
             }
