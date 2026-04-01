@@ -64,16 +64,44 @@ interface ListNotificationPageProps {
     };
 }
 
-type SortField = 'id' | 'channel' | 'type' | 'status' | 'attempt_count' | 'scheduled_at' | 'sent_at' | 'created_at' | '';
+type SortField =
+    | 'id'
+    | 'channel'
+    | 'type'
+    | 'status'
+    | 'attempt_count'
+    | 'scheduled_at'
+    | 'sent_at'
+    | 'created_at'
+    | '';
 type SortOrder = 'asc' | 'desc';
 
-const statusConfig: Record<string, { label: string; color: string; bgColor: string }> = {
-    pending: { label: 'Pending', color: 'text-yellow-700', bgColor: 'bg-yellow-100' },
+const statusConfig: Record<
+    string,
+    { label: string; color: string; bgColor: string }
+> = {
+    pending: {
+        label: 'Pending',
+        color: 'text-yellow-700',
+        bgColor: 'bg-yellow-100',
+    },
     sent: { label: 'Sent', color: 'text-green-700', bgColor: 'bg-green-100' },
     failed: { label: 'Failed', color: 'text-red-700', bgColor: 'bg-red-100' },
-    retrying: { label: 'Retrying', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-    cancelled: { label: 'Cancelled', color: 'text-gray-700', bgColor: 'bg-gray-100' },
-    permanently_failed: { label: 'Permanently Failed', color: 'text-red-900', bgColor: 'bg-red-200' },
+    retrying: {
+        label: 'Retrying',
+        color: 'text-blue-700',
+        bgColor: 'bg-blue-100',
+    },
+    cancelled: {
+        label: 'Cancelled',
+        color: 'text-gray-700',
+        bgColor: 'bg-gray-100',
+    },
+    permanently_failed: {
+        label: 'Permanently Failed',
+        color: 'text-red-900',
+        bgColor: 'bg-red-200',
+    },
 };
 
 const typeLabels: Record<string, string> = {
@@ -89,7 +117,7 @@ const typeLabels: Record<string, string> = {
 function formatWhatsAppLink(phone: string): string {
     // Remove all non-numeric characters
     const cleaned = phone.replace(/\D/g, '');
-    
+
     // If starts with 0, replace with 62 (Indonesia country code)
     let formatted = cleaned;
     if (cleaned.startsWith('0')) {
@@ -98,19 +126,31 @@ function formatWhatsAppLink(phone: string): string {
         // If doesn't start with country code, add 62
         formatted = '62' + cleaned;
     }
-    
+
     return `https://wa.me/${formatted}`;
 }
 
-function ListNotificationPage({ notifications, statistics, types, channels, filters }: ListNotificationPageProps) {
+function ListNotificationPage({
+    notifications,
+    statistics,
+    types,
+    channels,
+    filters,
+}: ListNotificationPageProps) {
     const [searchQuery, setSearchQuery] = useState(filters.search || '');
     const [statusFilter, setStatusFilter] = useState(filters.status || '');
     const [channelFilter, setChannelFilter] = useState(filters.channel || '');
     const [typeFilter, setTypeFilter] = useState(filters.type || '');
     const [dateFilter, setDateFilter] = useState(filters.date || '');
-    const [itemsPerPage, setItemsPerPage] = useState(Number(filters.per_page) || 10);
-    const [sortField, setSortField] = useState<SortField>((filters.sort_field as SortField) || '');
-    const [sortOrder, setSortOrder] = useState<SortOrder>((filters.sort_order as SortOrder) || 'desc');
+    const [itemsPerPage, setItemsPerPage] = useState(
+        Number(filters.per_page) || 10,
+    );
+    const [sortField, setSortField] = useState<SortField>(
+        (filters.sort_field as SortField) || '',
+    );
+    const [sortOrder, setSortOrder] = useState<SortOrder>(
+        (filters.sort_order as SortOrder) || 'desc',
+    );
     const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
     const debouncedSearch = useCallback(
@@ -148,7 +188,10 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
         debouncedSearch(value);
     };
 
-    const handleFilterChange = (type: 'status' | 'channel' | 'type' | 'date', value: string) => {
+    const handleFilterChange = (
+        type: 'status' | 'channel' | 'type' | 'date',
+        value: string,
+    ) => {
         const setters: Record<string, (v: string) => void> = {
             status: setStatusFilter,
             channel: setChannelFilter,
@@ -189,11 +232,20 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
         updateParams({ sort_field: field, sort_order: newOrder });
     };
 
-    const hasFilters = searchQuery || statusFilter || channelFilter || typeFilter || dateFilter;
+    const hasFilters =
+        searchQuery ||
+        statusFilter ||
+        channelFilter ||
+        typeFilter ||
+        dateFilter;
 
     const SortIcon = ({ field }: { field: SortField }) => (
         <span className="material-symbols-outlined ml-1 text-sm">
-            {sortField === field ? (sortOrder === 'asc' ? 'arrow_upward' : 'arrow_downward') : 'unfold_more'}
+            {sortField === field
+                ? sortOrder === 'asc'
+                    ? 'arrow_upward'
+                    : 'arrow_downward'
+                : 'unfold_more'}
         </span>
     );
 
@@ -202,8 +254,12 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
             {/* Page Header */}
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
-                    <h2 className="text-2xl font-bold tracking-tight text-slate-900">Daftar Notifikasi</h2>
-                    <p className="mt-1 text-sm text-slate-500">Monitor semua notifikasi yang dikirim ke pasien</p>
+                    <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+                        Daftar Notifikasi
+                    </h2>
+                    <p className="mt-1 text-sm text-slate-500">
+                        Monitor semua notifikasi yang dikirim ke pasien
+                    </p>
                 </div>
                 <span className="rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
                     Total: {notifications.total} notifikasi
@@ -275,7 +331,9 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
                         <input
                             type="date"
                             value={dateFilter}
-                            onChange={(e) => handleFilterChange('date', e.target.value)}
+                            onChange={(e) =>
+                                handleFilterChange('date', e.target.value)
+                            }
                             className="rounded-lg border border-slate-200 py-2.5 pl-10 pr-4 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                         />
                     </div>
@@ -297,7 +355,9 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
                     {/* Type Filter */}
                     <select
                         value={typeFilter}
-                        onChange={(e) => handleFilterChange('type', e.target.value)}
+                        onChange={(e) =>
+                            handleFilterChange('type', e.target.value)
+                        }
                         className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                     >
                         <option value="">Semua Tipe</option>
@@ -311,7 +371,9 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
                     {/* Status Filter */}
                     <select
                         value={statusFilter}
-                        onChange={(e) => handleFilterChange('status', e.target.value)}
+                        onChange={(e) =>
+                            handleFilterChange('status', e.target.value)
+                        }
                         className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                     >
                         <option value="">Semua Status</option>
@@ -320,7 +382,9 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
                         <option value="failed">Failed</option>
                         <option value="retrying">Retrying</option>
                         <option value="cancelled">Cancelled</option>
-                        <option value="permanently_failed">Permanently Failed</option>
+                        <option value="permanently_failed">
+                            Permanently Failed
+                        </option>
                     </select>
 
                     {/* Clear Filters */}
@@ -329,7 +393,9 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
                             onClick={handleClearFilters}
                             className="flex cursor-pointer items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
                         >
-                            <span className="material-symbols-outlined text-lg">close</span>
+                            <span className="material-symbols-outlined text-lg">
+                                close
+                            </span>
                             Clear
                         </button>
                     )}
@@ -364,7 +430,7 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
                                     </div>
                                 </th>
                                 <th
-                                    className="cursor-pointer min-w-[150px] whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600"
+                                    className="min-w-[150px] cursor-pointer whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600"
                                     onClick={() => handleSort('type')}
                                 >
                                     <div className="flex items-center">
@@ -394,7 +460,7 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
                                     </div>
                                 </th>
                                 <th
-                                    className="cursor-pointer min-w-[180px] whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600"
+                                    className="min-w-[180px] cursor-pointer whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600"
                                     onClick={() => handleSort('created_at')}
                                 >
                                     <div className="flex items-center">
@@ -410,7 +476,10 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
                         <tbody className="divide-y divide-slate-100">
                             {notifications.data.length === 0 ? (
                                 <tr>
-                                    <td colSpan={9} className="px-4 py-12 text-center text-slate-500">
+                                    <td
+                                        colSpan={9}
+                                        className="px-4 py-12 text-center text-slate-500"
+                                    >
                                         <span className="material-symbols-outlined mb-2 text-4xl text-slate-300">
                                             notifications_off
                                         </span>
@@ -428,40 +497,57 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
                                                 #{notification.id}
                                             </td>
                                             <td className="px-4 py-3">
-                                                <div className="text-sm whitespace-nowrap">
+                                                <div className="whitespace-nowrap text-sm">
                                                     {notification.booking_code ? (
                                                         <a
                                                             href={`/admin/bookings/${notification.booking_id}`}
                                                             className="font-medium text-primary hover:underline"
                                                         >
-                                                            {notification.booking_code}
+                                                            {
+                                                                notification.booking_code
+                                                            }
                                                         </a>
                                                     ) : (
-                                                        <span className="text-slate-400">-</span>
+                                                        <span className="text-slate-400">
+                                                            -
+                                                        </span>
                                                     )}
                                                 </div>
-                                                <div className="text-xs text-slate-500 whitespace-nowrap">
-                                                    {notification.patient_name || '-'}
+                                                <div className="whitespace-nowrap text-xs text-slate-500">
+                                                    {notification.patient_name ||
+                                                        '-'}
                                                 </div>
                                             </td>
                                             <td className="whitespace-nowrap px-4 py-3">
                                                 <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
                                                     <span className="material-symbols-outlined text-sm">
-                                                        {notification.channel === 'whatsapp' ? 'chat' : notification.channel === 'email' ? 'email' : 'sms'}
+                                                        {notification.channel ===
+                                                        'whatsapp'
+                                                            ? 'chat'
+                                                            : notification.channel ===
+                                                                'email'
+                                                              ? 'email'
+                                                              : 'sms'}
                                                     </span>
                                                     {notification.channel}
                                                 </span>
                                             </td>
                                             <td className="whitespace-nowrap px-4 py-3 text-sm text-slate-700">
-                                                {typeLabels[notification.type] || notification.type}
+                                                {typeLabels[
+                                                    notification.type
+                                                ] || notification.type}
                                             </td>
                                             <td className="whitespace-nowrap px-4 py-3 text-sm">
-                                                {notification.channel === 'whatsapp' && notification.recipient ? (
+                                                {notification.channel ===
+                                                    'whatsapp' &&
+                                                notification.recipient ? (
                                                     <a
-                                                        href={formatWhatsAppLink(notification.recipient)}
+                                                        href={formatWhatsAppLink(
+                                                            notification.recipient,
+                                                        )}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="inline-flex items-center gap-1 text-primary hover:underline hover:text-primary-dark"
+                                                        className="inline-flex items-center gap-1 text-primary hover:text-primary-dark hover:underline"
                                                         title="Buka WhatsApp"
                                                     >
                                                         <span className="material-symbols-outlined text-sm">
@@ -470,22 +556,31 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
                                                         {notification.recipient}
                                                     </a>
                                                 ) : (
-                                                    <span className="text-slate-700">{notification.recipient}</span>
+                                                    <span className="text-slate-700">
+                                                        {notification.recipient}
+                                                    </span>
                                                 )}
                                             </td>
                                             <td className="whitespace-nowrap px-4 py-3">
-                                                <StatusBadge status={notification.status} />
+                                                <StatusBadge
+                                                    status={notification.status}
+                                                />
                                             </td>
                                             <td className="whitespace-nowrap px-4 py-3 text-center text-sm text-slate-700">
                                                 {notification.attempt_count}
                                             </td>
                                             <td className="px-4 py-3">
-                                                <div className="text-sm text-slate-700 whitespace-nowrap">
-                                                    {notification.created_at_formatted}
+                                                <div className="whitespace-nowrap text-sm text-slate-700">
+                                                    {
+                                                        notification.created_at_formatted
+                                                    }
                                                 </div>
                                                 {notification.sent_at_formatted && (
-                                                    <div className="text-xs text-green-600 whitespace-nowrap">
-                                                        Terkirim: {notification.sent_at_formatted}
+                                                    <div className="whitespace-nowrap text-xs text-green-600">
+                                                        Terkirim:{' '}
+                                                        {
+                                                            notification.sent_at_formatted
+                                                        }
                                                     </div>
                                                 )}
                                             </td>
@@ -493,28 +588,41 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
                                                 <button
                                                     onClick={() =>
                                                         setExpandedRow(
-                                                            expandedRow === notification.id ? null : notification.id
+                                                            expandedRow ===
+                                                                notification.id
+                                                                ? null
+                                                                : notification.id,
                                                         )
                                                     }
                                                     className="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
                                                     title="Detail"
                                                 >
                                                     <span className="material-symbols-outlined text-lg">
-                                                        {expandedRow === notification.id ? 'expand_less' : 'expand_more'}
+                                                        {expandedRow ===
+                                                        notification.id
+                                                            ? 'expand_less'
+                                                            : 'expand_more'}
                                                     </span>
                                                 </button>
                                             </td>
                                         </tr>
                                         {expandedRow === notification.id && (
-                                            <tr key={`${notification.id}-detail`} className="bg-slate-50">
-                                                <td colSpan={9} className="px-4 py-4">
+                                            <tr
+                                                key={`${notification.id}-detail`}
+                                                className="bg-slate-50"
+                                            >
+                                                <td
+                                                    colSpan={9}
+                                                    className="px-4 py-4"
+                                                >
                                                     <div className="grid gap-4 md:grid-cols-2">
                                                         <div>
                                                             <h4 className="mb-2 text-xs font-semibold uppercase text-slate-500">
                                                                 Payload / Pesan
                                                             </h4>
-                                                            <pre className="max-h-40 overflow-auto whitespace-pre-wrap rounded-lg bg-white p-3 text-xs text-slate-700 border border-slate-200">
-                                                                {notification.payload || '-'}
+                                                            <pre className="max-h-40 overflow-auto whitespace-pre-wrap rounded-lg border border-slate-200 bg-white p-3 text-xs text-slate-700">
+                                                                {notification.payload ||
+                                                                    '-'}
                                                             </pre>
                                                         </div>
                                                         <div className="space-y-3">
@@ -524,17 +632,22 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
                                                                         Dijadwalkan:
                                                                     </span>
                                                                     <p className="text-sm text-slate-700">
-                                                                        {notification.scheduled_at_formatted}
+                                                                        {
+                                                                            notification.scheduled_at_formatted
+                                                                        }
                                                                     </p>
                                                                 </div>
                                                             )}
                                                             {notification.last_error && (
                                                                 <div>
                                                                     <span className="text-xs font-semibold uppercase text-red-500">
-                                                                        Error Terakhir:
+                                                                        Error
+                                                                        Terakhir:
                                                                     </span>
                                                                     <p className="text-sm text-red-600">
-                                                                        {notification.last_error}
+                                                                        {
+                                                                            notification.last_error
+                                                                        }
                                                                     </p>
                                                                 </div>
                                                             )}
@@ -543,7 +656,9 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
                                                                     Diperbarui:
                                                                 </span>
                                                                 <p className="text-sm text-slate-700">
-                                                                    {notification.updated_at_formatted}
+                                                                    {
+                                                                        notification.updated_at_formatted
+                                                                    }
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -565,7 +680,9 @@ function ListNotificationPage({ notifications, statistics, types, channels, filt
                     <span className="text-sm text-slate-500">Tampilkan:</span>
                     <select
                         value={itemsPerPage}
-                        onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+                        onChange={(e) =>
+                            handleItemsPerPageChange(Number(e.target.value))
+                        }
                         className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                     >
                         <option value={10}>10</option>
@@ -599,14 +716,41 @@ function StatCard({
     value: number;
     color: 'yellow' | 'green' | 'red' | 'blue' | 'emerald' | 'orange' | 'gray';
 }) {
-    const colorClasses: Record<string, { bg: string; icon: string; text: string }> = {
-        yellow: { bg: 'bg-yellow-50', icon: 'text-yellow-600', text: 'text-yellow-700' },
-        green: { bg: 'bg-green-50', icon: 'text-green-600', text: 'text-green-700' },
+    const colorClasses: Record<
+        string,
+        { bg: string; icon: string; text: string }
+    > = {
+        yellow: {
+            bg: 'bg-yellow-50',
+            icon: 'text-yellow-600',
+            text: 'text-yellow-700',
+        },
+        green: {
+            bg: 'bg-green-50',
+            icon: 'text-green-600',
+            text: 'text-green-700',
+        },
         red: { bg: 'bg-red-50', icon: 'text-red-600', text: 'text-red-700' },
-        blue: { bg: 'bg-blue-50', icon: 'text-blue-600', text: 'text-blue-700' },
-        emerald: { bg: 'bg-emerald-50', icon: 'text-emerald-600', text: 'text-emerald-700' },
-        orange: { bg: 'bg-orange-50', icon: 'text-orange-600', text: 'text-orange-700' },
-        gray: { bg: 'bg-gray-50', icon: 'text-gray-600', text: 'text-gray-700' },
+        blue: {
+            bg: 'bg-blue-50',
+            icon: 'text-blue-600',
+            text: 'text-blue-700',
+        },
+        emerald: {
+            bg: 'bg-emerald-50',
+            icon: 'text-emerald-600',
+            text: 'text-emerald-700',
+        },
+        orange: {
+            bg: 'bg-orange-50',
+            icon: 'text-orange-600',
+            text: 'text-orange-700',
+        },
+        gray: {
+            bg: 'bg-gray-50',
+            icon: 'text-gray-600',
+            text: 'text-gray-700',
+        },
     };
 
     const classes = colorClasses[color];
@@ -614,7 +758,9 @@ function StatCard({
     return (
         <div className={`rounded-xl ${classes.bg} p-4`}>
             <div className="flex items-center gap-3">
-                <span className={`material-symbols-outlined ${classes.icon}`}>{icon}</span>
+                <span className={`material-symbols-outlined ${classes.icon}`}>
+                    {icon}
+                </span>
                 <div>
                     <p className="text-2xl font-bold text-slate-900">{value}</p>
                     <p className={`text-xs ${classes.text}`}>{label}</p>
@@ -625,10 +771,16 @@ function StatCard({
 }
 
 function StatusBadge({ status }: { status: string }) {
-    const config = statusConfig[status] || { label: status, color: 'text-slate-700', bgColor: 'bg-slate-100' };
+    const config = statusConfig[status] || {
+        label: status,
+        color: 'text-slate-700',
+        bgColor: 'bg-slate-100',
+    };
 
     return (
-        <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${config.bgColor} ${config.color}`}>
+        <span
+            className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${config.bgColor} ${config.color}`}
+        >
             {config.label}
         </span>
     );
@@ -652,8 +804,14 @@ function Pagination({
     const startItem = (currentPage - 1) * itemsPerPage + 1;
     const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
-    const visiblePages = Array.from({ length: totalPages }, (_, i) => i + 1).filter(
-        (page) => page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1
+    const visiblePages = Array.from(
+        { length: totalPages },
+        (_, i) => i + 1,
+    ).filter(
+        (page) =>
+            page === 1 ||
+            page === totalPages ||
+            Math.abs(page - currentPage) <= 1,
     );
 
     return (
@@ -687,7 +845,9 @@ function Pagination({
                     </span>
                 ))}
                 <button
-                    onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+                    onClick={() =>
+                        onPageChange(Math.min(totalPages, currentPage + 1))
+                    }
                     disabled={currentPage === totalPages}
                     className="cursor-pointer rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -698,6 +858,8 @@ function Pagination({
     );
 }
 
-ListNotificationPage.layout = (page: React.ReactNode) => <AdminLayout>{page}</AdminLayout>;
+ListNotificationPage.layout = (page: React.ReactNode) => (
+    <AdminLayout>{page}</AdminLayout>
+);
 
 export default ListNotificationPage;

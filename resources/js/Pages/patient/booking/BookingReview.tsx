@@ -22,7 +22,10 @@ function ReviewBookingPage({ doctor }: ReviewBookingPageProps) {
                 {/* Main Content: Review Card */}
                 <div className="space-y-6 lg:col-span-2">
                     <ReviewBookingCard doctor={doctor} />
-                    <ReviewActions doctorId={String(doctor.id)} />
+                    <ReviewActions
+                        doctorId={String(doctor.id)}
+                        doctorName={doctor.name}
+                    />
                 </div>
 
                 {/* Sidebar Info */}

@@ -26,6 +26,7 @@ interface Village {
 
 interface CustomerDataFormProps {
     doctorId: string;
+    doctorName?: string;
     isAdmin?: boolean;
     provinces?: Province[];
     isCreateMode?: boolean;
@@ -35,6 +36,7 @@ interface CustomerDataFormProps {
 
 export function CustomerDataForm({
     doctorId,
+    doctorName,
     isAdmin = false,
     provinces = [],
     isCreateMode = false,
@@ -42,9 +44,8 @@ export function CustomerDataForm({
     patientId,
 }: CustomerDataFormProps) {
     const { bookingData, setBookingData } = useBooking();
-    const [isVerifying, setIsVerifying] = useState(false);
     const [isCheckingNik, setIsCheckingNik] = useState(false);
-    const [verificationError, setVerificationError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [nikMessage, setNikMessage] = useState<{
         type: 'success' | 'info' | 'error';
         text: string;
@@ -160,10 +161,6 @@ export function CustomerDataForm({
             field === 'fullName' ? value.toUpperCase() : value;
 
         setBookingData({ [field]: processedValue });
-        // Reset verification error when phone number changes
-        if (field === 'whatsapp') {
-            setVerificationError('');
-        }
         // Reset NIK check when NIK changes
         if (field === 'nik') {
             setBookingData({ isNikChecked: false });
@@ -314,35 +311,6 @@ export function CustomerDataForm({
         );
     };
 
-    const handleVerifyWhatsApp = () => {
-        if (!bookingData.whatsapp || bookingData.whatsapp.length < 10) {
-            setVerificationError('Masukkan nomor WhatsApp yang valid');
-            return;
-        }
-
-        setIsVerifying(true);
-        setVerificationError('');
-
-        router.post(
-            '/verify-wa',
-            { patient_phone: bookingData.whatsapp },
-            {
-                preserveState: true,
-                preserveScroll: true,
-                onSuccess: () => {
-                    setBookingData({ isWhatsappVerified: true });
-                    setIsVerifying(false);
-                },
-                onError: () => {
-                    setVerificationError(
-                        'Gagal mengirim pesan verifikasi. Coba lagi.',
-                    );
-                    setIsVerifying(false);
-                },
-            },
-        );
-    };
-
     // Form validation
     const isFormValid =
         bookingData.fullName.trim() !== '' &&
@@ -353,8 +321,128 @@ export function CustomerDataForm({
         bookingData.birthdate.trim() !== '' &&
         bookingData.gender !== '' &&
         (bookingData.villageId !== '' || bookingData.address.trim() !== '') &&
-        (isCreateMode || isEditMode ? true : bookingData.isWhatsappVerified) &&
         (isCreateMode || isEditMode ? true : bookingData.isNikChecked);
+
+    // Helper function to format phone number for WhatsApp
+    const formatPhoneForWhatsApp = (phone: string): string => {
+        // Remove all non-digit characters
+        let cleaned = phone.replace(/\D/g, '');
+
+        // Convert 08xxx to 628xxx
+        if (cleaned.startsWith('0')) {
+            cleaned = '62' + cleaned.substring(1);
+        }
+
+        // If doesn't start with 62, add it
+        if (!cleaned.startsWith('62')) {
+            cleaned = '62' + cleaned;
+        }
+
+        return cleaned;
+    };
+
+    // Handler for admin WhatsApp confirmation - saves booking first, then redirects to WhatsApp
+    const handleAdminWhatsAppConfirmation = () => {
+        if (!isFormValid || isSubmitting) return;
+
+        setIsSubmitting(true);
+
+        const patientPhone = formatPhoneForWhatsApp(bookingData.whatsapp);
+        const genderLabel =
+            bookingData.gender === 'male' ? 'Laki-laki' : 'Perempuan';
+
+        // Build check booking URL with NIK parameter
+        const checkBookingUrl = `${window.location.origin}/check-booking?nik=${bookingData.nik}`;
+
+        // Menyusun pesan menggunakan Array agar format newline (\n) konsisten di semua device
+        const messageLines = [
+            `Halo *${bookingData.fullName}*,`,
+            '',
+            'Berikut data booking anda di *Cantika Dental Care*! 🦷',
+            '',
+            '📋 *DETAIL BOOKING ANDA*',
+            '━━━━━━━━━━━━━━━━━━━━━',
+            `👨‍⚕️ Dokter: ${doctorName || 'Dokter'}`,
+            `📅 Tanggal: ${bookingData.selectedDate}`,
+            `🕐 Jam: ${bookingData.selectedTime || 'Akan dikonfirmasi'}`,
+            `🦷 Layanan: ${bookingData.service}`,
+            '',
+            '👤 *DATA PASIEN*',
+            '━━━━━━━━━━━━━━━━━',
+            `Nama: ${bookingData.fullName}`,
+            `NIK: ${bookingData.nik}`,
+            `No. HP: ${bookingData.whatsapp}`,
+            `Tgl Lahir: ${bookingData.birthdate}`,
+            `Jenis Kelamin: ${genderLabel}`,
+            `Alamat: ${bookingData.address}`,
+            '',
+            '🔗 *CEK STATUS BOOKING*',
+            checkBookingUrl,
+            '',
+            'Terima kasih! 🙏',
+        ];
+
+        const message = messageLines.join('\n');
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=${patientPhone}&text=${encodedMessage}`;
+
+        // Save booking first, then open WhatsApp only on success
+        router.post(
+            '/admin/bookings/store',
+            {
+                doctor_id: doctorId,
+                patient_name: bookingData.fullName,
+                patient_nik: bookingData.nik,
+                patient_phone: bookingData.whatsapp,
+                patient_birthdate: bookingData.birthdate,
+                patient_address: bookingData.address,
+                gender: bookingData.gender,
+                booking_date: bookingData.rawSelectedDate,
+                start_time: bookingData.selectedTime || null,
+                service: bookingData.service,
+                type: bookingData.serviceType || 'sisipan',
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: (page) => {
+                    setIsSubmitting(false);
+
+                    // Check flash message for error
+                    const flash = page.props.flash as
+                        | { error?: string; success?: string }
+                        | undefined;
+
+                    if (flash?.error) {
+                        // Controller returned error via flash message
+                        alert(flash.error);
+                        return; // Don't open WhatsApp
+                    }
+
+                    // Only open WhatsApp if there's a success message or no error
+                    if (flash?.success || !flash?.error) {
+                        window.open(
+                            whatsappUrl,
+                            '_blank',
+                            'noopener,noreferrer',
+                        );
+                    }
+                },
+                onError: (errors) => {
+                    // Validation errors (422)
+                    console.error('Booking failed:', errors);
+                    setIsSubmitting(false);
+                    const errorMessages = Object.values(errors)
+                        .flat()
+                        .join('\n');
+                    alert('Gagal menyimpan booking:\n' + errorMessages);
+                },
+                onFinish: () => {
+                    setIsSubmitting(false);
+                },
+            },
+        );
+    };
 
     // Common input class
     const inputClass =
@@ -636,11 +724,7 @@ export function CustomerDataForm({
                                 <div className="ml-2 h-4 w-px bg-gray-300"></div>
                             </div>
                             <input
-                                className={`${inputClass} pl-[55px] pr-4 ${
-                                    bookingData.isWhatsappVerified
-                                        ? 'border-green-300 focus:border-green-400 focus:ring-green-400'
-                                        : ''
-                                }`}
+                                className={`${inputClass} pl-[55px] pr-4`}
                                 id="whatsapp"
                                 placeholder="6281234567890"
                                 type="tel"
@@ -654,71 +738,10 @@ export function CustomerDataForm({
                                     handleInputChange('whatsapp', value);
                                 }}
                             />
-                            {bookingData.isWhatsappVerified && (
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
-                                    <span className="material-symbols-outlined text-green-500">
-                                        verified
-                                    </span>
-                                </div>
-                            )}
                         </div>
                         <p className="text-text-secondary mt-1 text-xs">
-                            Kode verifikasi akan dikirim ke nomor ini.
+                            Nomor ini akan digunakan untuk konfirmasi booking.
                         </p>
-
-                        {/* Verify WhatsApp Button */}
-                        {!bookingData.isWhatsappVerified && (
-                            <button
-                                type="button"
-                                onClick={handleVerifyWhatsApp}
-                                disabled={
-                                    isVerifying ||
-                                    !bookingData.whatsapp ||
-                                    bookingData.whatsapp.length < 10
-                                }
-                                className={`mt-2 flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                                    isVerifying ||
-                                    !bookingData.whatsapp ||
-                                    bookingData.whatsapp.length < 10
-                                        ? 'cursor-not-allowed bg-gray-200 text-gray-400'
-                                        : 'cursor-pointer bg-green-100 text-green-700 hover:bg-green-200'
-                                }`}
-                            >
-                                <span className="material-symbols-outlined text-[18px]">
-                                    {isVerifying ? 'hourglass_empty' : 'send'}
-                                </span>
-                                {isVerifying
-                                    ? 'Mengirim...'
-                                    : 'Kirim Verifikasi WhatsApp'}
-                            </button>
-                        )}
-
-                        {/* Success Message */}
-                        {bookingData.isWhatsappVerified && (
-                            <div className="mt-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
-                                <div className="flex items-start gap-2">
-                                    <span className="material-symbols-outlined text-[18px]">
-                                        check_circle
-                                    </span>
-                                    <p>
-                                        Nomor WhatsApp telah terverifikasi. Anda
-                                        dapat melanjutkan proses booking.
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Error Message */}
-                        {verificationError && (
-                            <div className="mt-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                                <div className="flex items-start gap-2">
-                                    <span className="material-symbols-outlined text-[18px]">
-                                        error
-                                    </span>
-                                    <p>{verificationError}</p>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
 
@@ -900,24 +923,21 @@ export function CustomerDataForm({
                 </div>
 
                 {/* Verification Warning */}
-                {(!bookingData.isWhatsappVerified ||
-                    !bookingData.isNikChecked) &&
-                    !isCreateMode && (
-                        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
-                            <div className="flex items-start gap-2">
-                                <span className="material-symbols-outlined text-[20px]">
-                                    warning
-                                </span>
-                                <p>
-                                    <strong>Verifikasi diperlukan:</strong>
-                                    {!bookingData.isNikChecked &&
-                                        ' Klik "Cek NIK" untuk memverifikasi NIK Anda.'}
-                                    {!bookingData.isWhatsappVerified &&
-                                        ' Verifikasi nomor WhatsApp sebelum melanjutkan.'}
-                                </p>
-                            </div>
+                {!bookingData.isNikChecked && !isCreateMode && (
+                    <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
+                        <div className="flex items-start gap-2">
+                            <span className="material-symbols-outlined text-[20px]">
+                                warning
+                            </span>
+                            <p>
+                                <strong>Verifikasi diperlukan:</strong>
+                                {
+                                    ' Klik "Cek NIK" untuk memverifikasi NIK Anda.'
+                                }
+                            </p>
                         </div>
-                    )}
+                    </div>
+                )}
 
                 {/* CTA Buttons */}
                 <div className="mt-2 pt-4">
@@ -994,42 +1014,30 @@ export function CustomerDataForm({
                             </span>
                         </button>
                     ) : isAdmin ? (
-                        /* Admin: Single "Simpan Booking" button */
+                        /* Admin: Save booking then redirect to WhatsApp */
                         <button
                             type="button"
-                            disabled={!isFormValid}
-                            onClick={() => {
-                                if (isFormValid) {
-                                    router.post('/admin/bookings/store', {
-                                        doctor_id: doctorId,
-                                        patient_name: bookingData.fullName,
-                                        patient_nik: bookingData.nik,
-                                        patient_phone: bookingData.whatsapp,
-                                        patient_birthdate:
-                                            bookingData.birthdate,
-                                        patient_address: bookingData.address,
-                                        gender: bookingData.gender,
-                                        booking_date:
-                                            bookingData.rawSelectedDate,
-                                        start_time:
-                                            bookingData.selectedTime || null,
-                                        service: bookingData.service,
-                                        type:
-                                            bookingData.serviceType ||
-                                            'sisipan',
-                                    });
-                                }
-                            }}
+                            disabled={!isFormValid || isSubmitting}
+                            onClick={handleAdminWhatsAppConfirmation}
                             className={`flex w-full items-center justify-center gap-2 rounded-lg px-8 py-4 text-base font-bold shadow-lg transition-all ${
-                                isFormValid
-                                    ? 'transform cursor-pointer bg-primary text-white shadow-primary/30 hover:bg-primary-dark active:scale-[0.99]'
+                                isFormValid && !isSubmitting
+                                    ? 'transform cursor-pointer bg-green-600 text-white shadow-green-600/30 hover:bg-green-700 active:scale-[0.99]'
                                     : 'cursor-not-allowed bg-gray-300 text-gray-500'
                             }`}
                         >
-                            <span>Simpan Booking</span>
-                            <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">
-                                save
-                            </span>
+                            {isSubmitting ? (
+                                <>
+                                    <span className="animate-spin">⏳</span>
+                                    <span>Menyimpan...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="material-symbols-outlined text-[20px]">
+                                        chat
+                                    </span>
+                                    <span>Simpan & Kirim via WhatsApp</span>
+                                </>
+                            )}
                         </button>
                     ) : (
                         /* Patient: Back + Continue buttons */

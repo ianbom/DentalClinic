@@ -21,7 +21,11 @@ const navLinks = [
     },
     { href: '/admin/patients', label: 'Pasien', icon: 'group' },
     { href: '/admin/doctors', label: 'Dokter', icon: 'stethoscope' },
-    { href: '/admin/notifications', label: 'Notifikasi', icon: 'notifications' },
+    {
+        href: '/admin/notifications',
+        label: 'Notifikasi',
+        icon: 'notifications',
+    },
 ];
 
 interface AdminSidebarProps {

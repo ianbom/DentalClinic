@@ -178,6 +178,7 @@ function CreateBookingForm({
 
                                 <CustomerDataForm
                                     doctorId={String(doctor.id)}
+                                    doctorName={doctor.name}
                                     isAdmin={true}
                                     provinces={provinces}
                                 />

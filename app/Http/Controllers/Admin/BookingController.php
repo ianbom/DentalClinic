@@ -97,8 +97,8 @@ class BookingController extends Controller
         try {
             $data = $request->all();
             $booking = $this->patientBookingService->createBooking($data);
-            $this->patientBookingService->sendBookingConfirmation($booking->id, $booking->patient->patient_phone);
-            $this->patientBookingService->scheduleReminderNotification($booking->id);
+            // $this->patientBookingService->sendBookingConfirmation($booking->id, $booking->patient->patient_phone);
+            // $this->patientBookingService->scheduleReminderNotification($booking->id);
             
             return redirect()
                 ->route('admin.bookings.list')

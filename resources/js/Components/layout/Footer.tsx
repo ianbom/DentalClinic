@@ -37,7 +37,8 @@ export function Footer() {
                             />
                         </Link>
                         <p className="text-sm leading-relaxed text-gray-500">
-                            Praktek gigi terpercaya dengan standar pelayanan terbaik dan ramah anak.
+                            Praktek gigi terpercaya dengan standar pelayanan
+                            terbaik dan ramah anak.
                         </p>
                         {/* Social Media */}
                         <div className="mt-2 flex gap-3">

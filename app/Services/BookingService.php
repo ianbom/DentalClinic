@@ -354,14 +354,14 @@ class BookingService
         $booking->load(['doctor', 'patient']);
 
         // Send reschedule notification
-        $this->sendRescheduleNotification(
-            $booking->id,
-            $booking->patient->patient_phone,
-            $oldSchedule
-        );
+        // $this->sendRescheduleNotification(
+        //     $booking->id,
+        //     $booking->patient->patient_phone,
+        //     $oldSchedule
+        // );
 
         // Update existing reminder notification with new schedule
-        $this->updateReminderNotification($booking->id);
+        // $this->updateReminderNotification($booking->id);
 
         return $booking;
     }

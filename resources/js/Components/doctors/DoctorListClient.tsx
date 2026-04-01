@@ -57,8 +57,7 @@ export function DoctorListClient({ doctors }: DoctorListClientProps) {
                             Temukan Dokter Gigi Terbaik
                         </h1>
                         <p className="text-gray-500">
-                            Pilih dokter berpengalaman untuk senyum
-                            sehat Anda.
+                            Pilih dokter berpengalaman untuk senyum sehat Anda.
                         </p>
                     </div>
                     {/* <div className="w-full md:w-auto md:min-w-[400px]">

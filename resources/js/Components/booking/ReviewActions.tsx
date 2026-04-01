@@ -6,51 +6,91 @@ import { useState } from 'react';
 
 interface ReviewActionsProps {
     doctorId: string;
+    doctorName?: string;
 }
 
-export function ReviewActions({ doctorId }: ReviewActionsProps) {
+export function ReviewActions({ doctorId, doctorName }: ReviewActionsProps) {
     const [isTermsAgreed, setIsTermsAgreed] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { bookingData, resetBookingData } = useBooking();
+
+    // Parse the date from formatted_date to Y-m-d format
+    const parseDate = (formattedDate: string): string => {
+        const months: Record<string, string> = {
+            Januari: '01',
+            Februari: '02',
+            Maret: '03',
+            April: '04',
+            Mei: '05',
+            Juni: '06',
+            Juli: '07',
+            Agustus: '08',
+            September: '09',
+            Oktober: '10',
+            November: '11',
+            Desember: '12',
+        };
+
+        const parts = formattedDate.split(', ')[1]?.split(' ') || [];
+        if (parts.length === 3) {
+            const day = parts[0].padStart(2, '0');
+            const month = months[parts[1]] || '01';
+            const year = parts[2];
+            return `${year}-${month}-${day}`;
+        }
+        return formattedDate;
+    };
 
     const handleConfirmBooking = () => {
         if (!isTermsAgreed || isSubmitting) return;
 
         setIsSubmitting(true);
 
-        // Parse the date from formatted_date to Y-m-d format
-        const parseDate = (formattedDate: string): string => {
-            // Handle formatted date like "Rabu, 31 Desember 2025"
-            const months: Record<string, string> = {
-                Januari: '01',
-                Februari: '02',
-                Maret: '03',
-                April: '04',
-                Mei: '05',
-                Juni: '06',
-                Juli: '07',
-                Agustus: '08',
-                September: '09',
-                Oktober: '10',
-                November: '11',
-                Desember: '12',
-            };
+        const adminPhone = '6285231519966';
+        const genderLabel =
+            bookingData.gender === 'male' ? 'Laki-laki' : 'Perempuan';
 
-            const parts = formattedDate.split(', ')[1]?.split(' ') || [];
-            if (parts.length === 3) {
-                const day = parts[0].padStart(2, '0');
-                const month = months[parts[1]] || '01';
-                const year = parts[2];
-                return `${year}-${month}-${day}`;
-            }
-            return formattedDate;
-        };
+        // Build check booking URL with NIK parameter
+        const checkBookingUrl = `${window.location.origin}/check-booking?nik=${bookingData.nik}`;
 
+        const messageLines = [
+            'Halo Admin Cantika Dental Care,',
+            '',
+            'Saya ingin melakukan booking dengan detail sebagai berikut:',
+            '',
+            '📋 *DATA BOOKING*',
+            '━━━━━━━━━━━━━━━━━',
+            `👨‍⚕️ Dokter: ${doctorName || 'Dokter'}`,
+            `📅 Tanggal: ${bookingData.selectedDate}`,
+            `🕐 Jam: ${bookingData.selectedTime}`,
+            `🦷 Layanan: ${bookingData.service}`,
+            '',
+            '👤 *DATA PASIEN*',
+            '━━━━━━━━━━━━━━━━━',
+            `Nama: ${bookingData.fullName}`,
+            `NIK: ${bookingData.nik}`,
+            `No. HP: ${bookingData.whatsapp}`,
+            `Tgl Lahir: ${bookingData.birthdate}`,
+            `Jenis Kelamin: ${genderLabel}`,
+            `Alamat: ${bookingData.address}`,
+            '',
+            '🔗 *CEK STATUS BOOKING*',
+            checkBookingUrl,
+            '',
+            'Mohon konfirmasi ketersediaan jadwal.',
+            'Terima kasih 🙏',
+        ];
+
+        const message = messageLines.join('\n');
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=${adminPhone}&text=${encodedMessage}`;
+
+        // Prepare form data
         const formData = {
             doctor_id: doctorId,
             booking_date: parseDate(bookingData.selectedDate),
-            start_time: bookingData.selectedTime, // Already in HH:mm format
+            start_time: bookingData.selectedTime,
             service: bookingData.service,
             type: bookingData.serviceType,
             patient_name: bookingData.fullName,
@@ -61,13 +101,36 @@ export function ReviewActions({ doctorId }: ReviewActionsProps) {
             gender: bookingData.gender,
         };
 
+        // Save booking first, then redirect to WhatsApp
         router.post('/booking/create', formData, {
-            onSuccess: () => {
-                // Reset booking context after successful submission
-                resetBookingData();
-            },
-            onError: () => {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: (page) => {
                 setIsSubmitting(false);
+
+                // Check flash message for error
+                const flash = page.props.flash as
+                    | { error?: string; success?: string }
+                    | undefined;
+
+                if (flash?.error) {
+                    // Controller returned error via flash message
+                    alert(flash.error);
+                    return; // Don't open WhatsApp
+                }
+
+                // Only open WhatsApp if booking was successful
+                if (flash?.success || !flash?.error) {
+                    resetBookingData();
+                    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+                }
+            },
+            onError: (errors) => {
+                // Validation errors (422)
+                console.error('Booking failed:', errors);
+                setIsSubmitting(false);
+                const errorMessages = Object.values(errors).flat().join('\n');
+                alert('Gagal menyimpan booking:\n' + errorMessages);
             },
             onFinish: () => {
                 setIsSubmitting(false);
@@ -129,20 +192,20 @@ export function ReviewActions({ doctorId }: ReviewActionsProps) {
                             className={`flex-2 flex items-center justify-center gap-2 rounded-xl px-6 py-3 font-bold text-white shadow-lg transition-all ${
                                 isSubmitting
                                     ? 'cursor-not-allowed bg-gray-400'
-                                    : 'cursor-pointer bg-primary shadow-primary/25 hover:bg-primary-dark hover:shadow-primary/40'
+                                    : 'cursor-pointer bg-green-600 shadow-green-600/25 hover:bg-green-700 hover:shadow-green-600/40'
                             }`}
                         >
                             {isSubmitting ? (
                                 <>
                                     <span className="animate-spin">⏳</span>
-                                    <span>Memproses...</span>
+                                    <span>Menyimpan...</span>
                                 </>
                             ) : (
                                 <>
-                                    <span>Konfirmasi Booking</span>
                                     <span className="material-symbols-outlined text-[20px]">
-                                        arrow_forward
+                                        chat
                                     </span>
+                                    <span>Konfirmasi via WhatsApp</span>
                                 </>
                             )}
                         </button>
@@ -152,10 +215,10 @@ export function ReviewActions({ doctorId }: ReviewActionsProps) {
                             disabled
                             className="flex-2 flex cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-gray-300 px-6 py-3 font-bold text-gray-500"
                         >
-                            <span>Konfirmasi Booking</span>
                             <span className="material-symbols-outlined text-[20px]">
-                                arrow_forward
+                                chat
                             </span>
+                            <span>Konfirmasi via WhatsApp</span>
                         </button>
                     )}
                 </div>

@@ -145,8 +145,8 @@ class BookingController extends Controller
                 throw new \Exception('Anda sudah memiliki booking aktif.');
             }
             $booking = $this->bookingService->createBooking($request->all());
-            $this->bookingService->sendBookingConfirmation($booking->id, $booking->patient->patient_phone);
-            $this->bookingService->scheduleReminderNotification($booking->id);
+            // $this->bookingService->sendBookingConfirmation($booking->id, $booking->patient->patient_phone);
+            // $this->bookingService->scheduleReminderNotification($booking->id);
 
             
             return redirect()

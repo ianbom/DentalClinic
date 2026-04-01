@@ -107,13 +107,57 @@ function RescheduleBookingForm({
         setService(value);
     };
 
-    // Handle submit
+    // Helper function to format phone number for WhatsApp
+    const formatPhoneForWhatsApp = (phone: string): string => {
+        let cleaned = phone.replace(/\D/g, '');
+        if (cleaned.startsWith('0')) {
+            cleaned = '62' + cleaned.substring(1);
+        }
+        if (!cleaned.startsWith('62')) {
+            cleaned = '62' + cleaned;
+        }
+        return cleaned;
+    };
+
+    // Handle submit - save to database first, then redirect to WhatsApp
     const handleSubmit = () => {
         if (!currentDoctorId || !bookingData.rawSelectedDate) {
             return;
         }
 
         setIsSubmitting(true);
+
+        // Prepare WhatsApp message
+        const patientPhone = formatPhoneForWhatsApp(booking.patient.phone);
+        const checkBookingUrl = `${window.location.origin}/check-booking?nik=${booking.patient.nik}`;
+        const doctorName = doctor?.name || booking.doctor.name;
+
+        const messageLines = [
+            `Halo *${booking.patient.name}*,`,
+            '',
+            'Jadwal booking Anda di *Cantika Dental Care* telah diubah.',
+            '',
+            '📋 *JADWAL BARU*',
+            '━━━━━━━━━━━━━━━━━',
+            `👨‍⚕️ Dokter: ${doctorName}`,
+            `📅 Tanggal: ${bookingData.selectedDate}`,
+            `🕐 Jam: ${bookingData.selectedTime || 'Akan dikonfirmasi'}`,
+            `🦷 Layanan: ${bookingData.service}`,
+            '',
+            '📋 *JADWAL SEBELUMNYA*',
+            '━━━━━━━━━━━━━━━━━',
+            `📅 Tanggal: ${booking.booking_date_formatted}`,
+            `🕐 Jam: ${booking.start_time || '-'}`,
+            '',
+            '🔗 *CEK STATUS BOOKING*',
+            checkBookingUrl,
+            '',
+            'Terima kasih! 🙏',
+        ];
+
+        const message = messageLines.join('\n');
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=${patientPhone}&text=${encodedMessage}`;
 
         router.put(
             `/admin/bookings/${booking.id}/reschedule`,
@@ -125,7 +169,41 @@ function RescheduleBookingForm({
                 start_time: bookingData.selectedTime || null,
             },
             {
-                onFinish: () => setIsSubmitting(false),
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: (page) => {
+                    setIsSubmitting(false);
+
+                    // Check flash message for error
+                    const flash = page.props.flash as
+                        | { error?: string; success?: string }
+                        | undefined;
+
+                    if (flash?.error) {
+                        alert(flash.error);
+                        return; // Don't open WhatsApp
+                    }
+
+                    // Open WhatsApp on success
+                    if (flash?.success || !flash?.error) {
+                        window.open(
+                            whatsappUrl,
+                            '_blank',
+                            'noopener,noreferrer',
+                        );
+                    }
+                },
+                onError: (errors) => {
+                    console.error('Reschedule failed:', errors);
+                    setIsSubmitting(false);
+                    const errorMessages = Object.values(errors)
+                        .flat()
+                        .join('\n');
+                    alert('Gagal menyimpan perubahan:\n' + errorMessages);
+                },
+                onFinish: () => {
+                    setIsSubmitting(false);
+                },
             },
         );
     };
@@ -243,11 +321,11 @@ function RescheduleBookingForm({
                             <button
                                 onClick={handleSubmit}
                                 disabled={isSubmitting}
-                                className="w-full rounded-lg bg-primary py-4 font-semibold text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-50"
+                                className="w-full rounded-lg bg-green-600 py-4 font-semibold text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 {isSubmitting
-                                    ? 'Menyimpan...'
-                                    : 'Simpan Perubahan'}
+                                    ? '⏳ Menyimpan...'
+                                    : '💬 Simpan & Kirim via WhatsApp'}
                             </button>
                         )}
                     </div>
