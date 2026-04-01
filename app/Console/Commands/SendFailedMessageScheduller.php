@@ -13,7 +13,7 @@ class SendFailedMessageScheduller extends Command
 
     protected $description = 'Retry sending failed notifications with attempt limit';
 
-    public const MAX_RETRY_ATTEMPTS = 10;
+    public const MAX_RETRY_ATTEMPTS = 100;
     public const RETRY_AFTER_MINUTES = 5;
 
     public function handle(): int

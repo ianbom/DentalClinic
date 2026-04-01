@@ -9,7 +9,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // Schedule reminder notifications to be sent every minute
-Schedule::command('notifications:send-reminders')->everyMinute();
+Schedule::command('notifications:send-reminders')->everySecond();
 
 // Retry failed notifications every 5 minutes
 Schedule::command('notifications:retry-failed')->everySecond();
