@@ -76,6 +76,25 @@ class DoctorController extends Controller
         return back()->with('success', 'Jadwal berhasil dikunci');
     }
 
+    public function unlockOneDayDoctorSchedule(Request $request)
+    { 
+        $validated = $request->validate([
+            'doctor_id' => 'required|exists:doctors,id',
+            'date' => 'required|date',
+        ]);
+
+        $result = $this->doctorService->unlockOneDaySchedule(
+            $validated['doctor_id'],
+            $validated['date']
+        );
+
+        if (!$result['success']) {
+            return back()->with('error', $result['message']);
+        }
+
+        return back()->with('success', 'Jadwal berhasil dibuka');
+    }
+
     public function lockDoctorSchedule(Request $request)
     { 
         $validated = $request->validate([

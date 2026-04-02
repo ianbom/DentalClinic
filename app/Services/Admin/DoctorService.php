@@ -287,9 +287,9 @@ class DoctorService
         }
 
         // Get doctor's working periods for this day of week
-        $dayOfWeek = Carbon::parse($date)->dayOfWeek;
+        // $dayOfWeek = Carbon::parse($date)->dayOfWeek;
         $hasWorkingPeriods = DoctorWorkingPeriod::where('doctor_id', $doctorId)
-            ->where('day_of_week', $dayOfWeek)
+            // ->where('day_of_week', $dayOfWeek)
             ->where('is_active', true)
             ->exists();
 
@@ -329,6 +329,31 @@ class DoctorService
             'success' => true,
             'message' => 'Berhasil mengunci semua jadwal pada tanggal ini.',
             'has_bookings' => false,
+        ];
+    }
+
+    /**
+     * Unlock full-day schedule by removing the 00:00–23:59 time-off entry
+     * Returns: ['success' => bool, 'message' => string]
+     */
+    public function unlockOneDaySchedule(int $doctorId, string $date): array
+    {
+        $deleted = DoctorTimeOff::where('doctor_id', $doctorId)
+            ->whereDate('date', $date)
+            ->where('start_time', '00:00:00')
+            ->where('end_time', '23:59:00')
+            ->delete();
+
+        if (!$deleted) {
+            return [
+                'success' => false,
+                'message' => 'Jadwal libur sehari tidak ditemukan untuk tanggal ini.',
+            ];
+        }
+
+        return [
+            'success' => true,
+            'message' => 'Jadwal berhasil dibuka untuk seluruh hari.',
         ];
     }
 

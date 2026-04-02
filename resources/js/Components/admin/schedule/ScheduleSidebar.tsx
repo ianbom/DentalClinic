@@ -1,4 +1,5 @@
 import { Link, router } from '@inertiajs/react';
+import Swal from 'sweetalert2';
 
 export interface TimeSlotInfo {
     time: string;
@@ -71,51 +72,85 @@ export function ScheduleSidebar({
     // Check if there are any booked slots (active bookings)
     const hasBookings = bookedSlots > 0;
 
+    // Check if ALL slots are locked (full-day off: 00:00–23:59)
+    const allSlots = [...morningSlots, ...afternoonSlots];
+    const isFullDayOff =
+        allSlots.length > 0 &&
+        allSlots.every((s) => s.status === 'off');
+
     const handleLockAllSchedules = () => {
         if (hasBookings) {
-            alert(
-                'Tidak dapat mengunci jadwal. Masih ada booking aktif pada tanggal ini. Silakan batalkan booking terlebih dahulu.',
-            );
+            Swal.fire({
+                title: 'Tidak Dapat Dikunci',
+                text: 'Masih ada booking aktif pada tanggal ini. Silakan batalkan booking terlebih dahulu.',
+                icon: 'error',
+            });
             return;
         }
 
-        if (
-            !confirm(
-                'Apakah Anda yakin ingin mengunci semua jadwal pada tanggal ini?',
-            )
-        ) {
-            return;
-        }
+        Swal.fire({
+            title: 'Kunci Semua Jadwal?',
+            text: 'Dokter akan dinyatakan libur seharian pada tanggal ini.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Kunci!',
+            cancelButtonText: 'Batal',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.post(
+                    '/admin/doctors/schedule/lock-day',
+                    {
+                        doctor_id: doctorId,
+                        date: dateStr,
+                    },
+                    {
+                        preserveState: true,
+                        preserveScroll: true,
+                        onError: (errors) => {
+                            const errorMessages = Object.values(errors)
+                                .flat()
+                                .join('\n');
+                            Swal.fire('Gagal!', errorMessages, 'error');
+                        },
+                    },
+                );
+            }
+        });
+    };
 
-        router.post(
-            '/admin/doctors/schedule/lock-day',
-            {
-                doctor_id: doctorId,
-                date: dateStr,
-            },
-            {
-                preserveState: true,
-                preserveScroll: true,
-                onSuccess: (page) => {
-                    const flash = page.props.flash as {
-                        error?: string;
-                        success?: string;
-                    };
-                    if (flash?.success) {
-                        alert(flash.success);
-                    } else if (flash?.error) {
-                        alert(flash.error);
-                    }
-                },
-                onError: (errors) => {
-                    console.error('Failed to lock schedules:', errors);
-                    const errorMessages = Object.values(errors)
-                        .flat()
-                        .join('\n');
-                    alert('Gagal mengunci jadwal:\n' + errorMessages);
-                },
-            },
-        );
+    const handleUnlockAllSchedules = () => {
+        Swal.fire({
+            title: 'Buka Jadwal Libur?',
+            text: 'Dokter akan kembali aktif dan dapat menerima booking pada tanggal ini.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#16a34a',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Buka!',
+            cancelButtonText: 'Batal',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.post(
+                    '/admin/doctors/schedule/unlock-day',
+                    {
+                        doctor_id: doctorId,
+                        date: dateStr,
+                    },
+                    {
+                        preserveState: true,
+                        preserveScroll: true,
+                        onError: (errors) => {
+                            const errorMessages = Object.values(errors)
+                                .flat()
+                                .join('\n');
+                            Swal.fire('Gagal!', errorMessages, 'error');
+                        },
+                    },
+                );
+            }
+        });
     };
 
     return (
@@ -178,32 +213,51 @@ export function ScheduleSidebar({
                     </div>
                 </div>
 
-                {/* Lock All Schedules Button */}
-                <button
-                    onClick={handleLockAllSchedules}
-                    disabled={hasBookings}
-                    className={`flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold transition-all ${
-                        hasBookings
-                            ? 'cursor-not-allowed bg-gray-200 text-gray-400'
-                            : 'bg-red-50 text-red-700 hover:bg-red-100 active:bg-red-200'
-                    }`}
-                    title={
-                        hasBookings
-                            ? 'Tidak dapat mengunci jadwal karena ada booking aktif'
-                            : 'Kunci semua jadwal hari ini'
-                    }
-                >
-                    <span className="material-symbols-outlined text-lg">
-                        lock
-                    </span>
-                    <span>Kunci Semua Jadwal</span>
-                </button>
+                {/* Lock / Unlock All Day Buttons */}
+                <div className="flex flex-col gap-2">
+                    {/* Unlock button: only shown when doctor is fully locked for the day */}
+                    {isFullDayOff && (
+                        <button
+                            onClick={handleUnlockAllSchedules}
+                            className="flex items-center justify-center gap-2 rounded-lg bg-green-50 px-4 py-3 text-sm font-semibold text-green-700 transition-all hover:bg-green-100 active:bg-green-200"
+                            title="Buka jadwal libur sehari ini"
+                        >
+                            <span className="material-symbols-outlined text-lg">
+                                lock_open
+                            </span>
+                            <span>Buka Jadwal Libur Hari Ini</span>
+                        </button>
+                    )}
 
-                {hasBookings && (
-                    <p className="-mt-4 text-xs text-red-600">
-                        * Batalkan booking terlebih dahulu untuk mengunci jadwal
-                    </p>
-                )}
+                    {/* Lock button: hidden when already fully locked */}
+                    {!isFullDayOff && (
+                        <button
+                            onClick={handleLockAllSchedules}
+                            disabled={hasBookings}
+                            className={`flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold transition-all ${
+                                hasBookings
+                                    ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                    : 'bg-red-50 text-red-700 hover:bg-red-100 active:bg-red-200'
+                            }`}
+                            title={
+                                hasBookings
+                                    ? 'Tidak dapat mengunci jadwal karena ada booking aktif'
+                                    : 'Kunci semua jadwal hari ini (libur sehari)'
+                            }
+                        >
+                            <span className="material-symbols-outlined text-lg">
+                                lock
+                            </span>
+                            <span>Kunci Semua Jadwal</span>
+                        </button>
+                    )}
+
+                    {hasBookings && !isFullDayOff && (
+                        <p className="text-xs text-red-600">
+                            * Batalkan booking terlebih dahulu untuk mengunci jadwal
+                        </p>
+                    )}
+                </div>
 
                 {/* Morning Slots */}
                 {morningSlots.length > 0 && (
