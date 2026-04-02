@@ -107,6 +107,15 @@ class NotificationService
         $perPage = $filters['per_page'] ?? 10;
         
         return $query->paginate($perPage)->through(function ($notification) {
+            // Build practice time from booking_date + start_time
+            $practiceTime = null;
+            if ($notification->booking?->booking_date && $notification->booking?->start_time) {
+                $dateOnly = \Carbon\Carbon::parse($notification->booking->booking_date)->format('Y-m-d');
+                $practiceTime = \Carbon\Carbon::parse(
+                    $dateOnly . ' ' . $notification->booking->start_time
+                )->translatedFormat('d M Y, H:i');
+            }
+
             return [
                 'id' => $notification->id,
                 'booking_id' => $notification->booking_id,
@@ -123,6 +132,7 @@ class NotificationService
                 'status' => $notification->status,
                 'attempt_count' => $notification->attempt_count,
                 'last_error' => $notification->last_error,
+                'booking_practice_time' => $practiceTime,
                 'created_at' => $notification->created_at->format('Y-m-d H:i:s'),
                 'created_at_formatted' => $notification->created_at->translatedFormat('d M Y, H:i'),
                 'updated_at' => $notification->updated_at->format('Y-m-d H:i:s'),

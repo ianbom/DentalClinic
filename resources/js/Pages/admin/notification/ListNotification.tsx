@@ -19,6 +19,7 @@ interface NotificationItem {
     status: string;
     attempt_count: number;
     last_error: string | null;
+    booking_practice_time: string | null;
     created_at: string;
     created_at_formatted: string;
     updated_at: string;
@@ -370,7 +371,7 @@ function ListNotificationPage({
                     {/* Scheduled At Filter */}
                     <div className="relative">
                         <label className="absolute -top-2 left-2 bg-white px-1 text-xs text-slate-500">
-                            Tgl Dijadwalkan
+                            Pesan Tgl Dijadwalkan
                         </label>
                         <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-xl text-slate-400">
                             schedule_send
@@ -515,22 +516,26 @@ function ListNotificationPage({
                                     onClick={() => handleSort('scheduled_at')}
                                 >
                                     <div className="flex items-center">
-                                        Dijadwalkan Pada
+                                        Pesan Dijadwalkan
                                         <SortIcon field="scheduled_at" />
                                     </div>
+                                </th>
+                                <th className="whitespace-nowrap px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-600">
+                                    Kirim Ulang
+                                </th>
+                                 <th className="min-w-[180px] whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
+                                    Waktu Praktek
                                 </th>
                                 <th
                                     className="min-w-[180px] cursor-pointer whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600"
                                     onClick={() => handleSort('created_at')}
                                 >
                                     <div className="flex items-center">
-                                        Dibuat
+                                        Pesan Dibuat
                                         <SortIcon field="created_at" />
                                     </div>
                                 </th>
-                                <th className="whitespace-nowrap px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-600">
-                                    Kirim Ulang
-                                </th>
+                               
                                 <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
                                     Aksi
                                 </th>
@@ -603,7 +608,7 @@ function ListNotificationPage({
                                             <td className="whitespace-nowrap px-4 py-3 text-sm">
                                                 {notification.channel ===
                                                     'whatsapp' &&
-                                                    notification.recipient ? (
+                                                notification.recipient ? (
                                                     <a
                                                         href={formatWhatsAppLink(
                                                             notification.recipient,
@@ -641,50 +646,18 @@ function ListNotificationPage({
                                                     )}
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-3">
-                                                <div className="whitespace-nowrap text-sm text-slate-700">
-                                                    {
-                                                        notification.created_at_formatted
-                                                    }
-                                                </div>
-                                            </td>
-                                            <td className="whitespace-nowrap px-4 py-3 text-center">
+                                             <td className="whitespace-nowrap px-4 py-3 text-center">
                                                 {notification.payload &&
-                                                    notification.recipient ? (
+                                                notification.recipient ? (
                                                     (() => {
-                                                        // For reminder type: only enable if within H-24 of scheduled_at
-                                                        const isReminder =
-                                                            notification.type ===
-                                                            'reminder';
-                                                        const isReminderDisabled =
-                                                            isReminder &&
-                                                            (() => {
-                                                                if (
-                                                                    !notification.scheduled_at
-                                                                )
-                                                                    return true;
-                                                                const scheduledAt =
-                                                                    new Date(
-                                                                        notification.scheduled_at,
-                                                                    );
-                                                                const now =
-                                                                    new Date();
-                                                                const diffMs =
-                                                                    scheduledAt.getTime() -
-                                                                    now.getTime();
-                                                                const diffHours =
-                                                                    diffMs /
-                                                                    (1000 *
-                                                                        60 *
-                                                                        60);
-                                                                // Enable only if within 24 hours (0 to 24 hours before scheduled_at)
-                                                                return (
-                                                                    diffHours >
-                                                                    24 ||
-                                                                    diffHours <
-                                                                    0
-                                                                );
-                                                            })();
+                                                        // Disabled only if scheduled_at is in the future (belum waktunya)
+                                                        const isBeforeSchedule =
+                                                            notification.scheduled_at
+                                                                ? new Date() <
+                                                                  new Date(
+                                                                      notification.scheduled_at,
+                                                                  )
+                                                                : false;
 
                                                         const handleSend =
                                                             () => {
@@ -718,7 +691,7 @@ function ListNotificationPage({
                                                                 const encodedMessage =
                                                                     encodeURIComponent(
                                                                         notification.payload ||
-                                                                        '',
+                                                                            '',
                                                                     );
                                                                 const whatsappUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
 
@@ -736,11 +709,11 @@ function ListNotificationPage({
                                                                                     page
                                                                                         .props
                                                                                         .flash as
-                                                                                    | {
-                                                                                        error?: string;
-                                                                                        success?: string;
-                                                                                    }
-                                                                                    | undefined;
+                                                                                        | {
+                                                                                              error?: string;
+                                                                                              success?: string;
+                                                                                          }
+                                                                                        | undefined;
 
                                                                                 if (
                                                                                     flash?.error
@@ -764,15 +737,16 @@ function ListNotificationPage({
                                                                     handleSend
                                                                 }
                                                                 disabled={
-                                                                    isReminderDisabled
+                                                                    isBeforeSchedule
                                                                 }
-                                                                className={`inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${isReminderDisabled
+                                                                className={`inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                                                                    isBeforeSchedule
                                                                         ? 'cursor-not-allowed bg-gray-300 text-gray-500'
                                                                         : 'bg-green-600 text-white hover:bg-green-700'
-                                                                    }`}
+                                                                }`}
                                                                 title={
-                                                                    isReminderDisabled
-                                                                        ? 'Reminder hanya bisa dikirim H-24 dari jadwal'
+                                                                    isBeforeSchedule
+                                                                        ? 'Belum bisa dikirim, tunggu waktu jadwal'
                                                                         : 'Kirim ulang via WhatsApp'
                                                                 }
                                                             >
@@ -789,6 +763,24 @@ function ListNotificationPage({
                                                     </span>
                                                 )}
                                             </td>
+                                                  <td className="px-4 py-3">
+                                                <div className="whitespace-nowrap text-sm text-slate-700">
+                                                    {notification.booking_practice_time || (
+                                                        <span className="text-slate-400">
+                                                            -
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <div className="whitespace-nowrap text-sm text-slate-700">
+                                                    {
+                                                        notification.created_at_formatted
+                                                    }
+                                                </div>
+                                            </td>
+                                      
+                                           
                                             <td className="whitespace-nowrap px-4 py-3">
                                                 <button
                                                     onClick={() =>
@@ -804,7 +796,7 @@ function ListNotificationPage({
                                                 >
                                                     <span className="material-symbols-outlined text-lg">
                                                         {expandedRow ===
-                                                            notification.id
+                                                        notification.id
                                                             ? 'expand_less'
                                                             : 'expand_more'}
                                                     </span>
@@ -1052,10 +1044,11 @@ function Pagination({
                         )}
                         <button
                             onClick={() => onPageChange(page)}
-                            className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${currentPage === page
+                            className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                                currentPage === page
                                     ? 'bg-primary text-white'
                                     : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
-                                }`}
+                            }`}
                         >
                             {page}
                         </button>
