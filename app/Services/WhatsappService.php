@@ -281,7 +281,7 @@ class WhatsappService
             ."🔗 Cek Data Booking\n"
             ."{$checkinLink}\n\n"
             ."Terima kasih atas pengertian Anda.\n"
-            ."Kami menantikan kedatangan Anda di Cantika Dental Care 😊\n"
+            ."Kami menantikan kedatangan Anda di Cantika Dental Care 😊\n";
             // ."❌JANGAN BALAS CHAT INI\n"
             // .'📱Untuk chat admin silakan ke no WhatsApp https://wa.me/6285231519966';
     }
