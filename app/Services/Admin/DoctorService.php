@@ -266,6 +266,73 @@ class DoctorService
     }
 
     /**
+     * Lock all schedules for a specific doctor on a specific date
+     * Returns: ['success' => bool, 'message' => string, 'has_bookings' => bool]
+     */
+    public function lockOneDaySchedule(int $doctorId, string $date): array
+    {
+        // Check if there are any active bookings on this date
+        $hasBookings = \App\Models\Booking::where('doctor_id', $doctorId)
+            ->where('booking_date', $date)
+            ->where('is_active', true)
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->exists();
+
+        if ($hasBookings) {
+            return [
+                'success' => false,
+                'message' => 'Tidak dapat mengunci jadwal. Masih ada booking aktif pada tanggal ini. Silakan batalkan booking terlebih dahulu.',
+                'has_bookings' => true,
+            ];
+        }
+
+        // Get doctor's working periods for this day of week
+        $dayOfWeek = Carbon::parse($date)->dayOfWeek;
+        $hasWorkingPeriods = DoctorWorkingPeriod::where('doctor_id', $doctorId)
+            ->where('day_of_week', $dayOfWeek)
+            ->where('is_active', true)
+            ->exists();
+
+        if (!$hasWorkingPeriods) {
+            return [
+                'success' => false,
+                'message' => 'Tidak ada jadwal kerja pada hari ini.',
+                'has_bookings' => false,
+            ];
+        }
+
+        // Check if full day time-off already exists
+        $exists = DoctorTimeOff::where('doctor_id', $doctorId)
+            ->where('date', $date)
+            ->where('start_time', '00:00:00')
+            ->where('end_time', '23:59:00')
+            ->exists();
+
+        if ($exists) {
+            return [
+                'success' => false,
+                'message' => 'Jadwal sudah dikunci untuk hari ini.',
+                'has_bookings' => false,
+            ];
+        }
+
+        // Create single time-off entry for full day (00:00 to 23:59)
+        $this->createTimeOff(
+            $doctorId,
+            $date,
+            '00:00',
+            '23:59',
+            'Jadwal dikunci untuk seluruh hari'
+        );
+
+        return [
+            'success' => true,
+            'message' => 'Berhasil mengunci semua jadwal pada tanggal ini.',
+            'has_bookings' => false,
+        ];
+    }
+
+    /**
      * Delete a time off entry
      */
     public function deleteTimeOff(int $timeOffId): bool

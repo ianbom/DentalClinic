@@ -2,6 +2,7 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import { router } from '@inertiajs/react';
 import { debounce } from 'lodash';
 import { useCallback, useState } from 'react';
+import Swal from 'sweetalert2';
 
 interface NotificationItem {
     id: number;
@@ -144,8 +145,12 @@ function ListNotificationPage({
     const [channelFilter, setChannelFilter] = useState(filters.channel || '');
     const [typeFilter, setTypeFilter] = useState(filters.type || '');
     const [dateFilter, setDateFilter] = useState(filters.date || '');
-    const [createdAtFilter, setCreatedAtFilter] = useState(filters.created_at_filter || '');
-    const [scheduledAtFilter, setScheduledAtFilter] = useState(filters.scheduled_at_filter || '');
+    const [createdAtFilter, setCreatedAtFilter] = useState(
+        filters.created_at_filter || '',
+    );
+    const [scheduledAtFilter, setScheduledAtFilter] = useState(
+        filters.scheduled_at_filter || '',
+    );
     const [itemsPerPage, setItemsPerPage] = useState(
         Number(filters.per_page) || 10,
     );
@@ -195,7 +200,13 @@ function ListNotificationPage({
     };
 
     const handleFilterChange = (
-        type: 'status' | 'channel' | 'type' | 'date' | 'created_at_filter' | 'scheduled_at_filter',
+        type:
+            | 'status'
+            | 'channel'
+            | 'type'
+            | 'date'
+            | 'created_at_filter'
+            | 'scheduled_at_filter',
         value: string,
     ) => {
         const setters: Record<string, (v: string) => void> = {
@@ -347,7 +358,10 @@ function ListNotificationPage({
                             type="date"
                             value={createdAtFilter}
                             onChange={(e) =>
-                                handleFilterChange('created_at_filter', e.target.value)
+                                handleFilterChange(
+                                    'created_at_filter',
+                                    e.target.value,
+                                )
                             }
                             className="rounded-lg border border-slate-200 py-2.5 pl-10 pr-4 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                             placeholder="Filter Tgl Dibuat"
@@ -366,7 +380,10 @@ function ListNotificationPage({
                             type="date"
                             value={scheduledAtFilter}
                             onChange={(e) =>
-                                handleFilterChange('scheduled_at_filter', e.target.value)
+                                handleFilterChange(
+                                    'scheduled_at_filter',
+                                    e.target.value,
+                                )
                             }
                             className="rounded-lg border border-slate-200 py-2.5 pl-10 pr-4 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                             placeholder="Filter Tgl Dijadwalkan"
@@ -619,7 +636,9 @@ function ListNotificationPage({
                                             <td className="px-4 py-3">
                                                 <div className="whitespace-nowrap text-sm text-slate-700">
                                                     {notification.scheduled_at_formatted || (
-                                                        <span className="text-slate-400">-</span>
+                                                        <span className="text-slate-400">
+                                                            -
+                                                        </span>
                                                     )}
                                                 </div>
                                             </td>
@@ -631,45 +650,133 @@ function ListNotificationPage({
                                                 </div>
                                             </td>
                                             <td className="whitespace-nowrap px-4 py-3 text-center">
-                                                {notification.payload && notification.recipient ? (
+                                                {notification.payload &&
+                                                notification.recipient ? (
                                                     <button
                                                         onClick={() => {
-                                                            // Format phone number for WhatsApp
-                                                            let phone = notification.recipient.replace(/\D/g, '');
-                                                            if (phone.startsWith('0')) {
-                                                                phone = '62' + phone.substring(1);
-                                                            }
-                                                            if (!phone.startsWith('62')) {
-                                                                phone = '62' + phone;
-                                                            }
-                                                            
-                                                            const encodedMessage = encodeURIComponent(notification.payload || '');
-                                                            const whatsappUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
-                                                            
-                                                            // Update status to 'sent' first, then open WhatsApp
-                                                            router.put(
-                                                                `/admin/notifications/${notification.id}/send`,
-                                                                {},
-                                                                {
-                                                                    preserveState: true,
-                                                                    preserveScroll: true,
-                                                                    onSuccess: (page) => {
-                                                                        const flash = page.props.flash as { error?: string; success?: string } | undefined;
-                                                                        
-                                                                        if (flash?.error) {
-                                                                            alert(flash.error);
-                                                                            return;
+                                                            Swal.fire({
+                                                                title: 'Konfirmasi Pengiriman',
+                                                                text: `Apakah Anda yakin ingin mengirim notifikasi ini${
+                                                                    notification.patient_name
+                                                                        ? ' ke ' +
+                                                                          notification.patient_name
+                                                                        : ''
+                                                                }?`,
+                                                                icon: 'warning',
+                                                                showCancelButton: true,
+                                                                confirmButtonColor:
+                                                                    '#16a34a',
+                                                                cancelButtonColor:
+                                                                    '#d33',
+                                                                confirmButtonText:
+                                                                    'Ya, Kirim!',
+                                                                cancelButtonText:
+                                                                    'Batal',
+                                                            }).then(
+                                                                (result) => {
+                                                                    if (
+                                                                        result.isConfirmed
+                                                                    ) {
+                                                                        // Format phone number for WhatsApp
+                                                                        let phone =
+                                                                            notification.recipient.replace(
+                                                                                /\D/g,
+                                                                                '',
+                                                                            );
+                                                                        if (
+                                                                            phone.startsWith(
+                                                                                '0',
+                                                                            )
+                                                                        ) {
+                                                                            phone =
+                                                                                '62' +
+                                                                                phone.substring(
+                                                                                    1,
+                                                                                );
                                                                         }
-                                                                        
-                                                                        // Open WhatsApp after successful status update
-                                                                        window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
-                                                                    },
-                                                                    onError: (errors) => {
-                                                                        console.error('Failed to update notification status:', errors);
-                                                                        const errorMessages = Object.values(errors).flat().join('\n');
-                                                                        alert('Gagal mengupdate status:\n' + errorMessages);
-                                                                    },
-                                                                }
+                                                                        if (
+                                                                            !phone.startsWith(
+                                                                                '62',
+                                                                            )
+                                                                        ) {
+                                                                            phone =
+                                                                                '62' +
+                                                                                phone;
+                                                                        }
+
+                                                                        const encodedMessage =
+                                                                            encodeURIComponent(
+                                                                                notification.payload ||
+                                                                                    '',
+                                                                            );
+                                                                        const whatsappUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
+
+                                                                        // Update status to 'sent' first, then open WhatsApp
+                                                                        router.put(
+                                                                            `/admin/notifications/${notification.id}/send`,
+                                                                            {},
+                                                                            {
+                                                                                preserveState: true,
+                                                                                preserveScroll: true,
+                                                                                onSuccess:
+                                                                                    (
+                                                                                        page,
+                                                                                    ) => {
+                                                                                        const flash =
+                                                                                            page
+                                                                                                .props
+                                                                                                .flash as
+                                                                                                | {
+                                                                                                      error?: string;
+                                                                                                      success?: string;
+                                                                                                  }
+                                                                                                | undefined;
+
+                                                                                        if (
+                                                                                            flash?.error
+                                                                                        ) {
+                                                                                            Swal.fire(
+                                                                                                'Gagal!',
+                                                                                                flash.error,
+                                                                                                'error',
+                                                                                            );
+                                                                                            return;
+                                                                                        }
+
+                                                                                        // Open WhatsApp after successful status update
+                                                                                        window.open(
+                                                                                            whatsappUrl,
+                                                                                            '_blank',
+                                                                                            'noopener,noreferrer',
+                                                                                        );
+                                                                                    },
+                                                                                onError:
+                                                                                    (
+                                                                                        errors,
+                                                                                    ) => {
+                                                                                        console.error(
+                                                                                            'Failed to update notification status:',
+                                                                                            errors,
+                                                                                        );
+                                                                                        const errorMessages =
+                                                                                            Object.values(
+                                                                                                errors,
+                                                                                            )
+                                                                                                .flat()
+                                                                                                .join(
+                                                                                                    '\n',
+                                                                                                );
+                                                                                        Swal.fire(
+                                                                                            'Gagal!',
+                                                                                            'Gagal mengupdate status:\n' +
+                                                                                                errorMessages,
+                                                                                            'error',
+                                                                                        );
+                                                                                    },
+                                                                            },
+                                                                        );
+                                                                    }
+                                                                },
                                                             );
                                                         }}
                                                         className="inline-flex items-center gap-1 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-green-700"
@@ -681,7 +788,9 @@ function ListNotificationPage({
                                                         Kirim
                                                     </button>
                                                 ) : (
-                                                    <span className="text-xs text-slate-400">-</span>
+                                                    <span className="text-xs text-slate-400">
+                                                        -
+                                                    </span>
                                                 )}
                                             </td>
                                             <td className="whitespace-nowrap px-4 py-3">
@@ -741,7 +850,8 @@ function ListNotificationPage({
                                                             {notification.sent_at_formatted && (
                                                                 <div>
                                                                     <span className="text-xs font-semibold uppercase text-green-600">
-                                                                        Terkirim Pada:
+                                                                        Terkirim
+                                                                        Pada:
                                                                     </span>
                                                                     <p className="text-sm text-green-700">
                                                                         {

@@ -36,6 +36,31 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
         return dateEntry?.slots ?? [];
     }, [availableSlots, bookingData.rawSelectedDate, bookingData.selectedDate]);
 
+    // Check if full day is locked
+    const isFullDayLocked = useMemo((): boolean => {
+        if (!bookingData.rawSelectedDate && !bookingData.selectedDate) {
+            return false;
+        }
+
+        // First, try to find by rawSelectedDate (YYYY-MM-DD format) as direct key
+        if (
+            bookingData.rawSelectedDate &&
+            availableSlots[bookingData.rawSelectedDate]
+        ) {
+            return (
+                availableSlots[bookingData.rawSelectedDate]
+                    .is_full_day_locked ?? false
+            );
+        }
+
+        // Fallback: find by formatted_date matching
+        const dateEntry = Object.values(availableSlots).find(
+            (slot) => slot.formatted_date === bookingData.selectedDate,
+        );
+
+        return dateEntry?.is_full_day_locked ?? false;
+    }, [availableSlots, bookingData.rawSelectedDate, bookingData.selectedDate]);
+
     // Check if slot is available based on service type
     const isSlotAvailable = (slot: TimeSlot): boolean => {
         if (bookingData.serviceType === 'short') {
@@ -195,6 +220,24 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
         );
     }
 
+    // If full day is locked, show "Dokter Libur" message
+    if (isFullDayLocked) {
+        return (
+            <div className="rounded-lg border-2 border-red-200 bg-red-50 p-8 text-center">
+                <span className="material-symbols-outlined mb-3 text-5xl text-red-500">
+                    event_busy
+                </span>
+                <h3 className="mb-2 text-lg font-bold text-red-900">
+                    Dokter Libur
+                </h3>
+                <p className="text-sm text-red-700">
+                    Dokter tidak tersedia pada tanggal ini. Silakan pilih
+                    tanggal lain.
+                </p>
+            </div>
+        );
+    }
+
     return (
         <>
             <div className="mb-6 flex items-center justify-between">
@@ -233,7 +276,9 @@ export function BookingTimeSlots({ availableSlots }: BookingTimeSlotsProps) {
                                     slot.reason === 'booked'
                                         ? 'Sudah dibooking'
                                         : slot.reason === 'time_off'
-                                          ? 'Dokter tidak tersedia'
+                                          ? isFullDayLocked
+                                              ? 'Dokter libur'
+                                              : 'Dijadwalkan Admin'
                                           : 'Tidak tersedia'
                                 }
                             >

@@ -115,7 +115,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     // Doctors
     Route::get('/doctors', [AdminDoctorController::class, 'listDoctors'])->name('doctors.list');
     Route::get('/schedule/{doctorId}', [AdminDoctorController::class, 'schedule'])->name('doctors.schedule');
+    
     Route::post('/doctors/schedule/lock', [AdminDoctorController::class, 'lockDoctorSchedule'])->name('doctors.lock');
+    Route::post('/doctors/schedule/lock-day', [AdminDoctorController::class, 'lockOneDayDoctorSchedule'])->name('doctors.lock-day');
     Route::post('/doctors/schedule/unlock', [AdminDoctorController::class, 'unlockDoctorSchedule'])->name('doctors.unlock');
     Route::get('/doctors/{doctorId}/edit', [AdminDoctorController::class, 'edit'])->name('doctors.edit');
     Route::put('/doctors/{doctorId}/update', [AdminDoctorController::class, 'update'])->name('doctors.update');

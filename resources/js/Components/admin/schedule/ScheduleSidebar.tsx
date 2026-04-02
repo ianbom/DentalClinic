@@ -68,6 +68,56 @@ export function ScheduleSidebar({
 
     const dateStr = formatDateForApi(selectedDate);
 
+    // Check if there are any booked slots (active bookings)
+    const hasBookings = bookedSlots > 0;
+
+    const handleLockAllSchedules = () => {
+        if (hasBookings) {
+            alert(
+                'Tidak dapat mengunci jadwal. Masih ada booking aktif pada tanggal ini. Silakan batalkan booking terlebih dahulu.',
+            );
+            return;
+        }
+
+        if (
+            !confirm(
+                'Apakah Anda yakin ingin mengunci semua jadwal pada tanggal ini?',
+            )
+        ) {
+            return;
+        }
+
+        router.post(
+            '/admin/doctors/schedule/lock-day',
+            {
+                doctor_id: doctorId,
+                date: dateStr,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: (page) => {
+                    const flash = page.props.flash as {
+                        error?: string;
+                        success?: string;
+                    };
+                    if (flash?.success) {
+                        alert(flash.success);
+                    } else if (flash?.error) {
+                        alert(flash.error);
+                    }
+                },
+                onError: (errors) => {
+                    console.error('Failed to lock schedules:', errors);
+                    const errorMessages = Object.values(errors)
+                        .flat()
+                        .join('\n');
+                    alert('Gagal mengunci jadwal:\n' + errorMessages);
+                },
+            },
+        );
+    };
+
     return (
         <aside className="z-10 flex w-full shrink-0 flex-col border-l border-[#e7f0f4] bg-white shadow-lg md:w-[360px]">
             {/* Header */}
@@ -127,6 +177,33 @@ export function ScheduleSidebar({
                         </span>
                     </div>
                 </div>
+
+                {/* Lock All Schedules Button */}
+                <button
+                    onClick={handleLockAllSchedules}
+                    disabled={hasBookings}
+                    className={`flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold transition-all ${
+                        hasBookings
+                            ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+                            : 'bg-red-50 text-red-700 hover:bg-red-100 active:bg-red-200'
+                    }`}
+                    title={
+                        hasBookings
+                            ? 'Tidak dapat mengunci jadwal karena ada booking aktif'
+                            : 'Kunci semua jadwal hari ini'
+                    }
+                >
+                    <span className="material-symbols-outlined text-lg">
+                        lock
+                    </span>
+                    <span>Kunci Semua Jadwal</span>
+                </button>
+
+                {hasBookings && (
+                    <p className="-mt-4 text-xs text-red-600">
+                        * Batalkan booking terlebih dahulu untuk mengunci jadwal
+                    </p>
+                )}
 
                 {/* Morning Slots */}
                 {morningSlots.length > 0 && (

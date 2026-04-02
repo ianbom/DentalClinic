@@ -29,6 +29,9 @@ class BookingService
         
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
             $daySlots = $this->getSlotsForDate($doctor, $date);
+            
+            // Check if the entire day is locked
+            $isFullDayLocked = $this->isFullDayLocked($doctor, $date);
 
             if (!empty($daySlots)) {
                 $availableSlots[$date->format('Y-m-d')] = [
@@ -36,6 +39,7 @@ class BookingService
                     'day_name' => $this->getDayName($date->dayOfWeek),
                     'formatted_date' => $this->formatDateIndonesian($date),
                     'slots' => $daySlots,
+                    'is_full_day_locked' => $isFullDayLocked,
                 ];
             }
         }
@@ -238,6 +242,36 @@ class BookingService
             
             // Check if slot overlaps with time off
             if ($slotStart < $offEnd && $slotEnd > $offStart) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * Check if the entire day is locked (time off from 00:00 to 23:59)
+     */
+    private function isFullDayLocked(Doctor $doctor, Carbon $date): bool
+    {
+        $dateString = $date->format('Y-m-d');
+        
+        // Get all time-offs for this date
+        $timeOffs = $doctor->timeOff->filter(function ($timeOff) use ($dateString) {
+            return $timeOff->date->format('Y-m-d') === $dateString;
+        });
+
+        if ($timeOffs->isEmpty()) {
+            return false;
+        }
+
+        // Check if there's a time-off that covers the entire day (00:00 to 23:59)
+        foreach ($timeOffs as $timeOff) {
+            $startTime = substr($timeOff->start_time, 0, 5);
+            $endTime = substr($timeOff->end_time, 0, 5);
+            
+            // Full day lock means start at 00:00 and end at 23:59
+            if ($startTime === '00:00' && $endTime === '23:59') {
                 return true;
             }
         }
@@ -709,17 +743,17 @@ class BookingService
         ]);
 
         // Send WhatsApp notification
-        $whatsappService = new WhatsappService();
-        $bookingDetails = [
-            'patient_name' => $booking->patient->patient_name,
-            'doctor_name' => $booking->doctor->name,
-            'date' => $this->formatDateIndonesian(Carbon::parse($booking->booking_date)),
-            'time' => substr($booking->start_time ?? '00:00', 0, 5),
-            'code' => $booking->code,
-            'checkin_time' => $checkinTime->format('H:i'),
-        ];
+        // $whatsappService = new WhatsappService();
+        // $bookingDetails = [
+        //     'patient_name' => $booking->patient->patient_name,
+        //     'doctor_name' => $booking->doctor->name,
+        //     'date' => $this->formatDateIndonesian(Carbon::parse($booking->booking_date)),
+        //     'time' => substr($booking->start_time ?? '00:00', 0, 5),
+        //     'code' => $booking->code,
+        //     'checkin_time' => $checkinTime->format('H:i'),
+        // ];
 
-        $whatsappService->sendCheckin($booking->id, $booking->patient->patient_phone, $bookingDetails);
+        // $whatsappService->sendCheckin($booking->id, $booking->patient->patient_phone, $bookingDetails);
 
         // Schedule post check-in reminder (3 days after check-in)
         $this->schedulePostCheckinReminder($booking->id);
@@ -836,20 +870,20 @@ class BookingService
             ->delete();
 
         // Send cancellation notification via WhatsApp
-        try {
-            $whatsappService = new WhatsappService();
-            $bookingDetails = [
-                'patient_name' => $booking->patient->patient_name,
-                'doctor_name' => $booking->doctor->name,
-                'date' => $this->formatDateIndonesian(Carbon::parse($booking->booking_date)),
-                'time' => substr($booking->start_time ?? '00:00', 0, 5),
-                'code' => $booking->code,
-            ];
-            $whatsappService->sendCancellation($booking->id, $booking->patient->patient_phone, $bookingDetails);
-        } catch (\Throwable $e) {
-            // Log but don't fail if WhatsApp notification fails
-            \Illuminate\Support\Facades\Log::error('Failed to send cancellation notification: ' . $e->getMessage());
-        }
+        // try {
+        //     $whatsappService = new WhatsappService();
+        //     $bookingDetails = [
+        //         'patient_name' => $booking->patient->patient_name,
+        //         'doctor_name' => $booking->doctor->name,
+        //         'date' => $this->formatDateIndonesian(Carbon::parse($booking->booking_date)),
+        //         'time' => substr($booking->start_time ?? '00:00', 0, 5),
+        //         'code' => $booking->code,
+        //     ];
+        //     // $whatsappService->sendCancellation($booking->id, $booking->patient->patient_phone, $bookingDetails);
+        // } catch (\Throwable $e) {
+        //     // Log but don't fail if WhatsApp notification fails
+        //     \Illuminate\Support\Facades\Log::error('Failed to send cancellation notification: ' . $e->getMessage());
+        // }
 
         return $booking->fresh(['patient', 'doctor', 'cancellation']);
     }
@@ -897,8 +931,8 @@ class BookingService
             . "Bagaimana kondisi gigi setelah dari sini kemarin?\n\n"
             . "Apabila masih terdapat keluhan atau rasa kurang nyaman, silakan menginformasikannya kepada kami. "
             . "Kami dengan senang hati siap membantu.\n\n"
-            . "Untuk keluhan bisa langsung chat dengan drg. Anna Fikril di nomor di bawah ini:\n"
-            . "📱https://wa.me/6285231519966\n\n"
+            // . "Untuk keluhan bisa langsung chat dengan drg. Anna Fikril di nomor di bawah ini:\n"
+            // . "📱https://wa.me/6285231519966\n\n"
             . "Salam sehat,\n"
             . "drg. Anna Fikril";
     }

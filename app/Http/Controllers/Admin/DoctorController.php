@@ -57,6 +57,25 @@ class DoctorController extends Controller
         ]);
     }
 
+    public function lockOneDayDoctorSchedule(Request $request)
+    { 
+        $validated = $request->validate([
+            'doctor_id' => 'required|exists:doctors,id',
+            'date' => 'required|date',
+        ]);
+
+        $result = $this->doctorService->lockOneDaySchedule(
+            $validated['doctor_id'],
+            $validated['date']
+        );
+
+        if (!$result['success']) {
+            return back()->with('error', $result['message']);
+        }
+
+        return back()->with('success', 'Jadwal berhasil dikunci');
+    }
+
     public function lockDoctorSchedule(Request $request)
     { 
         $validated = $request->validate([

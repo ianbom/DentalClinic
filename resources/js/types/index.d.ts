@@ -183,6 +183,7 @@ export interface AvailableDate {
     day_name: string;
     formatted_date: string;
     slots: TimeSlot[];
+    is_full_day_locked?: boolean;
 }
 
 export type AvailableSlots = Record<string, AvailableDate>;
