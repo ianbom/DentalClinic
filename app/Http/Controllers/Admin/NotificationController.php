@@ -46,6 +46,18 @@ class NotificationController extends Controller
 
         try {
             $notification = Notification::findOrFail($notificationId);
+
+            // For reminder type: only allow sending within H-24 of scheduled_at
+            if ($notification->type === 'reminder' && $notification->scheduled_at) {
+                $scheduledAt = \Carbon\Carbon::parse($notification->scheduled_at);
+                $now = now();
+                $diffHours = $now->diffInHours($scheduledAt, false);
+
+                if ($diffHours > 24 || $diffHours < 0) {
+                    return redirect()->back()->with('error', 'Reminder hanya bisa dikirim dalam H-24 dari jadwal.');
+                }
+            }
+
             $notification->update([
                 'status' => 'sent',
                 'sent_at' => now(),

@@ -2,7 +2,6 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import { router } from '@inertiajs/react';
 import { debounce } from 'lodash';
 import { useCallback, useState } from 'react';
-import Swal from 'sweetalert2';
 
 interface NotificationItem {
     id: number;
@@ -502,7 +501,7 @@ function ListNotificationPage({
                                         <SortIcon field="status" />
                                     </div>
                                 </th>
-                                <th
+                                {/* <th
                                     className="cursor-pointer whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600"
                                     onClick={() => handleSort('attempt_count')}
                                 >
@@ -510,7 +509,7 @@ function ListNotificationPage({
                                         Attempt
                                         <SortIcon field="attempt_count" />
                                     </div>
-                                </th>
+                                </th> */}
                                 <th
                                     className="min-w-[180px] cursor-pointer whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600"
                                     onClick={() => handleSort('scheduled_at')}
@@ -604,7 +603,7 @@ function ListNotificationPage({
                                             <td className="whitespace-nowrap px-4 py-3 text-sm">
                                                 {notification.channel ===
                                                     'whatsapp' &&
-                                                notification.recipient ? (
+                                                    notification.recipient ? (
                                                     <a
                                                         href={formatWhatsAppLink(
                                                             notification.recipient,
@@ -630,9 +629,9 @@ function ListNotificationPage({
                                                     status={notification.status}
                                                 />
                                             </td>
-                                            <td className="whitespace-nowrap px-4 py-3 text-center text-sm text-slate-700">
+                                            {/* <td className="whitespace-nowrap px-4 py-3 text-center text-sm text-slate-700">
                                                 {notification.attempt_count}
-                                            </td>
+                                            </td> */}
                                             <td className="px-4 py-3">
                                                 <div className="whitespace-nowrap text-sm text-slate-700">
                                                     {notification.scheduled_at_formatted || (
@@ -651,142 +650,139 @@ function ListNotificationPage({
                                             </td>
                                             <td className="whitespace-nowrap px-4 py-3 text-center">
                                                 {notification.payload &&
-                                                notification.recipient ? (
-                                                    <button
-                                                        onClick={() => {
-                                                            Swal.fire({
-                                                                title: 'Konfirmasi Pengiriman',
-                                                                text: `Apakah Anda yakin ingin mengirim notifikasi ini${
-                                                                    notification.patient_name
-                                                                        ? ' ke ' +
-                                                                          notification.patient_name
-                                                                        : ''
-                                                                }?`,
-                                                                icon: 'warning',
-                                                                showCancelButton: true,
-                                                                confirmButtonColor:
-                                                                    '#16a34a',
-                                                                cancelButtonColor:
-                                                                    '#d33',
-                                                                confirmButtonText:
-                                                                    'Ya, Kirim!',
-                                                                cancelButtonText:
-                                                                    'Batal',
-                                                            }).then(
-                                                                (result) => {
-                                                                    if (
-                                                                        result.isConfirmed
-                                                                    ) {
-                                                                        // Format phone number for WhatsApp
-                                                                        let phone =
-                                                                            notification.recipient.replace(
-                                                                                /\D/g,
-                                                                                '',
-                                                                            );
-                                                                        if (
-                                                                            phone.startsWith(
-                                                                                '0',
-                                                                            )
-                                                                        ) {
-                                                                            phone =
-                                                                                '62' +
-                                                                                phone.substring(
-                                                                                    1,
-                                                                                );
-                                                                        }
-                                                                        if (
-                                                                            !phone.startsWith(
-                                                                                '62',
-                                                                            )
-                                                                        ) {
-                                                                            phone =
-                                                                                '62' +
-                                                                                phone;
-                                                                        }
+                                                    notification.recipient ? (
+                                                    (() => {
+                                                        // For reminder type: only enable if within H-24 of scheduled_at
+                                                        const isReminder =
+                                                            notification.type ===
+                                                            'reminder';
+                                                        const isReminderDisabled =
+                                                            isReminder &&
+                                                            (() => {
+                                                                if (
+                                                                    !notification.scheduled_at
+                                                                )
+                                                                    return true;
+                                                                const scheduledAt =
+                                                                    new Date(
+                                                                        notification.scheduled_at,
+                                                                    );
+                                                                const now =
+                                                                    new Date();
+                                                                const diffMs =
+                                                                    scheduledAt.getTime() -
+                                                                    now.getTime();
+                                                                const diffHours =
+                                                                    diffMs /
+                                                                    (1000 *
+                                                                        60 *
+                                                                        60);
+                                                                // Enable only if within 24 hours (0 to 24 hours before scheduled_at)
+                                                                return (
+                                                                    diffHours >
+                                                                    24 ||
+                                                                    diffHours <
+                                                                    0
+                                                                );
+                                                            })();
 
-                                                                        const encodedMessage =
-                                                                            encodeURIComponent(
-                                                                                notification.payload ||
-                                                                                    '',
-                                                                            );
-                                                                        const whatsappUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
-
-                                                                        // Update status to 'sent' first, then open WhatsApp
-                                                                        router.put(
-                                                                            `/admin/notifications/${notification.id}/send`,
-                                                                            {},
-                                                                            {
-                                                                                preserveState: true,
-                                                                                preserveScroll: true,
-                                                                                onSuccess:
-                                                                                    (
-                                                                                        page,
-                                                                                    ) => {
-                                                                                        const flash =
-                                                                                            page
-                                                                                                .props
-                                                                                                .flash as
-                                                                                                | {
-                                                                                                      error?: string;
-                                                                                                      success?: string;
-                                                                                                  }
-                                                                                                | undefined;
-
-                                                                                        if (
-                                                                                            flash?.error
-                                                                                        ) {
-                                                                                            Swal.fire(
-                                                                                                'Gagal!',
-                                                                                                flash.error,
-                                                                                                'error',
-                                                                                            );
-                                                                                            return;
-                                                                                        }
-
-                                                                                        // Open WhatsApp after successful status update
-                                                                                        window.open(
-                                                                                            whatsappUrl,
-                                                                                            '_blank',
-                                                                                            'noopener,noreferrer',
-                                                                                        );
-                                                                                    },
-                                                                                onError:
-                                                                                    (
-                                                                                        errors,
-                                                                                    ) => {
-                                                                                        console.error(
-                                                                                            'Failed to update notification status:',
-                                                                                            errors,
-                                                                                        );
-                                                                                        const errorMessages =
-                                                                                            Object.values(
-                                                                                                errors,
-                                                                                            )
-                                                                                                .flat()
-                                                                                                .join(
-                                                                                                    '\n',
-                                                                                                );
-                                                                                        Swal.fire(
-                                                                                            'Gagal!',
-                                                                                            'Gagal mengupdate status:\n' +
-                                                                                                errorMessages,
-                                                                                            'error',
-                                                                                        );
-                                                                                    },
-                                                                            },
+                                                        const handleSend =
+                                                            () => {
+                                                                // Format phone number for WhatsApp
+                                                                let phone =
+                                                                    notification.recipient.replace(
+                                                                        /\D/g,
+                                                                        '',
+                                                                    );
+                                                                if (
+                                                                    phone.startsWith(
+                                                                        '0',
+                                                                    )
+                                                                ) {
+                                                                    phone =
+                                                                        '62' +
+                                                                        phone.substring(
+                                                                            1,
                                                                         );
-                                                                    }
-                                                                },
-                                                            );
-                                                        }}
-                                                        className="inline-flex items-center gap-1 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-green-700"
-                                                        title="Kirim ulang via WhatsApp"
-                                                    >
-                                                        <span className="material-symbols-outlined text-sm">
-                                                            send
-                                                        </span>
-                                                        Kirim
-                                                    </button>
+                                                                }
+                                                                if (
+                                                                    !phone.startsWith(
+                                                                        '62',
+                                                                    )
+                                                                ) {
+                                                                    phone =
+                                                                        '62' +
+                                                                        phone;
+                                                                }
+
+                                                                const encodedMessage =
+                                                                    encodeURIComponent(
+                                                                        notification.payload ||
+                                                                        '',
+                                                                    );
+                                                                const whatsappUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
+
+                                                                router.put(
+                                                                    `/admin/notifications/${notification.id}/send`,
+                                                                    {},
+                                                                    {
+                                                                        preserveState: true,
+                                                                        preserveScroll: true,
+                                                                        onSuccess:
+                                                                            (
+                                                                                page,
+                                                                            ) => {
+                                                                                const flash =
+                                                                                    page
+                                                                                        .props
+                                                                                        .flash as
+                                                                                    | {
+                                                                                        error?: string;
+                                                                                        success?: string;
+                                                                                    }
+                                                                                    | undefined;
+
+                                                                                if (
+                                                                                    flash?.error
+                                                                                ) {
+                                                                                    return;
+                                                                                }
+
+                                                                                window.open(
+                                                                                    whatsappUrl,
+                                                                                    '_blank',
+                                                                                    'noopener,noreferrer',
+                                                                                );
+                                                                            },
+                                                                    },
+                                                                );
+                                                            };
+
+                                                        return (
+                                                            <button
+                                                                onClick={
+                                                                    handleSend
+                                                                }
+                                                                disabled={
+                                                                    isReminderDisabled
+                                                                }
+                                                                className={`inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${isReminderDisabled
+                                                                        ? 'cursor-not-allowed bg-gray-300 text-gray-500'
+                                                                        : 'bg-green-600 text-white hover:bg-green-700'
+                                                                    }`}
+                                                                title={
+                                                                    isReminderDisabled
+                                                                        ? 'Reminder hanya bisa dikirim H-24 dari jadwal'
+                                                                        : 'Kirim ulang via WhatsApp'
+                                                                }
+                                                            >
+                                                                <span className="material-symbols-outlined text-sm">
+                                                                    send
+                                                                </span>
+                                                                Kirim
+                                                            </button>
+                                                        );
+                                                    })()
                                                 ) : (
                                                     <span className="text-xs text-slate-400">
                                                         -
@@ -808,7 +804,7 @@ function ListNotificationPage({
                                                 >
                                                     <span className="material-symbols-outlined text-lg">
                                                         {expandedRow ===
-                                                        notification.id
+                                                            notification.id
                                                             ? 'expand_less'
                                                             : 'expand_more'}
                                                     </span>
@@ -1056,11 +1052,10 @@ function Pagination({
                         )}
                         <button
                             onClick={() => onPageChange(page)}
-                            className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                                currentPage === page
+                            className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${currentPage === page
                                     ? 'bg-primary text-white'
                                     : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
-                            }`}
+                                }`}
                         >
                             {page}
                         </button>
