@@ -70,9 +70,19 @@ class NotificationService
             $query->where('type', $filters['type']);
         }
 
-        // Filter by date (created_at)
+        // Filter by date (created_at) - legacy support
         if (!empty($filters['date'])) {
             $query->whereDate('created_at', $filters['date']);
+        }
+
+        // Filter by created_at
+        if (!empty($filters['created_at_filter'])) {
+            $query->whereDate('created_at', $filters['created_at_filter']);
+        }
+
+        // Filter by scheduled_at
+        if (!empty($filters['scheduled_at_filter'])) {
+            $query->whereDate('scheduled_at', $filters['scheduled_at_filter']);
         }
 
         // Filter by date range

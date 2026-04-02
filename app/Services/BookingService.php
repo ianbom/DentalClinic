@@ -361,7 +361,7 @@ class BookingService
         // );
 
         // Update existing reminder notification with new schedule
-        // $this->updateReminderNotification($booking->id);
+        $this->updateReminderNotification($booking->id);
 
         return $booking;
     }

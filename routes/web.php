@@ -138,5 +138,6 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 
     // Notifications
     Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications.list');
+    Route::put('/notifications/{notificationId}/send', [AdminNotificationController::class, 'sendManualMessage'])->name('notifications.send');
 });
 

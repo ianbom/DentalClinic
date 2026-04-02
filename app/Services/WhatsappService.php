@@ -334,9 +334,9 @@ class WhatsappService
             ."📌 *Catatan:*\n"
             ."Mohon lakukan konfirmasi kedatangan pada H-1 melalui link di atas.\n\n"
             ."Terima kasih atas kepercayaan Anda.\n"
-            ."Kami menantikan kedatangan Anda di Cantika Dental Care 😊\n\n"
-            ."❌JANGAN BALAS CHAT INI\n"
-            .'📱Untuk chat admin silakan ke no WhatsApp https://wa.me/6285231519966';
+            ."Kami menantikan kedatangan Anda di Cantika Dental Care 😊\n";
+            // ."❌JANGAN BALAS CHAT INI\n"
+            // .'📱Untuk chat admin silakan ke no WhatsApp https://wa.me/6285231519966';
 
     }
 

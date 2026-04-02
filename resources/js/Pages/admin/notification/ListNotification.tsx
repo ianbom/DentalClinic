@@ -58,6 +58,8 @@ interface ListNotificationPageProps {
         channel?: string;
         type?: string;
         date?: string;
+        created_at_filter?: string;
+        scheduled_at_filter?: string;
         per_page?: number;
         sort_field?: string;
         sort_order?: string;
@@ -142,6 +144,8 @@ function ListNotificationPage({
     const [channelFilter, setChannelFilter] = useState(filters.channel || '');
     const [typeFilter, setTypeFilter] = useState(filters.type || '');
     const [dateFilter, setDateFilter] = useState(filters.date || '');
+    const [createdAtFilter, setCreatedAtFilter] = useState(filters.created_at_filter || '');
+    const [scheduledAtFilter, setScheduledAtFilter] = useState(filters.scheduled_at_filter || '');
     const [itemsPerPage, setItemsPerPage] = useState(
         Number(filters.per_page) || 10,
     );
@@ -169,6 +173,8 @@ function ListNotificationPage({
                 channel: channelFilter,
                 type: typeFilter,
                 date: dateFilter,
+                created_at_filter: createdAtFilter,
+                scheduled_at_filter: scheduledAtFilter,
                 per_page: itemsPerPage,
                 sort_field: sortField,
                 sort_order: sortOrder,
@@ -189,7 +195,7 @@ function ListNotificationPage({
     };
 
     const handleFilterChange = (
-        type: 'status' | 'channel' | 'type' | 'date',
+        type: 'status' | 'channel' | 'type' | 'date' | 'created_at_filter' | 'scheduled_at_filter',
         value: string,
     ) => {
         const setters: Record<string, (v: string) => void> = {
@@ -197,6 +203,8 @@ function ListNotificationPage({
             channel: setChannelFilter,
             type: setTypeFilter,
             date: setDateFilter,
+            created_at_filter: setCreatedAtFilter,
+            scheduled_at_filter: setScheduledAtFilter,
         };
         setters[type](value);
         updateParams({ [type]: value, page: 1 });
@@ -208,6 +216,8 @@ function ListNotificationPage({
         setChannelFilter('');
         setTypeFilter('');
         setDateFilter('');
+        setCreatedAtFilter('');
+        setScheduledAtFilter('');
         setSortField('');
         setSortOrder('desc');
         router.get('/admin/notifications');
@@ -237,7 +247,9 @@ function ListNotificationPage({
         statusFilter ||
         channelFilter ||
         typeFilter ||
-        dateFilter;
+        dateFilter ||
+        createdAtFilter ||
+        scheduledAtFilter;
 
     const SortIcon = ({ field }: { field: SortField }) => (
         <span className="material-symbols-outlined ml-1 text-sm">
@@ -323,18 +335,41 @@ function ListNotificationPage({
                         />
                     </div>
 
-                    {/* Date Filter */}
+                    {/* Created At Filter */}
                     <div className="relative">
+                        <label className="absolute -top-2 left-2 bg-white px-1 text-xs text-slate-500">
+                            Tgl Dibuat
+                        </label>
                         <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-xl text-slate-400">
-                            calendar_today
+                            event_note
                         </span>
                         <input
                             type="date"
-                            value={dateFilter}
+                            value={createdAtFilter}
                             onChange={(e) =>
-                                handleFilterChange('date', e.target.value)
+                                handleFilterChange('created_at_filter', e.target.value)
                             }
                             className="rounded-lg border border-slate-200 py-2.5 pl-10 pr-4 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                            placeholder="Filter Tgl Dibuat"
+                        />
+                    </div>
+
+                    {/* Scheduled At Filter */}
+                    <div className="relative">
+                        <label className="absolute -top-2 left-2 bg-white px-1 text-xs text-slate-500">
+                            Tgl Dijadwalkan
+                        </label>
+                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-xl text-slate-400">
+                            schedule_send
+                        </span>
+                        <input
+                            type="date"
+                            value={scheduledAtFilter}
+                            onChange={(e) =>
+                                handleFilterChange('scheduled_at_filter', e.target.value)
+                            }
+                            className="rounded-lg border border-slate-200 py-2.5 pl-10 pr-4 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                            placeholder="Filter Tgl Dijadwalkan"
                         />
                     </div>
 
@@ -420,7 +455,7 @@ function ListNotificationPage({
                                 <th className="min-w-[180px] whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
                                     Booking / Pasien
                                 </th>
-                                <th
+                                {/* <th
                                     className="cursor-pointer whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600"
                                     onClick={() => handleSort('channel')}
                                 >
@@ -428,7 +463,7 @@ function ListNotificationPage({
                                         Channel
                                         <SortIcon field="channel" />
                                     </div>
-                                </th>
+                                </th> */}
                                 <th
                                     className="min-w-[150px] cursor-pointer whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600"
                                     onClick={() => handleSort('type')}
@@ -461,12 +496,24 @@ function ListNotificationPage({
                                 </th>
                                 <th
                                     className="min-w-[180px] cursor-pointer whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600"
+                                    onClick={() => handleSort('scheduled_at')}
+                                >
+                                    <div className="flex items-center">
+                                        Dijadwalkan Pada
+                                        <SortIcon field="scheduled_at" />
+                                    </div>
+                                </th>
+                                <th
+                                    className="min-w-[180px] cursor-pointer whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600"
                                     onClick={() => handleSort('created_at')}
                                 >
                                     <div className="flex items-center">
                                         Dibuat
                                         <SortIcon field="created_at" />
                                     </div>
+                                </th>
+                                <th className="whitespace-nowrap px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-600">
+                                    Kirim Ulang
                                 </th>
                                 <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
                                     Aksi
@@ -477,7 +524,7 @@ function ListNotificationPage({
                             {notifications.data.length === 0 ? (
                                 <tr>
                                     <td
-                                        colSpan={9}
+                                        colSpan={11}
                                         className="px-4 py-12 text-center text-slate-500"
                                     >
                                         <span className="material-symbols-outlined mb-2 text-4xl text-slate-300">
@@ -518,7 +565,7 @@ function ListNotificationPage({
                                                         '-'}
                                                 </div>
                                             </td>
-                                            <td className="whitespace-nowrap px-4 py-3">
+                                            {/* <td className="whitespace-nowrap px-4 py-3">
                                                 <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
                                                     <span className="material-symbols-outlined text-sm">
                                                         {notification.channel ===
@@ -531,7 +578,7 @@ function ListNotificationPage({
                                                     </span>
                                                     {notification.channel}
                                                 </span>
-                                            </td>
+                                            </td> */}
                                             <td className="whitespace-nowrap px-4 py-3 text-sm text-slate-700">
                                                 {typeLabels[
                                                     notification.type
@@ -571,17 +618,70 @@ function ListNotificationPage({
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div className="whitespace-nowrap text-sm text-slate-700">
+                                                    {notification.scheduled_at_formatted || (
+                                                        <span className="text-slate-400">-</span>
+                                                    )}
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <div className="whitespace-nowrap text-sm text-slate-700">
                                                     {
                                                         notification.created_at_formatted
                                                     }
                                                 </div>
-                                                {notification.sent_at_formatted && (
-                                                    <div className="whitespace-nowrap text-xs text-green-600">
-                                                        Terkirim:{' '}
-                                                        {
-                                                            notification.sent_at_formatted
-                                                        }
-                                                    </div>
+                                            </td>
+                                            <td className="whitespace-nowrap px-4 py-3 text-center">
+                                                {notification.payload && notification.recipient ? (
+                                                    <button
+                                                        onClick={() => {
+                                                            // Format phone number for WhatsApp
+                                                            let phone = notification.recipient.replace(/\D/g, '');
+                                                            if (phone.startsWith('0')) {
+                                                                phone = '62' + phone.substring(1);
+                                                            }
+                                                            if (!phone.startsWith('62')) {
+                                                                phone = '62' + phone;
+                                                            }
+                                                            
+                                                            const encodedMessage = encodeURIComponent(notification.payload || '');
+                                                            const whatsappUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
+                                                            
+                                                            // Update status to 'sent' first, then open WhatsApp
+                                                            router.put(
+                                                                `/admin/notifications/${notification.id}/send`,
+                                                                {},
+                                                                {
+                                                                    preserveState: true,
+                                                                    preserveScroll: true,
+                                                                    onSuccess: (page) => {
+                                                                        const flash = page.props.flash as { error?: string; success?: string } | undefined;
+                                                                        
+                                                                        if (flash?.error) {
+                                                                            alert(flash.error);
+                                                                            return;
+                                                                        }
+                                                                        
+                                                                        // Open WhatsApp after successful status update
+                                                                        window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+                                                                    },
+                                                                    onError: (errors) => {
+                                                                        console.error('Failed to update notification status:', errors);
+                                                                        const errorMessages = Object.values(errors).flat().join('\n');
+                                                                        alert('Gagal mengupdate status:\n' + errorMessages);
+                                                                    },
+                                                                }
+                                                            );
+                                                        }}
+                                                        className="inline-flex items-center gap-1 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-green-700"
+                                                        title="Kirim ulang via WhatsApp"
+                                                    >
+                                                        <span className="material-symbols-outlined text-sm">
+                                                            send
+                                                        </span>
+                                                        Kirim
+                                                    </button>
+                                                ) : (
+                                                    <span className="text-xs text-slate-400">-</span>
                                                 )}
                                             </td>
                                             <td className="whitespace-nowrap px-4 py-3">
@@ -612,7 +712,7 @@ function ListNotificationPage({
                                                 className="bg-slate-50"
                                             >
                                                 <td
-                                                    colSpan={9}
+                                                    colSpan={11}
                                                     className="px-4 py-4"
                                                 >
                                                     <div className="grid gap-4 md:grid-cols-2">
@@ -634,6 +734,18 @@ function ListNotificationPage({
                                                                     <p className="text-sm text-slate-700">
                                                                         {
                                                                             notification.scheduled_at_formatted
+                                                                        }
+                                                                    </p>
+                                                                </div>
+                                                            )}
+                                                            {notification.sent_at_formatted && (
+                                                                <div>
+                                                                    <span className="text-xs font-semibold uppercase text-green-600">
+                                                                        Terkirim Pada:
+                                                                    </span>
+                                                                    <p className="text-sm text-green-700">
+                                                                        {
+                                                                            notification.sent_at_formatted
                                                                         }
                                                                     </p>
                                                                 </div>
