@@ -756,7 +756,7 @@ class BookingService
         // $whatsappService->sendCheckin($booking->id, $booking->patient->patient_phone, $bookingDetails);
 
         // Schedule post check-in reminder (3 days after check-in)
-        $this->schedulePostCheckinReminder($booking->id);
+        // $this->schedulePostCheckinReminder($booking->id);
 
         return $booking->fresh(['patient', 'doctor', 'checkin']);
     }

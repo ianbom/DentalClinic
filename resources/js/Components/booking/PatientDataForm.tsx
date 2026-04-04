@@ -295,7 +295,7 @@ export function CustomerDataForm({
                         setBookingData({ isNikChecked: true });
                         setNikMessage({
                             type: 'info',
-                            text: 'NIK belum terdaftar. Silakan isi data lengkap.',
+                            text: 'Silakan isi data lengkap.',
                         });
                     }
                     setIsCheckingNik(false);
@@ -356,7 +356,7 @@ export function CustomerDataForm({
 
         // Menyusun pesan menggunakan Array agar format newline (\n) konsisten di semua device
         const messageLines = [
-            `Halo *${bookingData.fullName}*,`,
+            `Yth. Bapak/Ibu *${bookingData.fullName}*,`,
             '',
             'Berikut data booking anda di *Cantika Dental Care*! 🦷',
             '',
