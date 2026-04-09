@@ -24,7 +24,7 @@ class Patient extends Model
     ];
 
     protected $casts = [
-        'patient_birthdate' => 'date',
+        'patient_birthdate' => 'date:Y-m-d',
     ];
 
     /**
