@@ -523,7 +523,7 @@ class BookingService
             'checkin_link' => url('/check-booking') . '?nik=' . $booking->patient->patient_nik,
         ];
 
-        return $whatsappService->sendReschedule($bookingId, $phone, $bookingDetails);
+        // return $whatsappService->sendReschedule($bookingId, $phone, $bookingDetails);
     }
 
     public function scheduleReminderNotification(int $bookingId): void

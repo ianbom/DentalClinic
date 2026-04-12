@@ -1,5 +1,69 @@
 import { useBooking } from '@/context/BookingContext';
 
+export const getServiceIdByName = (name: string): string => {
+    switch (name) {
+        case 'Konsultasi/Periksa':
+            return 'konsultasi';
+        case 'Cabut Gigi Anak':
+            return 'cabut_gigi_anak';
+        case 'Sakit Gigi / Pengobatan':
+            return 'pengobatan';
+        case 'Cabut Gigi Dewasa':
+            return 'cabut_gigi_dewasa';
+        case 'Pembersihan Karang Gigi / Scalling':
+            return 'scalling';
+        case 'Kontrol Gigi':
+            return 'kontrol_gigi';
+        case 'Tambal Gigi':
+            return 'tambal_gigi';
+        case 'Pemutihan Gigi / Bleaching':
+            return 'bleaching';
+        case 'Pasang Gigi Palsu':
+            return 'gigi_palsu';
+        case 'Pasang Diamond':
+            return 'pasang_diamond';
+        case 'Pasang Behel / Kawat Gigi':
+            return 'pasang_behel';
+        case 'Sisipan':
+            return 'sisipan';
+        default:
+            return '';
+    }
+};
+
+export const getServiceTypeByName = (
+    name: string,
+): 'short' | 'long' | 'sisipan' | '' => {
+    switch (name) {
+        case 'Konsultasi/Periksa':
+            return 'short';
+        case 'Cabut Gigi Anak':
+            return 'short';
+        case 'Sakit Gigi / Pengobatan':
+            return 'short';
+        case 'Cabut Gigi Dewasa':
+            return 'long';
+        case 'Pembersihan Karang Gigi / Scalling':
+            return 'long';
+        case 'Kontrol Gigi':
+            return 'long';
+        case 'Tambal Gigi':
+            return 'long';
+        case 'Pemutihan Gigi / Bleaching':
+            return 'long';
+        case 'Pasang Gigi Palsu':
+            return 'long';
+        case 'Pasang Diamond':
+            return 'long';
+        case 'Pasang Behel / Kawat Gigi':
+            return 'long';
+        case 'Sisipan':
+            return 'sisipan';
+        default:
+            return '';
+    }
+};
+
 interface ServiceSelectionProps {
     value: string;
     onChange: (value: string) => void;

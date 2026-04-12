@@ -1,6 +1,10 @@
 import { BookingCalendarWidget } from '@/Components/booking/BookingCalendarWidget';
 import { BookingTimeSlots } from '@/Components/booking/BookingTimeSlots';
-import { ServiceSelection } from '@/Components/booking/ServiceSelection';
+import {
+    ServiceSelection,
+    getServiceIdByName,
+    getServiceTypeByName,
+} from '@/Components/booking/ServiceSelection';
 import { BookingProvider, useBooking } from '@/context/BookingContext';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { AvailableSlots, Doctor } from '@/types';
@@ -54,7 +58,7 @@ function RescheduleBookingForm({
     const { bookingData, setBookingData, resetBookingData } = useBooking();
     const [currentDoctorId, setCurrentDoctorId] =
         useState<number>(selectedDoctorId);
-    const [service, setService] = useState(booking.service);
+    const [service, setService] = useState(getServiceIdByName(booking.service));
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isInitialized, setIsInitialized] = useState(false);
 
@@ -68,8 +72,9 @@ function RescheduleBookingForm({
             // to ensure reset has completed
             setTimeout(() => {
                 setBookingData({
-                    service: '',
-                    serviceType: '',
+                    service: booking.service,
+                    serviceType: getServiceTypeByName(booking.service),
+                    serviceId: getServiceIdByName(booking.service),
                     selectedDate: '',
                     rawSelectedDate: '',
                     selectedTime: '',
@@ -147,7 +152,7 @@ function RescheduleBookingForm({
             '📋 *JADWAL SEBELUMNYA*',
             '━━━━━━━━━━━━━━━━━',
             `📅 Tanggal: ${booking.booking_date_formatted}`,
-            `🕐 Jam: ${booking.start_time || '-'}`,
+            `🕐 Jam: ${booking.start_time ? booking.start_time.substring(0, 5) : '-'}`,
             '',
             '🔗 *CEK STATUS BOOKING*',
             checkBookingUrl,
