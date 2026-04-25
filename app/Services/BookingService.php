@@ -193,7 +193,12 @@ class BookingService
             $slotDuration = $slotType === 'long' ? 45 : 15;
             $slotEnd = $startTime->copy()->addMinutes($slotDuration);
             
-            $isDuringTimeOff = $this->isSlotDuringTimeOff($timeOffs, $slotTime, $slotEnd->format('H:i'));
+            $matchingTimeOff = $this->findMatchingTimeOff(
+                $timeOffs,
+                $slotTime,
+                $slotEnd->format('H:i')
+            );
+            $isDuringTimeOff = $matchingTimeOff !== null;
             
             // Check if slot is already booked
             $isBooked = in_array($slotTime, $bookedSlots);
@@ -215,6 +220,7 @@ class BookingService
                 'available_for_short' => $slotType === 'short' && $isAvailable,
                 'available_for_long' => $slotType === 'long' && $isAvailable,
                 'is_overtime' => $isOvertime, // Flag to indicate overtime slot
+                'note' => $matchingTimeOff?->note,
                 // Include booking details for booked slots
                 'patient_name' => $booking?->patient?->patient_name,
                 'service' => $booking?->service,
@@ -236,17 +242,25 @@ class BookingService
      */
     private function isSlotDuringTimeOff(Collection $timeOffs, string $slotStart, string $slotEnd): bool
     {
+        return $this->findMatchingTimeOff($timeOffs, $slotStart, $slotEnd) !== null;
+    }
+
+    /**
+     * Find the matching time off entry that overlaps with a slot.
+     */
+    private function findMatchingTimeOff(Collection $timeOffs, string $slotStart, string $slotEnd): ?DoctorTimeOff
+    {
         foreach ($timeOffs as $timeOff) {
             $offStart = substr($timeOff->start_time, 0, 5);
             $offEnd = substr($timeOff->end_time, 0, 5);
             
             // Check if slot overlaps with time off
             if ($slotStart < $offEnd && $slotEnd > $offStart) {
-                return true;
+                return $timeOff;
             }
         }
         
-        return false;
+        return null;
     }
 
     /**
@@ -937,4 +951,3 @@ class BookingService
             . "drg. Anna Fikril";
     }
 }
-

@@ -1,14 +1,21 @@
+import Modal from '@/Components/Modal';
 import { Link, router } from '@inertiajs/react';
+import { FormEvent, useState } from 'react';
 import Swal from 'sweetalert2';
 
 export interface TimeSlotInfo {
     time: string;
     endTime: string;
     status: 'available' | 'booked' | 'off' | 'unavailable';
+    note?: string | null;
     patientName?: string;
     service?: string;
     bookingId?: number;
 }
+
+type LockTarget =
+    | { mode: 'full_day' }
+    | { mode: 'slot'; startTime: string; endTime: string };
 
 interface ScheduleSidebarProps {
     selectedDate: Date | null;
@@ -65,18 +72,33 @@ export function ScheduleSidebar({
     doctorId,
     onClose,
 }: ScheduleSidebarProps) {
+    const [isLockModalOpen, setIsLockModalOpen] = useState(false);
+    const [lockNote, setLockNote] = useState('');
+    const [lockTarget, setLockTarget] = useState<LockTarget | null>(null);
+    const [isSubmittingLock, setIsSubmittingLock] = useState(false);
+
     if (!selectedDate) return null;
 
     const dateStr = formatDateForApi(selectedDate);
 
-    // Check if there are any booked slots (active bookings)
     const hasBookings = bookedSlots > 0;
-
-    // Check if ALL slots are locked (full-day off: 00:00–23:59)
     const allSlots = [...morningSlots, ...afternoonSlots];
     const isFullDayOff =
-        allSlots.length > 0 &&
-        allSlots.every((s) => s.status === 'off');
+        allSlots.length > 0 && allSlots.every((slot) => slot.status === 'off');
+
+    const closeLockModal = () => {
+        if (isSubmittingLock) return;
+
+        setIsLockModalOpen(false);
+        setLockNote('');
+        setLockTarget(null);
+    };
+
+    const openLockModal = (target: LockTarget) => {
+        setLockTarget(target);
+        setLockNote('');
+        setIsLockModalOpen(true);
+    };
 
     const handleLockAllSchedules = () => {
         if (hasBookings) {
@@ -88,36 +110,7 @@ export function ScheduleSidebar({
             return;
         }
 
-        Swal.fire({
-            title: 'Kunci Semua Jadwal?',
-            text: 'Dokter akan dinyatakan libur seharian pada tanggal ini.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#dc2626',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Ya, Kunci!',
-            cancelButtonText: 'Batal',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                router.post(
-                    '/admin/doctors/schedule/lock-day',
-                    {
-                        doctor_id: doctorId,
-                        date: dateStr,
-                    },
-                    {
-                        preserveState: true,
-                        preserveScroll: true,
-                        onError: (errors) => {
-                            const errorMessages = Object.values(errors)
-                                .flat()
-                                .join('\n');
-                            Swal.fire('Gagal!', errorMessages, 'error');
-                        },
-                    },
-                );
-            }
-        });
+        openLockModal({ mode: 'full_day' });
     };
 
     const handleUnlockAllSchedules = () => {
@@ -153,150 +146,266 @@ export function ScheduleSidebar({
         });
     };
 
+    const handleSubmitLock = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        if (!lockTarget) return;
+
+        const endpoint =
+            lockTarget.mode === 'full_day'
+                ? '/admin/doctors/schedule/lock-day'
+                : '/admin/doctors/schedule/lock';
+
+        const payload =
+            lockTarget.mode === 'full_day'
+                ? {
+                      doctor_id: doctorId,
+                      date: dateStr,
+                      note: lockNote.trim() || null,
+                  }
+                : {
+                      doctor_id: doctorId,
+                      date: dateStr,
+                      start_time: lockTarget.startTime,
+                      end_time: lockTarget.endTime,
+                      note: lockNote.trim() || null,
+                  };
+
+        setIsSubmittingLock(true);
+
+        router.post(endpoint, payload, {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                closeLockModal();
+            },
+            onError: (errors) => {
+                const errorMessages = Object.values(errors).flat().join('\n');
+                Swal.fire(
+                    'Gagal!',
+                    errorMessages || 'Gagal mengunci jadwal.',
+                    'error',
+                );
+            },
+            onFinish: () => {
+                setIsSubmittingLock(false);
+            },
+        });
+    };
+
     return (
-        <aside className="z-10 flex w-full shrink-0 flex-col border-l border-[#e7f0f4] bg-white shadow-lg md:w-[360px]">
-            {/* Header */}
-            <div className="flex items-start justify-between border-b border-[#e7f0f4] p-6">
-                <div>
-                    <h3 className="text-lg font-bold text-[#0d171c]">
-                        Detail Jadwal
-                    </h3>
-                    <div className="mt-1 flex items-center gap-2">
-                        <span
-                            className="material-symbols-outlined text-primary"
-                            style={{ fontSize: '18px' }}
+        <>
+            <aside className="z-10 flex w-full shrink-0 flex-col border-l border-[#e7f0f4] bg-white shadow-lg md:w-[360px]">
+                <div className="flex items-start justify-between border-b border-[#e7f0f4] p-6">
+                    <div>
+                        <h3 className="text-lg font-bold text-[#0d171c]">
+                            Detail Jadwal
+                        </h3>
+                        <div className="mt-1 flex items-center gap-2">
+                            <span
+                                className="material-symbols-outlined text-primary"
+                                style={{ fontSize: '18px' }}
+                            >
+                                calendar_today
+                            </span>
+                            <p className="text-sm text-[#49829c]">
+                                {formatDate(selectedDate)}
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={onClose}
+                        className="text-gray-400 hover:text-gray-600"
+                    >
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-6">
+                    <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary/5 p-4">
+                        <div className="flex flex-col">
+                            <span className="text-xs font-bold uppercase tracking-wide text-primary">
+                                Total Slot
+                            </span>
+                            <span className="text-2xl font-bold text-[#0d171c]">
+                                {totalSlots}
+                            </span>
+                        </div>
+                        <div className="h-8 w-px bg-primary/20"></div>
+                        <div className="flex flex-col">
+                            <span className="text-xs font-bold uppercase tracking-wide text-green-600">
+                                Tersedia
+                            </span>
+                            <span className="text-2xl font-bold text-green-600">
+                                {availableSlots}
+                            </span>
+                        </div>
+                        <div className="h-8 w-px bg-primary/20"></div>
+                        <div className="flex flex-col">
+                            <span className="text-xs font-bold uppercase tracking-wide text-red-600">
+                                Terisi
+                            </span>
+                            <span className="text-2xl font-bold text-red-600">
+                                {bookedSlots}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        {isFullDayOff && (
+                            <button
+                                onClick={handleUnlockAllSchedules}
+                                className="flex items-center justify-center gap-2 rounded-lg bg-green-50 px-4 py-3 text-sm font-semibold text-green-700 transition-all hover:bg-green-100 active:bg-green-200"
+                                title="Buka jadwal libur sehari ini"
+                            >
+                                <span className="material-symbols-outlined text-lg">
+                                    lock_open
+                                </span>
+                                <span>Buka Jadwal Libur Hari Ini</span>
+                            </button>
+                        )}
+
+                        {!isFullDayOff && (
+                            <button
+                                onClick={handleLockAllSchedules}
+                                disabled={hasBookings}
+                                className={`flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold transition-all ${
+                                    hasBookings
+                                        ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                        : 'bg-red-50 text-red-700 hover:bg-red-100 active:bg-red-200'
+                                }`}
+                                title={
+                                    hasBookings
+                                        ? 'Tidak dapat mengunci jadwal karena ada booking aktif'
+                                        : 'Kunci semua jadwal hari ini (libur sehari)'
+                                }
+                            >
+                                <span className="material-symbols-outlined text-lg">
+                                    lock
+                                </span>
+                                <span>Kunci Semua Jadwal</span>
+                            </button>
+                        )}
+
+                        {hasBookings && !isFullDayOff && (
+                            <p className="text-xs text-red-600">
+                                * Batalkan booking terlebih dahulu untuk mengunci
+                                jadwal
+                            </p>
+                        )}
+                    </div>
+
+                    {morningSlots.length > 0 && (
+                        <div className="flex flex-col gap-3">
+                            <h4 className="mb-2 text-sm font-bold uppercase tracking-wider text-[#0d171c]">
+                                Slot Tersedia
+                            </h4>
+                            {morningSlots.map((slot, index) => (
+                                <SlotItem
+                                    key={index}
+                                    slot={slot}
+                                    doctorId={doctorId}
+                                    date={dateStr}
+                                    onLock={openLockModal}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="h-px w-full bg-[#e7f0f4]"></div>
+
+                    {afternoonSlots.length > 0 && (
+                        <div className="flex flex-col gap-3">
+                            <h4 className="mb-2 text-sm font-bold uppercase tracking-wider text-[#0d171c]">
+                                Slot Tersedia
+                            </h4>
+                            {afternoonSlots.map((slot, index) => (
+                                <SlotItem
+                                    key={index}
+                                    slot={slot}
+                                    doctorId={doctorId}
+                                    date={dateStr}
+                                    onLock={openLockModal}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </aside>
+
+            <Modal show={isLockModalOpen} maxWidth="md" onClose={closeLockModal}>
+                <form onSubmit={handleSubmitLock} className="p-6">
+                    <div className="flex items-start justify-between gap-4">
+                        <div>
+                            <h3 className="text-lg font-bold text-[#0d171c]">
+                                {lockTarget?.mode === 'full_day'
+                                    ? 'Kunci Jadwal Satu Hari'
+                                    : 'Kunci Slot Jadwal'}
+                            </h3>
+                            <p className="mt-1 text-sm text-slate-500">
+                                {lockTarget?.mode === 'full_day'
+                                    ? 'Tambahkan catatan agar admin lain tahu alasan jadwal dokter diliburkan pada tanggal ini.'
+                                    : 'Tambahkan catatan untuk menjelaskan alasan slot ini dikunci.'}
+                            </p>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={closeLockModal}
+                            className="text-gray-400 hover:text-gray-600"
                         >
-                            calendar_today
-                        </span>
-                        <p className="text-sm text-[#49829c]">
+                            <span className="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+
+                    <div className="mt-4 rounded-lg border border-[#e7f0f4] bg-slate-50 p-4 text-sm text-slate-600">
+                        <p className="font-semibold text-[#0d171c]">
                             {formatDate(selectedDate)}
                         </p>
+                        {lockTarget?.mode === 'slot' && (
+                            <p className="mt-1">
+                                Jam: {lockTarget.startTime} -{' '}
+                                {lockTarget.endTime}
+                            </p>
+                        )}
                     </div>
-                </div>
-                <button
-                    onClick={onClose}
-                    className="text-gray-400 hover:text-gray-600"
-                >
-                    <span className="material-symbols-outlined">close</span>
-                </button>
-            </div>
 
-            {/* Content */}
-            <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-6">
-                {/* Summary Card */}
-                <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary/5 p-4">
-                    <div className="flex flex-col">
-                        <span className="text-xs font-bold uppercase tracking-wide text-primary">
-                            Total Slot
-                        </span>
-                        <span className="text-2xl font-bold text-[#0d171c]">
-                            {totalSlots}
-                        </span>
-                    </div>
-                    <div className="h-8 w-px bg-primary/20"></div>
-                    <div className="flex flex-col">
-                        <span className="text-xs font-bold uppercase tracking-wide text-green-600">
-                            Tersedia
-                        </span>
-                        <span className="text-2xl font-bold text-green-600">
-                            {availableSlots}
-                        </span>
-                    </div>
-                    <div className="h-8 w-px bg-primary/20"></div>
-                    <div className="flex flex-col">
-                        <span className="text-xs font-bold uppercase tracking-wide text-red-600">
-                            Terisi
-                        </span>
-                        <span className="text-2xl font-bold text-red-600">
-                            {bookedSlots}
-                        </span>
-                    </div>
-                </div>
-
-                {/* Lock / Unlock All Day Buttons */}
-                <div className="flex flex-col gap-2">
-                    {/* Unlock button: only shown when doctor is fully locked for the day */}
-                    {isFullDayOff && (
-                        <button
-                            onClick={handleUnlockAllSchedules}
-                            className="flex items-center justify-center gap-2 rounded-lg bg-green-50 px-4 py-3 text-sm font-semibold text-green-700 transition-all hover:bg-green-100 active:bg-green-200"
-                            title="Buka jadwal libur sehari ini"
+                    <div className="mt-4">
+                        <label
+                            htmlFor="lock-note"
+                            className="mb-2 block text-sm font-semibold text-[#0d171c]"
                         >
-                            <span className="material-symbols-outlined text-lg">
-                                lock_open
-                            </span>
-                            <span>Buka Jadwal Libur Hari Ini</span>
-                        </button>
-                    )}
+                            Catatan
+                        </label>
+                        <textarea
+                            id="lock-note"
+                            value={lockNote}
+                            onChange={(event) => setLockNote(event.target.value)}
+                            rows={4}
+                            placeholder="Contoh: Dokter izin pribadi, rapat internal, atau tindakan khusus."
+                            className="w-full rounded-lg border border-[#d7e3ea] px-3 py-2 text-sm text-[#0d171c] shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        />
+                    </div>
 
-                    {/* Lock button: hidden when already fully locked */}
-                    {!isFullDayOff && (
+                    <div className="mt-6 flex justify-end gap-3">
                         <button
-                            onClick={handleLockAllSchedules}
-                            disabled={hasBookings}
-                            className={`flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold transition-all ${
-                                hasBookings
-                                    ? 'cursor-not-allowed bg-gray-200 text-gray-400'
-                                    : 'bg-red-50 text-red-700 hover:bg-red-100 active:bg-red-200'
-                            }`}
-                            title={
-                                hasBookings
-                                    ? 'Tidak dapat mengunci jadwal karena ada booking aktif'
-                                    : 'Kunci semua jadwal hari ini (libur sehari)'
-                            }
+                            type="button"
+                            onClick={closeLockModal}
+                            disabled={isSubmittingLock}
+                            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                            <span className="material-symbols-outlined text-lg">
-                                lock
-                            </span>
-                            <span>Kunci Semua Jadwal</span>
+                            Batal
                         </button>
-                    )}
-
-                    {hasBookings && !isFullDayOff && (
-                        <p className="text-xs text-red-600">
-                            * Batalkan booking terlebih dahulu untuk mengunci jadwal
-                        </p>
-                    )}
-                </div>
-
-                {/* Morning Slots */}
-                {morningSlots.length > 0 && (
-                    <div className="flex flex-col gap-3">
-                        <h4 className="mb-2 text-sm font-bold uppercase tracking-wider text-[#0d171c]">
-                            Slot Tersedia
-                        </h4>
-                        {morningSlots.map((slot, index) => (
-                            <SlotItem
-                                key={index}
-                                slot={slot}
-                                doctorId={doctorId}
-                                date={dateStr}
-                            />
-                        ))}
+                        <button
+                            type="submit"
+                            disabled={isSubmittingLock}
+                            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            {isSubmittingLock ? 'Menyimpan...' : 'Kunci Jadwal'}
+                        </button>
                     </div>
-                )}
-
-                {/* Divider */}
-                <div className="h-px w-full bg-[#e7f0f4]"></div>
-
-                {/* Afternoon Slots */}
-                {afternoonSlots.length > 0 && (
-                    <div className="flex flex-col gap-3">
-                        <h4 className="mb-2 text-sm font-bold uppercase tracking-wider text-[#0d171c]">
-                            Slot Tersedia
-                        </h4>
-                        {afternoonSlots.map((slot, index) => (
-                            <SlotItem
-                                key={index}
-                                slot={slot}
-                                doctorId={doctorId}
-                                date={dateStr}
-                            />
-                        ))}
-                    </div>
-                )}
-            </div>
-        </aside>
+                </form>
+            </Modal>
+        </>
     );
 }
 
@@ -304,11 +413,11 @@ interface SlotItemProps {
     slot: TimeSlotInfo;
     doctorId: number;
     date: string;
+    onLock: (target: LockTarget) => void;
 }
 
-function SlotItem({ slot, doctorId, date }: SlotItemProps) {
+function SlotItem({ slot, doctorId, date, onLock }: SlotItemProps) {
     const handleBookClick = () => {
-        // Clear booking data from sessionStorage directly
         try {
             sessionStorage.removeItem('bookingData');
         } catch (error) {
@@ -318,23 +427,11 @@ function SlotItem({ slot, doctorId, date }: SlotItemProps) {
     };
 
     const handleLockClick = () => {
-        if (!confirm('Apakah Anda yakin ingin mengunci slot ini?')) {
-            return;
-        }
-
-        router.post(
-            '/admin/doctors/schedule/lock',
-            {
-                doctor_id: doctorId,
-                date: date,
-                start_time: slot.time,
-                end_time: slot.endTime,
-                note: 'Dikunci dari jadwal',
-            },
-            {
-                preserveScroll: true,
-            },
-        );
+        onLock({
+            mode: 'slot',
+            startTime: slot.time,
+            endTime: slot.endTime,
+        });
     };
 
     if (slot.status === 'booked') {
@@ -409,6 +506,11 @@ function SlotItem({ slot, doctorId, date }: SlotItemProps) {
                         <p className="text-xs font-medium text-yellow-600">
                             Dikunci
                         </p>
+                        {slot.note && (
+                            <p className="mt-1 text-xs text-slate-600">
+                                {slot.note}
+                            </p>
+                        )}
                     </div>
                 </div>
                 <button
@@ -447,7 +549,6 @@ function SlotItem({ slot, doctorId, date }: SlotItemProps) {
         );
     }
 
-    // Available - book or lock
     return (
         <div className="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-3">
             <div className="flex items-center gap-3">

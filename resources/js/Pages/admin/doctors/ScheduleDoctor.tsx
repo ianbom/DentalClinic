@@ -33,6 +33,7 @@ interface SlotInfo {
     time: string;
     available: boolean;
     reason: string | null;
+    note?: string | null;
     slot_type: 'long' | 'short';
     available_for_short: boolean;
     available_for_long: boolean;
@@ -239,6 +240,7 @@ export default function ScheduleDoctor({
                 time: slot.time,
                 endTime: endTimeStr,
                 status: status,
+                note: slot.note,
                 patientName: slot.patient_name,
                 service: slot.service,
                 bookingId: slot.booking_id,

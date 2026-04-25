@@ -62,11 +62,13 @@ class DoctorController extends Controller
         $validated = $request->validate([
             'doctor_id' => 'required|exists:doctors,id',
             'date' => 'required|date',
+            'note' => 'nullable|string|max:255',
         ]);
 
         $result = $this->doctorService->lockOneDaySchedule(
             $validated['doctor_id'],
-            $validated['date']
+            $validated['date'],
+            $validated['note'] ?? null
         );
 
         if (!$result['success']) {

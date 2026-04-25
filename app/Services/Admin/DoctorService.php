@@ -269,7 +269,7 @@ class DoctorService
      * Lock all schedules for a specific doctor on a specific date
      * Returns: ['success' => bool, 'message' => string, 'has_bookings' => bool]
      */
-    public function lockOneDaySchedule(int $doctorId, string $date): array
+    public function lockOneDaySchedule(int $doctorId, string $date, ?string $note = null): array
     {
         // Check if there are any active bookings on this date
         $hasBookings = \App\Models\Booking::where('doctor_id', $doctorId)
@@ -322,7 +322,7 @@ class DoctorService
             $date,
             '00:00',
             '23:59',
-            'Jadwal dikunci untuk seluruh hari'
+            $note ?: 'Jadwal dikunci untuk seluruh hari'
         );
 
         return [
@@ -552,4 +552,3 @@ class DoctorService
         }
     }
 }
-
