@@ -112,7 +112,7 @@ class DoctorController extends Controller
             $validated['date'],
             $validated['start_time'],
             $validated['end_time'],
-            $validated['note'] ?? 'Locked from schedule'
+            $validated['note'] ?? null
         );
 
         return back()->with('success', 'Jadwal berhasil dikunci');

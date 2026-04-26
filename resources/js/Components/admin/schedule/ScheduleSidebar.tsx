@@ -507,7 +507,7 @@ function SlotItem({ slot, doctorId, date, onLock }: SlotItemProps) {
                             Dikunci
                         </p>
                         {slot.note && (
-                            <p className="mt-1 text-xs text-slate-600">
+                            <p className="mt-1 text-sm font-bold text-red-600">
                                 {slot.note}
                             </p>
                         )}
